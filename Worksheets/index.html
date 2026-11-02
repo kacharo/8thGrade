@@ -3,188 +3,119 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>8th Grade Science: Mouse Genetics (One Trait)</title>
+<title>8th Grade Science: Mouse Genetics</title>
 <style>
 :root{
   --bg:#f4f7f6;--card:#fff;--ink:#2c3e50;--muted:#6c7a89;
   --brand:#2980b9;--brand2:#ebf5fb;--good:#27ae60;--goodbg:#e8f8f5;
   --bad:#c0392b;--badbg:#fadbd8;--warn:#d35400;--warnbg:#fef9e7;
-  --line:#dcdde1;--fs:20px;--lh:1.6;
+  --line:#dcdde1;
 }
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:"Atkinson Hyperlegible","Trebuchet MS",Verdana,sans-serif;font-size:18px;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
-header{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:12px 20px;background:#fff;border-bottom:2px solid var(--line);position:sticky;top:0;z-index:10}
-header h1{font-size:20px;margin:0 8px 0 0}
-nav{display:flex;gap:6px;overflow-x:auto;flex-wrap:nowrap;-webkit-overflow-scrolling:touch;flex:1}
-nav button{border:0;background:transparent;font:inherit;font-weight:700;padding:10px 16px;border-radius:12px;cursor:pointer;color:var(--muted);white-space:nowrap;min-height:44px}
-nav button.on{background:var(--brand2);color:var(--brand)}
-#xp{font-weight:700;background:var(--warnbg);color:var(--warn);padding:6px 14px;border-radius:99px}
-main{max-width:980px;margin:0 auto;padding:18px}
-.card{background:var(--card);border:2px solid var(--line);border-radius:18px;padding:20px;margin-bottom:16px;box-shadow:0 4px 6px rgba(0,0,0,0.02)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,sans-serif;font-size:18px;-webkit-tap-highlight-color:transparent}
+header{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;background:#fff;border-bottom:2px solid var(--line);position:sticky;top:0;z-index:10}
+header h1{font-size:20px;margin:0}
+main{max-width:900px;margin:0 auto;padding:16px}
+.card{background:var(--card);border:2px solid var(--line);border-radius:16px;padding:20px;margin-bottom:16px;box-shadow:0 2px 4px rgba(0,0,0,0.02)}
 h2{margin:0 0 10px;font-size:22px;color:#2c3e50}
 h3{margin:14px 0 8px;font-size:19px;color:var(--brand)}
-button.b{font:inherit;font-weight:700;border:0;border-radius:14px;padding:12px 18px;cursor:pointer;background:var(--brand);color:#fff;min-height:44px}
+button.b{font:inherit;font-weight:700;border:0;border-radius:12px;padding:12px 18px;cursor:pointer;background:var(--brand);color:#fff;min-height:44px}
 button.b.alt{background:var(--brand2);color:var(--brand)}
-button.b.red{background:var(--badbg);color:var(--bad)}
 button.b.green{background:var(--good);color:#fff}
-button.b:disabled{opacity:.4;cursor:not-allowed}
 .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
 .muted{color:var(--muted)}
-.opt{display:block;width:100%;text-align:left;font:inherit;font-size:18px;padding:14px 16px;margin:8px 0;border:2px solid var(--line);border-radius:14px;background:#fff;cursor:pointer}
-.opt:hover:not(:disabled){border-color:var(--brand)}
+.opt{display:block;width:100%;text-align:left;font:inherit;font-size:17px;padding:12px 16px;margin:8px 0;border:2px solid var(--line);border-radius:12px;background:#fff;cursor:pointer}
 .opt.right{background:var(--goodbg);border-color:var(--good)}
 .opt.wrong{background:var(--badbg);border-color:var(--bad)}
 input[type=text],textarea,select{font:inherit;padding:12px;border:2px solid var(--line);border-radius:12px;width:100%;margin-top:6px;background:#fff}
-.hide{display:none!important}
 .ws-sec{border-left:5px solid var(--brand);padding-left:16px;margin-bottom:24px}
 .badge{display:inline-block;padding:4px 10px;border-radius:6px;font-weight:bold;font-size:14px;background:var(--brand2);color:var(--brand)}
 .ans-sheet{background:#f8f9fa;border:2px dashed var(--brand);padding:18px;border-radius:14px;margin-top:20px}
 table.vocab-table{width:100%;border-collapse:collapse;margin-top:10px}
 table.vocab-table th, table.vocab-table td{border:1px solid var(--line);padding:10px;text-align:left;font-size:16px}
 table.vocab-table th{background:var(--brand2);color:var(--brand)}
-.punnett-box{display:grid;grid-template-columns:repeat(3,60px);gap:4px;margin:10px 0}
-.p-cell{background:var(--brand2);border:1px solid var(--brand);height:60px;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:20px}
-.p-cell.header{background:#e2e8f0;color:var(--ink)}
 </style>
 </head>
 <body>
+
 <header>
   <h1>🧬 Mouse Genetics Worksheet</h1>
-  <nav id="tabs">
-    <button data-tab="ws" class="on">📝 Digital Worksheet</button>
-    <button data-tab="words">🧠 Vocabulary</button>
-    <button data-tab="play">🎮 Quick Quiz</button>
-  </nav>
-  <div id="xp">⭐ Score: 0</div>
+  <div id="scoreDisplay" style="font-weight:bold;color:var(--warn)">⭐ Score: 0</div>
 </header>
+
 <main>
-  <section id="tab-ws"></section>
-  <section id="tab-words" class="hide"></section>
-  <section id="tab-play" class="hide"></section>
-</main>
-<dialog id="dlg"></dialog>
-<div id="toast" style="position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#2c3e50;color:#fff;padding:10px 18px;border-radius:99px;opacity:0;transition:.3s;pointer-events:none;z-index:20"></div>
-
-<script>
-(function(){
-'use strict';
-const $=s=>document.querySelector(s);
-const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-
-function toast(m){const t=$('#toast');t.textContent=m;t.style.opacity='1';setTimeout(()=>t.style.opacity='0',2200);}
-
-function say(text){
-  if(!('speechSynthesis' in window)) return;
-  speechSynthesis.cancel();
-  const u=new SpeechSynthesisUtterance(text);
-  u.rate=0.85; u.lang='en-US';
-  speechSynthesis.speak(u);
-}
-
-let xpScore = 0;
-
-/* Worksheet Data extracted directly from Mouse_Genetics_Worksheet.pdf */
-const wsData = {
-  title: "8th Grade Science: Mouse Genetics (One Trait)",
-  subject: "Science & Genetics",
-  overview: "Heredity is how traits pass from parents to babies[cite: 6]. A trait is a feature, like fur color[cite: 6]. Traits are controlled by genes, which are pieces of DNA[cite: 6]. A gene can have different versions called alleles[cite: 6]. A baby gets one allele from each parent[cite: 6]. In mice, the fur color gene has two alleles: F (black fur) and f (white fur)[cite: 6]. Black is dominant, so it shows up whenever it is present. White is recessive, so it only shows up when there are two f alleles[cite: 6]. Scientists use a Punnett square to predict the babies[cite: 6]. Remember: Genotype = the letters (like Ff). Phenotype = what you see (like black fur)[cite: 6].",
-  vocab: [
-    {word: "heredity", def: "Passing of traits from parents to offspring", ex: "Mouse pups look like parents"},
-    {word: "trait", def: "A feature of a living thing", ex: "Fur color"},
-    {word: "DNA", def: "The molecule that holds the instructions for traits", ex: "Found in every cell"},
-    {word: "gene", def: "A piece of DNA that controls one trait", ex: "The fur color gene"},
-    {word: "allele", def: "One version of a gene", ex: "F (black) or f (white)"},
-    {word: "genotype", def: "The allele pair an organism has", ex: "FF, Ff, or ff"},
-    {word: "phenotype", def: "How the trait looks", ex: "Black fur or white fur"},
-    {word: "dominant allele", def: "An allele that always shows when present", ex: "F (black fur)"},
-    {word: "recessive allele", def: "An allele that is hidden if a dominant one is present", ex: "f (white fur)"},
-    {word: "homozygous", def: "Two alleles that are the same", ex: "FF or ff"},
-    {word: "heterozygous", def: "Two alleles that are different", ex: "Ff"},
-    {word: "hybrid", def: "Offspring of parents with different traits", ex: "Black mouse x white mouse"},
-    {word: "inheritance", def: "The way traits are received from parents", ex: "Getting one allele from each parent"},
-    {word: "Punnett square", def: "A grid used to predict offspring genotypes", ex: "A 2 by 2 box of letters"}
-  ],
-  crossRef: [
-    {term: "gene", match: "F. A piece of DNA that controls a trait"},
-    {term: "allele", match: "D. One version of a gene"},
-    {term: "genotype", match: "J. The letters of the allele pair"},
-    {term: "phenotype", match: "I. What the trait looks like"},
-    {term: "homozygous", match: "H. Two matching alleles, like FF"},
-    {term: "heterozygous", match: "A. Two different alleles, like Ff"},
-    {term: "dominant allele", match: "C. Always shows when present"},
-    {term: "recessive allele", match: "G. Hidden when a dominant allele is present"},
-    {term: "hybrid", match: "E. Offspring of parents with different traits"},
-    {term: "Punnett square", match: "B. A grid that predicts offspring"}
-  ],
-  trueFalse: [
-    {q: "A baby mouse gets one allele from each parent.", ans: true},
-    {q: "The genotype is what the mouse looks like.", ans: false},
-    {q: "A mouse with genotype Ff has black fur.", ans: true},
-    {q: "A white mouse must have the genotype ff.", ans: true},
-    {q: "Two white mice can have black babies.", ans: false},
-    {q: "Genes are made of DNA.", ans: true}
-  ],
-  mcq: [
-    {q: "Which genotype is homozygous dominant?", opts: ["FF", "Ff", "ff", "fF"], ans: 0},
-    {q: "Which allele makes white fur?", opts: ["F", "f", "Both", "Neither"], ans: 1},
-    {q: "A black mouse (FF) and a white mouse (ff) have babies. What are the babies' genotypes?", opts: ["All FF", "All ff", "All Ff", "Half FF, half ff"], ans: 2},
-    {q: "What do we call the look of a trait, like black fur?", opts: ["Genotype", "Allele", "Phenotype", "Hybrid"], ans: 2},
-    {q: "A mouse is Ff. Which word describes it?", opts: ["Homozygous", "Heterozygous", "Recessive", "Extinct"], ans: 1},
-    {q: "What tool predicts the genotypes of babies?", opts: ["A Punnett square", "A microscope", "A fossil", "A thermometer"], ans: 0}
-  ],
-  fillBlanks: [
-    {sentence: "Passing traits from parents to offspring is called ____________.", word: "heredity"},
-    {sentence: "Genes are pieces of ____________.", word: "DNA"},
-    {sentence: "Each version of a gene is called an ____________.", word: "allele"},
-    {sentence: "The ____________ allele always shows when it is present.", word: "dominant"},
-    {sentence: "The ____________ allele is hidden when a dominant allele is there.", word: "recessive"},
-    {sentence: "The allele letters, like Ff, are the ____________.", word: "genotype"},
-    {sentence: "The way the mouse looks, like black fur, is the ____________.", word: "phenotype"},
-    {sentence: "A baby from a black parent and a white parent is a ____________.", word: "hybrid"}
-  ],
-  punnett: [
-    {title: "A. Black (FF) x White (ff)", ansBlack: "4", pctBlack: "100", pctWhite: "0"},
-    {title: "B. Black (Ff) x Black (Ff)", ansBlack: "3", pctBlack: "75", pctWhite: "25"},
-    {title: "C. Black (Ff) x White (ff)", ansBlack: "2", pctBlack: "50", pctWhite: "50"},
-    {title: "D. White (ff) x White (ff)", ansBlack: "0", pctBlack: "0", pctWhite: "100"}
-  ],
-  writingPrompt: "Explain why two black mice (with genotype Ff) can sometimes produce a white offspring (ff). Use the sentence starter: 'Both parents must be Ff, so the baby can get...'",
-  shortAnswer: [
-    {q: "Will mouse babies always look like their parents? Why or why not?", starter: "Not always, because each baby gets...", hint: "Think about inheriting one allele from each parent."},
-    {q: "How can two black mice have a white baby?", starter: "Both parents must be Ff, so the baby can get...", hint: "Both parents carry a hidden recessive allele."},
-    {q: "What is the difference between genotype and phenotype?", starter: "Genotype is... and phenotype is...", hint: "Letters vs. physical appearance."}
-  ],
-  funFacts: [
-    "Meet Mendel: Gregor Mendel was a monk who studied pea plants in the 1860s. He discovered the rules of inheritance, so he is called the father of genetics[cite: 10].",
-    "Mice are great helpers: Scientists study mice because they have babies fast and share most of their genes with humans[cite: 10].",
-    "Hidden traits: Two black mice can have a white baby if both carry a hidden f allele[cite: 10].",
-    "People too: Humans get one allele from each parent. Traits like freckles and dimples are often taught as dominant and recessive patterns[cite: 10]."
-  ]
-};
-
-function show(t){
-  ['ws','words','play'].forEach(x=>$('#tab-'+x).classList.toggle('hide',x!==t));
-  document.querySelectorAll('#tabs button').forEach(b=>b.classList.toggle('on',b.dataset.tab===t));
-  if(t==='ws') renderWorksheet();
-  if(t==='words') renderVocabulary();
-  if(t==='play') renderQuiz();
-}
-$('#tabs').addEventListener('click',e=>{const b=e.target.closest('button');if(b)show(b.dataset.tab);});
-
-function renderWorksheet(){
-  const el=$('#tab-ws');
-  el.innerHTML=`
-    <div class="card">
-      <div class="row" style="justify-content:space-between">
-        <div>
-          <span class="badge">${esc(wsData.subject)}</span>
-          <h2 style="margin-top:6px">${esc(wsData.title)}</h2>
-        </div>
-        <button class="b alt" onclick="window.print()">🖨️ Print / Save PDF</button>
+  <div class="card">
+    <div class="row" style="justify-content:space-between">
+      <div>
+        <span class="badge">8th Grade Science & IEP Support</span>
+        <h2 style="margin-top:6px">Mouse Genetics: One Trait</h2>
       </div>
+      <button class="b alt" onclick="window.print()">🖨️ Print / Save PDF</button>
     </div>
+  </div>
 
-    <!-- 1. Topic Overview -->
-    <div class="card ws-sec">
-      <h3>1. Topic Overview <button class="b alt" style="padding:4px 8px;min-height:30px" onclick="say('${esc(wsData.overview)}')">🔊 Hear</button></h3>
-      <p style="font-size:19
+  <!-- 1. Topic Overview -->
+  <div class="card ws-sec">
+    <h3>1. Topic Overview <button class="b alt" style="padding:4px 8px;min-height:30px" onclick="speakOverview()">🔊 Hear</button></h3>
+    <p style="font-size:18px;line-height:1.6">
+      Heredity is how traits pass from parents to babies[cite: 6]. A trait is a feature, like fur color[cite: 6]. Traits are controlled by genes, which are pieces of DNA[cite: 6]. A gene can have different versions called alleles[cite: 6]. A baby gets one allele from each parent[cite: 6]. In mice, the fur color gene has two alleles: <b>F</b> (black fur) and <b>f</b> (white fur)[cite: 6]. Black is dominant, and white is recessive[cite: 6]. Genotype = allele letters (like Ff); Phenotype = what you see (like black fur)[cite: 6].
+    </p>
+  </div>
+
+  <!-- 2. Vocabulary Words -->
+  <div class="card ws-sec">
+    <h3>2. Vocabulary Words & Meanings</h3>
+    <table class="vocab-table">
+      <tr><th>Word</th><th>Meaning</th><th>Example</th></tr>
+      <tr><td><b>heredity</b>[cite: 6]</td><td>Passing of traits from parents to offspring[cite: 6]</td><td>Mouse pups look like parents[cite: 6]</td></tr>
+      <tr><td><b>trait</b>[cite: 6]</td><td>A feature of a living thing[cite: 6]</td><td>Fur color[cite: 6]</td></tr>
+      <tr><td><b>gene</b>[cite: 6]</td><td>A piece of DNA that controls one trait[cite: 6]</td><td>Fur color gene[cite: 6]</td></tr>
+      <tr><td><b>allele</b>[cite: 6]</td><td>One version of a gene[cite: 6]</td><td>F (black) or f (white)[cite: 6]</td></tr>
+      <tr><td><b>genotype</b>[cite: 6]</td><td>The allele pair an organism has[cite: 6]</td><td>FF, Ff, or ff[cite: 6]</td></tr>
+      <tr><td><b>phenotype</b>[cite: 6]</td><td>How the trait looks[cite: 6]</td><td>Black or white fur[cite: 6]</td></tr>
+      <tr><td><b>dominant allele</b>[cite: 6]</td><td>An allele that always shows when present[cite: 6]</td><td>F (black fur)[cite: 6]</td></tr>
+      <tr><td><b>recessive allele</b>[cite: 6]</td><td>Hidden when a dominant allele is present[cite: 6]</td><td>f (white fur)[cite: 6]</td></tr>
+      <tr><td><b>homozygous</b>[cite: 6]</td><td>Two alleles that are the same[cite: 6]</td><td>FF or ff[cite: 6]</td></tr>
+      <tr><td><b>heterozygous</b>[cite: 6]</td><td>Two alleles that are different[cite: 6]</td><td>Ff[cite: 6]</td></tr>
+    </table>
+  </div>
+
+  <!-- 3. Cross Reference Matching -->
+  <div class="card ws-sec">
+    <h3>3. Cross-Reference: Match the Word to Its Meaning</h3>
+    <div id="matchingContainer">
+      <!-- Generated via JS for reliability -->
+    </div>
+  </div>
+
+  <!-- 4. True or False -->
+  <div class="card ws-sec">
+    <h3>4. True or False</h3>
+    <div id="tfContainer"></div>
+  </div>
+
+  <!-- 5. Multiple Choice -->
+  <div class="card ws-sec">
+    <h3>5. Multiple Choice</h3>
+    <div id="mcqContainer"></div>
+  </div>
+
+  <!-- 6. Fill in the Blanks -->
+  <div class="card ws-sec">
+    <h3>6. Fill in the Blanks</h3>
+    <p class="muted"><b>Word Bank:</b> heredity, DNA, allele, dominant, recessive, genotype, phenotype, hybrid</p>
+    <div id="fibContainer"></div>
+  </div>
+
+  <!-- 7. Writing & Short Answer Practice -->
+  <div class="card ws-sec">
+    <h3>7. Writing & Short Answer Practice</h3>
+    <p class="muted">💡 Tip: Use the microphone key (🎤) on your iPad or iPhone keyboard to dictate your answers if preferred.</p>
+    <div style="margin-bottom:14px">
+      <p><b>1. Will mouse babies always look like their parents? Why or why not?</b>[cite: 11]</p>
+      <p class="muted">Starter: <i>“Not always, because each baby gets...”</i>[cite: 11]</p>
+      <textarea rows="3" placeholder="Type or dictate your answer here..."></textarea>
+    </div>
+    <div style="margin-bottom:14px">
+      <p><b>2. How can two black mice have a white baby?</b>[cite: 11]</p>
+      <p class="muted">Starter: <i>“Both parents must
