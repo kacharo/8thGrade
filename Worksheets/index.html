@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Mouse Genetics (One Trait) - Digital Worksheet</title>
+<title>8th Grade Science: Mouse Genetics (One Trait)</title>
 <style>
 :root{
   --bg:#f4f7f6;--card:#fff;--ink:#2c3e50;--muted:#6c7a89;
@@ -22,7 +22,7 @@ nav button.on{background:var(--brand2);color:var(--brand)}
 main{max-width:980px;margin:0 auto;padding:18px}
 .card{background:var(--card);border:2px solid var(--line);border-radius:18px;padding:20px;margin-bottom:16px;box-shadow:0 4px 6px rgba(0,0,0,0.02)}
 h2{margin:0 0 10px;font-size:22px;color:#2c3e50}
-h3{margin:12px 0 8px;font-size:19px;color:var(--brand)}
+h3{margin:14px 0 8px;font-size:19px;color:var(--brand)}
 button.b{font:inherit;font-weight:700;border:0;border-radius:14px;padding:12px 18px;cursor:pointer;background:var(--brand);color:#fff;min-height:44px}
 button.b.alt{background:var(--brand2);color:var(--brand)}
 button.b.red{background:var(--badbg);color:var(--bad)}
@@ -32,15 +32,19 @@ button.b:disabled{opacity:.4;cursor:not-allowed}
 .muted{color:var(--muted)}
 .opt{display:block;width:100%;text-align:left;font:inherit;font-size:18px;padding:14px 16px;margin:8px 0;border:2px solid var(--line);border-radius:14px;background:#fff;cursor:pointer}
 .opt:hover:not(:disabled){border-color:var(--brand)}
-.opt.right{background:var(--goodbg);border-color:var(--good);border-color:var(--good)}
+.opt.right{background:var(--goodbg);border-color:var(--good)}
 .opt.wrong{background:var(--badbg);border-color:var(--bad)}
 input[type=text],textarea,select{font:inherit;padding:12px;border:2px solid var(--line);border-radius:12px;width:100%;margin-top:6px;background:#fff}
 .hide{display:none!important}
 .ws-sec{border-left:5px solid var(--brand);padding-left:16px;margin-bottom:24px}
 .badge{display:inline-block;padding:4px 10px;border-radius:6px;font-weight:bold;font-size:14px;background:var(--brand2);color:var(--brand)}
 .ans-sheet{background:#f8f9fa;border:2px dashed var(--brand);padding:18px;border-radius:14px;margin-top:20px}
-.punnett-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;max-width:300px;margin:10px 0}
-.punnett-cell{background:var(--brand2);border:2px solid var(--brand);padding:16px;text-align:center;font-size:22px;font-weight:bold;border-radius:10px}
+table.vocab-table{width:100%;border-collapse:collapse;margin-top:10px}
+table.vocab-table th, table.vocab-table td{border:1px solid var(--line);padding:10px;text-align:left;font-size:16px}
+table.vocab-table th{background:var(--brand2);color:var(--brand)}
+.punnett-box{display:grid;grid-template-columns:repeat(3,60px);gap:4px;margin:10px 0}
+.p-cell{background:var(--brand2);border:1px solid var(--brand);height:60px;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:20px}
+.p-cell.header{background:#e2e8f0;color:var(--ink)}
 </style>
 </head>
 <body>
@@ -49,7 +53,7 @@ input[type=text],textarea,select{font:inherit;padding:12px;border:2px solid var(
   <nav id="tabs">
     <button data-tab="ws" class="on">📝 Digital Worksheet</button>
     <button data-tab="words">🧠 Vocabulary</button>
-    <button data-tab="play">🎮 Practice Quiz</button>
+    <button data-tab="play">🎮 Quick Quiz</button>
   </nav>
   <div id="xp">⭐ Score: 0</div>
 </header>
@@ -79,43 +83,82 @@ function say(text){
 
 let xpScore = 0;
 
-/* Worksheet Data based on Mouse_Genetics_Gizmo.pdf */
+/* Worksheet Data extracted directly from Mouse_Genetics_Worksheet.pdf */
 const wsData = {
-  title: "Student Exploration: Mouse Genetics (One Trait)",
-  subject: "Science & Heredity",
-  overview: "Heredity is the passage of genetic information from parents to offspring. Discovered by Gregor Mendel, traits like fur color in mice are controlled by genes on DNA[cite: 4]. Dominant alleles (F) mask recessive alleles (f)[cite: 4], determining whether a mouse has black or white fur.",
+  title: "8th Grade Science: Mouse Genetics (One Trait)",
+  subject: "Science & Genetics",
+  overview: "Heredity is how traits pass from parents to babies[cite: 6]. A trait is a feature, like fur color[cite: 6]. Traits are controlled by genes, which are pieces of DNA[cite: 6]. A gene can have different versions called alleles[cite: 6]. A baby gets one allele from each parent[cite: 6]. In mice, the fur color gene has two alleles: F (black fur) and f (white fur)[cite: 6]. Black is dominant, so it shows up whenever it is present. White is recessive, so it only shows up when there are two f alleles[cite: 6]. Scientists use a Punnett square to predict the babies[cite: 6]. Remember: Genotype = the letters (like Ff). Phenotype = what you see (like black fur)[cite: 6].",
   vocab: [
-    {word: "Heredity", def: "The passage of genetic information from parents to offspring.", ex: "Kittens inherit coat colors from both parents."},
-    {word: "Allele", def: "Different versions or forms of a gene.", ex: 'The fur color gene has black (F) and white (f) alleles.'},
-    {word: "Dominant Allele", def: "An allele that is always expressed when present.", ex: 'Black fur allele (F) is dominant.'},
-    {word: "Recessive Allele", def: "An allele that is masked when a dominant allele is present.", ex: 'White fur allele (f) is recessive.'},
-    {word: "Genotype", def: "The allele combination an organism has (e.g., FF, Ff, ff).", ex: 'A heterozygous mouse has the genotype Ff.'},
-    {word: "Phenotype", def: "The physical appearance of an organism.", ex: 'A mouse with black fur has a black phenotype.'},
-    {word: "Heterozygous", def: "Having two different alleles for a trait (Ff).", ex: 'Hybrid mice are heterozygous.'},
-    {word: "Homozygous", def: "Having two identical alleles for a trait (FF or ff).", ex: 'Pure black mice are homozygous (FF).'}
+    {word: "heredity", def: "Passing of traits from parents to offspring", ex: "Mouse pups look like parents"},
+    {word: "trait", def: "A feature of a living thing", ex: "Fur color"},
+    {word: "DNA", def: "The molecule that holds the instructions for traits", ex: "Found in every cell"},
+    {word: "gene", def: "A piece of DNA that controls one trait", ex: "The fur color gene"},
+    {word: "allele", def: "One version of a gene", ex: "F (black) or f (white)"},
+    {word: "genotype", def: "The allele pair an organism has", ex: "FF, Ff, or ff"},
+    {word: "phenotype", def: "How the trait looks", ex: "Black fur or white fur"},
+    {word: "dominant allele", def: "An allele that always shows when present", ex: "F (black fur)"},
+    {word: "recessive allele", def: "An allele that is hidden if a dominant one is present", ex: "f (white fur)"},
+    {word: "homozygous", def: "Two alleles that are the same", ex: "FF or ff"},
+    {word: "heterozygous", def: "Two alleles that are different", ex: "Ff"},
+    {word: "hybrid", def: "Offspring of parents with different traits", ex: "Black mouse x white mouse"},
+    {word: "inheritance", def: "The way traits are received from parents", ex: "Getting one allele from each parent"},
+    {word: "Punnett square", def: "A grid used to predict offspring genotypes", ex: "A 2 by 2 box of letters"}
   ],
   crossRef: [
-    {term: "Phenotype", match: "Physical appearance of the mouse"},
-    {term: "Genotype", match: "Allele combination (letters like Ff)"},
-    {term: "Homozygous", match: "Both alleles are the same (FF or ff)"},
-    {term: "Heterozygous", match: "Alleles are different (Ff)"}
+    {term: "gene", match: "F. A piece of DNA that controls a trait"},
+    {term: "allele", match: "D. One version of a gene"},
+    {term: "genotype", match: "J. The letters of the allele pair"},
+    {term: "phenotype", match: "I. What the trait looks like"},
+    {term: "homozygous", match: "H. Two matching alleles, like FF"},
+    {term: "heterozygous", match: "A. Two different alleles, like Ff"},
+    {term: "dominant allele", match: "C. Always shows when present"},
+    {term: "recessive allele", match: "G. Hidden when a dominant allele is present"},
+    {term: "hybrid", match: "E. Offspring of parents with different traits"},
+    {term: "Punnett square", match: "B. A grid that predicts offspring"}
   ],
   trueFalse: [
-    {q: "Dominant alleles are always expressed when present in an organism's genotype.", ans: true},
-    {q: "A mouse with homozygous white fur has the genotype FF.", ans: false},
-    {q: "Hybrid offspring with the genotype Ff have mixed or different alleles.", ans: true}
+    {q: "A baby mouse gets one allele from each parent.", ans: true},
+    {q: "The genotype is what the mouse looks like.", ans: false},
+    {q: "A mouse with genotype Ff has black fur.", ans: true},
+    {q: "A white mouse must have the genotype ff.", ans: true},
+    {q: "Two white mice can have black babies.", ans: false},
+    {q: "Genes are made of DNA.", ans: true}
   ],
   mcq: [
-    {q: "What does a Punnett square help scientists predict?", opts: ["The exact age of the parents", "The possible genotypes and phenotypes of offspring", "How much food mice will eat", "The habitat size"], ans: 1},
-    {q: "If a black parent is FF and a white parent is ff, what is the genotype of all F1 hybrid offspring?", opts: ["FF", "ff", "Ff", "None of these"], ans: 2}
+    {q: "Which genotype is homozygous dominant?", opts: ["FF", "Ff", "ff", "fF"], ans: 0},
+    {q: "Which allele makes white fur?", opts: ["F", "f", "Both", "Neither"], ans: 1},
+    {q: "A black mouse (FF) and a white mouse (ff) have babies. What are the babies' genotypes?", opts: ["All FF", "All ff", "All Ff", "Half FF, half ff"], ans: 2},
+    {q: "What do we call the look of a trait, like black fur?", opts: ["Genotype", "Allele", "Phenotype", "Hybrid"], ans: 2},
+    {q: "A mouse is Ff. Which word describes it?", opts: ["Homozygous", "Heterozygous", "Recessive", "Extinct"], ans: 1},
+    {q: "What tool predicts the genotypes of babies?", opts: ["A Punnett square", "A microscope", "A fossil", "A thermometer"], ans: 0}
   ],
   fillBlanks: [
-    {sentence: "Genes are segments of ______ that control a particular trait.", word: "DNA"},
-    {sentence: "A mouse with white fur must have the homozygous genotype ______.", word: "ff"}
+    {sentence: "Passing traits from parents to offspring is called ____________.", word: "heredity"},
+    {sentence: "Genes are pieces of ____________.", word: "DNA"},
+    {sentence: "Each version of a gene is called an ____________.", word: "allele"},
+    {sentence: "The ____________ allele always shows when it is present.", word: "dominant"},
+    {sentence: "The ____________ allele is hidden when a dominant allele is there.", word: "recessive"},
+    {sentence: "The allele letters, like Ff, are the ____________.", word: "genotype"},
+    {sentence: "The way the mouse looks, like black fur, is the ____________.", word: "phenotype"},
+    {sentence: "A baby from a black parent and a white parent is a ____________.", word: "hybrid"}
   ],
-  writingPrompt: "Explain why two black mice (with genotype Ff) can sometimes produce a white offspring (ff).",
+  punnett: [
+    {title: "A. Black (FF) x White (ff)", ansBlack: "4", pctBlack: "100", pctWhite: "0"},
+    {title: "B. Black (Ff) x Black (Ff)", ansBlack: "3", pctBlack: "75", pctWhite: "25"},
+    {title: "C. Black (Ff) x White (ff)", ansBlack: "2", pctBlack: "50", pctWhite: "50"},
+    {title: "D. White (ff) x White (ff)", ansBlack: "0", pctBlack: "0", pctWhite: "100"}
+  ],
+  writingPrompt: "Explain why two black mice (with genotype Ff) can sometimes produce a white offspring (ff). Use the sentence starter: 'Both parents must be Ff, so the baby can get...'",
   shortAnswer: [
-    {q: "What is the difference between homozygous and heterozygous genotypes?", hint: "Look at whether the two allele letters are the same or different."}
+    {q: "Will mouse babies always look like their parents? Why or why not?", starter: "Not always, because each baby gets...", hint: "Think about inheriting one allele from each parent."},
+    {q: "How can two black mice have a white baby?", starter: "Both parents must be Ff, so the baby can get...", hint: "Both parents carry a hidden recessive allele."},
+    {q: "What is the difference between genotype and phenotype?", starter: "Genotype is... and phenotype is...", hint: "Letters vs. physical appearance."}
+  ],
+  funFacts: [
+    "Meet Mendel: Gregor Mendel was a monk who studied pea plants in the 1860s. He discovered the rules of inheritance, so he is called the father of genetics[cite: 10].",
+    "Mice are great helpers: Scientists study mice because they have babies fast and share most of their genes with humans[cite: 10].",
+    "Hidden traits: Two black mice can have a white baby if both carry a hidden f allele[cite: 10].",
+    "People too: Humans get one allele from each parent. Traits like freckles and dimples are often taught as dominant and recessive patterns[cite: 10]."
   ]
 };
 
@@ -144,188 +187,4 @@ function renderWorksheet(){
     <!-- 1. Topic Overview -->
     <div class="card ws-sec">
       <h3>1. Topic Overview <button class="b alt" style="padding:4px 8px;min-height:30px" onclick="say('${esc(wsData.overview)}')">🔊 Hear</button></h3>
-      <p style="font-size:19px;line-height:1.6">${esc(wsData.overview)}</p>
-    </div>
-
-    <!-- 2. Vocabulary Words -->
-    <div class="card ws-sec">
-      <h3>2. Vocabulary Words & Meanings</h3>
-      ${wsData.vocab.map(v=>`
-        <div style="margin-bottom:12px">
-          <b>${esc(v.word)}</b>: ${esc(v.def)}
-          <br><span class="muted">Example: “${esc(v.ex)}”</span>
-        </div>
-      `).join('')}
-    </div>
-
-    <!-- 3. Cross Reference Matching -->
-    <div class="card ws-sec">
-      <h3>3. Cross-Reference (Match Terms)</h3>
-      ${wsData.crossRef.map((cr,i)=>`
-        <div class="row" style="margin-bottom:8px">
-          <div style="width:180px"><b>${esc(cr.term)}</b></div>
-          <select id="cr_${i}">
-            <option value="">-- Select Matching Definition --</option>
-            ${wsData.crossRef.map(c=>`<option value="${esc(c.match)}">${esc(c.match)}</option>`).join('')}
-          </select>
-        </div>
-      `).join('')}
-    </div>
-
-    <!-- 4. True or False -->
-    <div class="card ws-sec">
-      <h3>4. True or False</h3>
-      ${wsData.trueFalse.map((tf,i)=>`
-        <div style="margin-bottom:14px">
-          <p style="margin:4px 0">${i+1}. ${esc(tf.q)}</p>
-          <button class="b alt" id="tf_${i}_t" onclick="setTF(${i}, true)">True</button>
-          <button class="b alt" id="tf_${i}_f" onclick="setTF(${i}, false)">False</button>
-        </div>
-      `).join('')}
-    </div>
-
-    <!-- 5. Multiple Choice -->
-    <div class="card ws-sec">
-      <h3>5. Multiple Choice</h3>
-      ${wsData.mcq.map((m,i)=>`
-        <div style="margin-bottom:14px">
-          <p style="margin:4px 0"><b>${i+1}. ${esc(m.q)}</b></p>
-          ${m.opts.map((o,optIdx)=>`
-            <button class="opt" id="mcq_${i}_${optIdx}" onclick="setMCQ(${i}, ${optIdx})">${esc(o)}</button>
-          `).join('')}
-        </div>
-      `).join('')}
-    </div>
-
-    <!-- 6. Fill in the Blanks -->
-    <div class="card ws-sec">
-      <h3>6. Fill in the Blanks</h3>
-      ${wsData.fillBlanks.map((fb,i)=>`
-        <div style="margin-bottom:12px">
-          <p>${i+1}. ${esc(fb.sentence.replace('______', '__________'))}</p>
-          <input type="text" id="fb_${i}" placeholder="Type the missing word..." style="max-width:320px">
-        </div>
-      `).join('')}
-    </div>
-
-    <!-- 7. Writing Skills Practice -->
-    <div class="card ws-sec">
-      <h3>7. Writing Practice (Expressive Skills)</h3>
-      <p><b>Prompt:</b> ${esc(wsData.writingPrompt)}</p>
-      <p class="muted">💡 Tip: Use the microphone key (🎤) on your iPad or iPhone keyboard to dictate your answer if preferred.</p>
-      <textarea id="ws_writing" rows="4" placeholder="Type or dictate your explanation here..."></textarea>
-    </div>
-
-    <!-- 8. Short Answer Questions -->
-    <div class="card ws-sec">
-      <h3>8. Short Answer Questions</h3>
-      ${wsData.shortAnswer.map((sa,i)=>`
-        <div style="margin-bottom:14px">
-          <p><b>${i+1}. ${esc(sa.q)}</b></p>
-          ${sa.hint?`<p class="muted">💡 Hint: ${esc(sa.hint)}</p>`:''}
-          <textarea id="sa_${i}" rows="2" placeholder="Type your answer here..."></textarea>
-        </div>
-      `).join('')}
-    </div>
-
-    <!-- 9. Answer Sheet & Grading -->
-    <div class="card ws-sec">
-      <h3>9. Answer Sheet & Scoring</h3>
-      <button class="b green" onclick="checkAnswers()">✅ Check Answers & Reveal Guide</button>
-      <div id="ansSheet" class="ans-sheet hide"></div>
-    </div>
-  `;
-}
-
-const userTF = {};
-const userMCQ = {};
-
-window.setTF = function(idx, val){
-  userTF[idx] = val;
-  $(`#tf_${idx}_t`).className = val ? 'b green' : 'b alt';
-  $(`#tf_${idx}_f`).className = !val ? 'b red' : 'b alt';
-};
-
-window.setMCQ = function(qIdx, optIdx){
-  userMCQ[qIdx] = optIdx;
-  wsData.mcq[qIdx].opts.forEach((_, oI)=>{
-    const el = $(`#mcq_${qIdx}_${oI}`);
-    if(el) {
-      el.style.borderColor = (oI === optIdx) ? 'var(--brand)' : 'var(--line)';
-      el.style.backgroundColor = (oI === optIdx) ? 'var(--brand2)' : '#fff';
-    }
-  });
-};
-
-window.checkAnswers = function(){
-  let score = 0;
-  let total = wsData.crossRef.length + wsData.trueFalse.length + wsData.mcq.length + wsData.fillBlanks.length;
-
-  wsData.crossRef.forEach((cr, i)=>{
-    if($(`#cr_${i}`).value === cr.match) score++;
-  });
-  wsData.trueFalse.forEach((tf, i)=>{
-    if(userTF[i] === tf.ans) score++;
-  });
-  wsData.mcq.forEach((m, i)=>{
-    if(userMCQ[i] === m.ans) score++;
-  });
-  wsData.fillBlanks.forEach((fb, i)=>{
-    if(($(`#fb_${i}`).value || '').trim().toLowerCase() === fb.word.toLowerCase()) score++;
-  });
-
-  xpScore += score * 10;
-  $('#xp').textContent = '⭐ Score: ' + xpScore;
-
-  const percent = Math.round((score / total) * 100);
-  const sheet = $('#ansSheet');
-  sheet.classList.remove('hide');
-  sheet.innerHTML = `
-    <h2>🎉 Evaluation Results</h2>
-    <p style="font-size:22px"><b>Score:</b> ${score} / ${total} (${percent}%)</p>
-    <hr style="border:0;border-top:1px solid var(--line);margin:12px 0">
-    <h4>Answer Key Guide:</h4>
-    <ul>
-      <li><b>Cross-Reference:</b> ${wsData.crossRef.map(c=>`${c.term} → ${c.match}`).join('; ')}</li>
-      <li><b>True/False:</b> ${wsData.trueFalse.map((tf,i)=>`Q${i+1}: ${tf.ans?'True':'False'}`).join('; ')}</li>
-      <li><b>Multiple Choice:</b> ${wsData.mcq.map((m,i)=>`Q${i+1}: Option ${m.ans+1} (${m.opts[m.ans]})`).join('; ')}</li>
-      <li><b>Fill in Blanks:</b> ${wsData.fillBlanks.map((fb,i)=>`Q${i+1}: ${fb.word}`).join('; ')}</li>
-    </ul>
-    <p class="muted">Great job completing the worksheet! Writing prompts and short answers can be reviewed together.</p>
-  `;
-  toast("Worksheet checked!");
-};
-
-function renderVocabulary(){
-  $('#tab-words').innerHTML = `
-    <div class="card">
-      <h2>🧠 Vocabulary Flashcards</h2>
-      <p class="muted">Tap any word to hear its pronunciation and definition.</p>
-      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;margin-top:14px">
-        ${wsData.vocab.map(v=>`
-          <div class="card" style="cursor:pointer;margin-bottom:0" onclick="say('${esc(v.word)}: ${esc(v.def)}')">
-            <h3>${esc(v.word)} 🔊</h3>
-            <p>${esc(v.def)}</p>
-            <p class="muted">“${esc(v.ex)}”</p>
-          </div>
-        `).join('')}
-      </div>
-    </div>
-  `;
-}
-
-function renderQuiz(){
-  $('#tab-play').innerHTML = `
-    <div class="card" style="text-align:center;padding:40px">
-      <h2>🎮 Genetics Quick Practice</h2>
-      <p class="muted" style="font-size:18px">Test your knowledge of alleles, dominant traits, and Punnett squares!</p>
-      <button class="b green" style="font-size:20px;padding:16px 32px;margin-top:16px" onclick="alert('Great job practicing! Keep up the amazing work on your IEP goals!')">Start Quick Review</button>
-    </div>
-  `;
-}
-
-show('ws');
-})();
-</script>
-</body>
-</html>
+      <p style="font-size:19
