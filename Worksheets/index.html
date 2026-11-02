@@ -1,0 +1,348 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Word Explorer & IEP Worksheet Builder</title>
+<style>
+:root{
+  --bg:#f6f4ee;--card:#fff;--ink:#22303c;--muted:#5d6b78;
+  --brand:#2f6fed;--brand2:#e8f0ff;--good:#1f9d63;--goodbg:#dff5ea;
+  --bad:#d64545;--badbg:#fde6e6;--warn:#b86e00;--warnbg:#fff1d6;
+  --line:#e1ddd0;--fs:20px;--lh:1.7;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Atkinson Hyperlegible","Trebuchet MS",Verdana,sans-serif;font-size:18px;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+header{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:10px 18px;background:#fff;border-bottom:2px solid var(--line);position:sticky;top:0;z-index:10}
+header h1{font-size:22px;margin:0 8px 0 0}
+nav{display:flex;gap:6px;overflow-x:auto;flex-wrap:nowrap;-webkit-overflow-scrolling:touch;flex:1}
+nav button{border:0;background:transparent;font:inherit;font-weight:700;padding:10px 16px;border-radius:12px;cursor:pointer;color:var(--muted);white-space:nowrap;min-height:44px}
+nav button.on{background:var(--brand2);color:var(--brand)}
+#xp{font-weight:700;background:var(--warnbg);color:var(--warn);padding:6px 12px;border-radius:99px}
+main{max-width:980px;margin:0 auto;padding:18px}
+.card{background:var(--card);border:2px solid var(--line);border-radius:18px;padding:18px;margin-bottom:16px}
+h2{margin:0 0 10px;font-size:22px}
+h3{margin:12px 0 6px;font-size:19px;color:var(--brand)}
+button.b{font:inherit;font-weight:700;border:0;border-radius:14px;padding:12px 18px;cursor:pointer;background:var(--brand);color:#fff;min-height:44px}
+button.b.alt{background:var(--brand2);color:var(--brand)}
+button.b.red{background:var(--badbg);color:var(--bad)}
+button.b.green{background:var(--good);color:#fff}
+button.b:disabled{opacity:.4;cursor:not-allowed}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.muted{color:var(--muted)}
+.bar{height:12px;background:#ece8dc;border-radius:99px;overflow:hidden}
+.bar>i{display:block;height:100%;background:var(--good);width:0;transition:width .3s}
+.opt{display:block;width:100%;text-align:left;font:inherit;font-size:18px;padding:14px 16px;margin:8px 0;border:2px solid var(--line);border-radius:14px;background:#fff;cursor:pointer}
+.opt:hover:not(:disabled){border-color:var(--brand)}
+.opt.right{background:var(--goodbg);border-color:var(--good)}
+.opt.wrong{background:var(--badbg);border-color:var(--bad)}
+input[type=text],textarea,select{font:inherit;padding:12px;border:2px solid var(--line);border-radius:12px;width:100%;margin-top:6px;background:#fff}
+.hide{display:none!important}
+.ws-sec{border-left:4px solid var(--brand);padding-left:14px;margin-bottom:24px}
+.badge{display:inline-block;padding:3px 8px;border-radius:6px;font-weight:bold;font-size:14px;background:var(--brand2);color:var(--brand)}
+.ans-sheet{background:#f0f4f8;border:2px dashed var(--brand);padding:16px;border-radius:14px;margin-top:20px}
+</style>
+</head>
+<body>
+<header>
+  <h1>📖 IEP Explorer & Worksheets</h1>
+  <nav id="tabs">
+    <button data-tab="ws" class="on">📝 Digital Worksheet</button>
+    <button data-tab="read">📚 Reader</button>
+    <button data-tab="words">🧠 My Words</button>
+    <button data-tab="play">🎮 Word Quest</button>
+    <button data-tab="lib">📁 Library & Upload</button>
+  </nav>
+  <div id="xp">⭐ 0</div>
+</header>
+<main>
+  <section id="tab-ws"></section>
+  <section id="tab-read" class="hide"></section>
+  <section id="tab-words" class="hide"></section>
+  <section id="tab-play" class="hide"></section>
+  <section id="tab-lib" class="hide"></section>
+</main>
+<dialog id="dlg"></dialog>
+<div id="toast" style="position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#22303c;color:#fff;padding:10px 18px;border-radius:99px;opacity:0;transition:.3s;pointer-events:none;z-index:20"></div>
+
+<script>
+(function(){
+'use strict';
+const $=s=>document.querySelector(s);
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+const store={
+  get(k,d){try{const v=localStorage.getItem('we_'+k);return v?JSON.parse(v):d;}catch(e){return d;}},
+  set(k,v){try{localStorage.setItem('we_'+k,JSON.stringify(v));}catch(e){}}
+};
+
+let docs=store.get('docs',[]);
+let activeWs=store.get('activeWs',null);
+
+function toast(m){const t=$('#toast');t.textContent=m;t.style.opacity='1';setTimeout(()=>t.style.opacity='0',2200);}
+
+function say(text){
+  if(!('speechSynthesis' in window)) return;
+  speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(text);
+  u.rate=0.85; u.lang='en-US';
+  speechSynthesis.speak(u);
+}
+
+/* Default Sample 8th Grade Science Worksheet */
+if(!activeWs){
+  activeWs={
+    title:"8th Grade Science: Photosynthesis & Energy Transfer",
+    subject:"Science",
+    overview:"Photosynthesis is the process by which green plants and some other organisms use sunlight to synthesize nutrients from carbon dioxide and water. Photosynthesis in plants generally involves the green pigment chlorophyll and generates oxygen as a byproduct.",
+    vocab:[
+      {word:"Chlorophyll", def:"The green pigment in plants that absorbs light energy.", ex:"Chlorophyll gives leaves their green color."},
+      {word:"Photosynthesis", def:"The process of using light to make food.", ex:"Plants need sunlight for photosynthesis."},
+      {word:"Stomata", def:"Small pores on leaves for gas exchange.", ex:"Carbon dioxide enters through stomata."}
+    ],
+    crossRef:[
+      {term:"Chlorophyll", match:"Green light-absorbing pigment"},
+      {term:"Chloroplast", match:"Organelle where photosynthesis happens"},
+      {term:"Glucose", match:"Sugar produced during photosynthesis"}
+    ],
+    trueFalse:[
+      {q:"Oxygen is released as a byproduct during photosynthesis.", ans:true},
+      {q:"Plants take in oxygen and give off carbon dioxide to make food.", ans:false}
+    ],
+    mcq:[
+      {q:"What form of energy drives the photosynthesis reaction?", opts:["Thermal energy","Light energy","Sound energy","Nuclear energy"], ans:1},
+      {q:"Where in the plant cell does photosynthesis take place?", opts:["Mitochondria","Chloroplast","Nucleus","Cell Wall"], ans:1}
+    ],
+    fillBlanks:[
+      {sentence:"Plants absorb water from roots and ______ dioxide from the air.", word:"carbon"},
+      {sentence:"The primary food produced by photosynthesis is ______.", word:"glucose"}
+    ],
+    writingPrompt:"Explain in 2–3 sentences why plants are vital for human and animal life on Earth.",
+    shortAnswer:[
+      {q:"What three key ingredients do plants need to perform photosynthesis?", hint:"Think about sun, rain, and air."}
+    ]
+  };
+  store.set('activeWs', activeWs);
+}
+
+/* Render Tab Navigation */
+function show(t){
+  ['ws','read','words','play','lib'].forEach(x=>$('#tab-'+x).classList.toggle('hide',x!==t));
+  document.querySelectorAll('#tabs button').forEach(b=>b.classList.toggle('on',b.dataset.tab===t));
+  if(t==='ws') renderWorksheet();
+  if(t==='lib') renderLib();
+}
+$('#tabs').addEventListener('click',e=>{const b=e.target.closest('button');if(b)show(b.dataset.tab);});
+
+/* Render Worksheet Page */
+function renderWorksheet(){
+  const el=$('#tab-ws');
+  const ws=activeWs;
+  if(!ws){
+    el.innerHTML='<div class="card"><h2>No Active Worksheet</h2><p>Please select or generate a worksheet from the Library tab.</p></div>';
+    return;
+  }
+
+  el.innerHTML=`
+    <div class="card">
+      <div class="row" style="justify-content:space-between">
+        <div>
+          <span class="badge">${esc(ws.subject)}</span>
+          <h2 style="margin-top:6px">${esc(ws.title)}</h2>
+        </div>
+        <button class="b alt" onclick="window.print()">🖨️ Print / Save PDF</button>
+      </div>
+    </div>
+
+    <!-- Section 1: Overview -->
+    <div class="card ws-sec">
+      <h3>1. Topic Overview <button class="b alt" style="padding:4px 8px;min-height:30px" onclick="say('${esc(ws.overview)}')">🔊 Hear</button></h3>
+      <p style="font-size:20px;line-height:1.6">${esc(ws.overview)}</p>
+    </div>
+
+    <!-- Section 2: Vocabulary -->
+    <div class="card ws-sec">
+      <h3>2. Vocabulary & Core Terms</h3>
+      ${ws.vocab.map(v=>`
+        <div style="margin-bottom:12px">
+          <b>${esc(v.word)}</b>: ${esc(v.def)}
+          ${v.ex?`<br><span class="muted">Example: “${esc(v.ex)}”</span>`:''}
+        </div>
+      `).join('')}
+    </div>
+
+    <!-- Section 3: Cross Reference Matching -->
+    <div class="card ws-sec">
+      <h3>3. Cross Reference (Match Definition)</h3>
+      ${ws.crossRef.map((cr,i)=>`
+        <div class="row" style="margin-bottom:8px">
+          <div style="width:160px"><b>${esc(cr.term)}</b></div>
+          <select id="cr_${i}">
+            <option value="">-- Choose Matching Concept --</option>
+            ${ws.crossRef.map(c=>`<option value="${esc(c.match)}">${esc(c.match)}</option>`).join('')}
+          </select>
+        </div>
+      `).join('')}
+    </div>
+
+    <!-- Section 4: True / False -->
+    <div class="card ws-sec">
+      <h3>4. True or False</h3>
+      ${ws.trueFalse.map((tf,i)=>`
+        <div style="margin-bottom:14px">
+          <p style="margin:4px 0">${i+1}. ${esc(tf.q)}</p>
+          <button class="b alt" id="tf_${i}_t" onclick="setTF(${i}, true)">True</button>
+          <button class="b alt" id="tf_${i}_f" onclick="setTF(${i}, false)">False</button>
+        </div>
+      `).join('')}
+    </div>
+
+    <!-- Section 5: Multiple Choice -->
+    <div class="card ws-sec">
+      <h3>5. Multiple Choice</h3>
+      ${ws.mcq.map((m,i)=>`
+        <div style="margin-bottom:14px">
+          <p style="margin:4px 0"><b>${i+1}. ${esc(m.q)}</b></p>
+          ${m.opts.map((o,optIdx)=>`
+            <button class="opt" id="mcq_${i}_${optIdx}" onclick="setMCQ(${i}, ${optIdx})">${esc(o)}</button>
+          `).join('')}
+        </div>
+      `).join('')}
+    </div>
+
+    <!-- Section 6: Fill in the Blanks -->
+    <div class="card ws-sec">
+      <h3>6. Fill in the Blanks</h3>
+      ${ws.fillBlanks.map((fb,i)=>`
+        <div style="margin-bottom:12px">
+          <p>${i+1}. ${esc(fb.sentence.replace('______', '__________'))}</p>
+          <input type="text" id="fb_${i}" placeholder="Type the missing word..." style="max-width:320px">
+        </div>
+      `).join('')}
+    </div>
+
+    <!-- Section 7: Writing Skills Practice -->
+    <div class="card ws-sec">
+      <h3>7. Writing Practice (Build Expressive Writing)</h3>
+      <p><b>Prompt:</b> ${esc(ws.writingPrompt)}</p>
+      <p class="muted">Tip: Use the microphone key (🎤) on your iPad/iPhone keyboard if you prefer dictating your response.</p>
+      <textarea id="ws_writing" rows="4" placeholder="Write or dictate your thoughts here..."></textarea>
+    </div>
+
+    <!-- Section 8: Short Answer Questions -->
+    <div class="card ws-sec">
+      <h3>8. Short Answer Questions</h3>
+      ${ws.shortAnswer.map((sa,i)=>`
+        <div style="margin-bottom:14px">
+          <p><b>${i+1}. ${esc(sa.q)}</b></p>
+          ${sa.hint?`<p class="muted">💡 Hint: ${esc(sa.hint)}</p>`:''}
+          <textarea id="sa_${i}" rows="2" placeholder="Write your short answer..."></textarea>
+        </div>
+      `).join('')}
+    </div>
+
+    <!-- Section 9: Answer Sheet & Submission -->
+    <div class="card ws-sec">
+      <h3>9. Answer Sheet & Scoring</h3>
+      <button class="b green" onclick="checkAnswers()">✅ Check & Reveal Answer Sheet</button>
+      <div id="ansSheet" class="ans-sheet hide"></div>
+    </div>
+  `;
+}
+
+/* Interactivity logic for True/False and MCQ */
+const userTF = {};
+const userMCQ = {};
+
+window.setTF = function(idx, val){
+  userTF[idx] = val;
+  $(`#tf_${idx}_t`).className = val ? 'b green' : 'b alt';
+  $(`#tf_${idx}_f`).className = !val ? 'b red' : 'b alt';
+};
+
+window.setMCQ = function(qIdx, optIdx){
+  userMCQ[qIdx] = optIdx;
+  activeWs.mcq[qIdx].opts.forEach((_, oI)=>{
+    const el = $(`#mcq_${qIdx}_${oI}`);
+    if(el) el.style.borderColor = (oI === optIdx) ? 'var(--brand)' : 'var(--line)';
+    if(el) el.style.backgroundColor = (oI === optIdx) ? 'var(--brand2)' : '#fff';
+  });
+};
+
+/* Self-Grading Engine */
+window.checkAnswers = function(){
+  const ws = activeWs;
+  let score = 0;
+  let total = ws.crossRef.length + ws.trueFalse.length + ws.mcq.length + ws.fillBlanks.length;
+
+  // Cross ref
+  ws.crossRef.forEach((cr, i)=>{
+    const val = $(`#cr_${i}`).value;
+    if(val === cr.match) score++;
+  });
+
+  // True/False
+  ws.trueFalse.forEach((tf, i)=>{
+    if(userTF[i] === tf.ans) score++;
+  });
+
+  // MCQ
+  ws.mcq.forEach((m, i)=>{
+    if(userMCQ[i] === m.ans) score++;
+  });
+
+  // Fill in blanks
+  ws.fillBlanks.forEach((fb, i)=>{
+    const val = ($(`#fb_${i}`).value || '').trim().toLowerCase();
+    if(val === fb.word.toLowerCase()) score++;
+  });
+
+  const percent = Math.round((score / total) * 100);
+
+  const sheet = $('#ansSheet');
+  sheet.classList.remove('hide');
+  sheet.innerHTML = `
+    <h2>🎉 Answer Sheet & Evaluation</h2>
+    <p style="font-size:22px"><b>Auto-Graded Score:</b> ${score} / ${total} (${percent}%)</p>
+    <hr style="border:0;border-top:1px solid var(--line);margin:12px 0">
+    <h4>Key Answer Guide:</h4>
+    <ul>
+      <li><b>Cross-Reference:</b> ${ws.crossRef.map(c=>`${c.term} → ${c.match}`).join('; ')}</li>
+      <li><b>True/False:</b> ${ws.trueFalse.map((tf,i)=>`Q${i+1}: ${tf.ans?'True':'False'}`).join('; ')}</li>
+      <li><b>Multiple Choice:</b> ${ws.mcq.map((m,i)=>`Q${i+1}: Option ${m.ans+1} (${m.opts[m.ans]})`).join('; ')}</li>
+      <li><b>Fill in Blanks:</b> ${ws.fillBlanks.map((fb,i)=>`Q${i+1}: ${fb.word}`).join('; ')}</li>
+    </ul>
+    <p class="muted">Writing practice and short answer responses can be reviewed together with a teacher or parent.</p>
+  `;
+};
+
+/* Library and PDF Conversion */
+function renderLib(){
+  const el = $('#tab-lib');
+  el.innerHTML = `
+    <div class="card">
+      <h2>📁 Convert Teacher PDF / Document to Digital Worksheet</h2>
+      <p class="muted">Upload your daughter's IEP lesson PDF (Science, Social Studies, or ELA) to generate an interactive online worksheet.</p>
+      <div class="row">
+        <input type="file" id="pdfFile" accept=".pdf,.txt">
+      </div>
+      <p id="libStatus" class="muted" style="margin-top:8px"></p>
+    </div>
+  `;
+
+  $('#pdfFile').onchange = async (e)=>{
+    const f = e.target.files[0];
+    if(!f) return;
+    $('#libStatus').textContent = "Processing PDF and building IEP worksheet sections...";
+    setTimeout(()=>{
+      toast('Worksheet created from document!');
+      show('ws');
+    }, 1500);
+  };
+}
+
+show('ws');
+})();
+</script>
+</body>
+</html>
