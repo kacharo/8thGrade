@@ -15,6 +15,7 @@
 </header>
 <main>
   <div class="card"><h2>Exercises</h2><div class="grid" id="list"></div></div>
+  <div class="card" id="practice" style="display:none"></div>
   <div class="card" id="saved"></div>
 </main>
 <script src="../shared.js" data-home="../index.html"></script>
@@ -31,6 +32,16 @@ $('#list').innerHTML=EXERCISES.length?EXERCISES.map(function(x){
     (best?'<div class="dots">Best: '+best+' points</div>':'')+'<div class="row" style="margin-top:8px"><a class="b" href="'+W.esc(x.href)+'">Open</a></div></div>';}).join('')
   :'<p class="muted">No exercises here yet. New ones will show up on this page.</p>';
 W.ui.saved($('#saved'),SUBJECT);
+function drawPractice(){
+  var pr=W.practice.list(),ks=Object.keys(pr),el=$('#practice');
+  if(!ks.length){el.style.display='none';return;}
+  el.style.display='';
+  el.innerHTML='<h2>🔁 Words to practice</h2><p class="muted">Tap 🔊 to hear the word. When you can say it, tap ✓.</p>'+ks.map(function(k){
+    return '<span class="chip">'+W.esc(pr[k].word)+' <button data-h="'+W.esc(k)+'" aria-label="Hear it">🔊</button><button data-c="'+W.esc(k)+'" aria-label="I can say it">✓</button></span>';}).join('');
+  el.querySelectorAll('[data-h]').forEach(function(b){b.onclick=function(){try{speechSynthesis.cancel();var u=new SpeechSynthesisUtterance(pr[b.dataset.h].word);u.rate=0.7;u.lang='en-US';speechSynthesis.speak(u);}catch(e){}};});
+  el.querySelectorAll('[data-c]').forEach(function(b){b.onclick=function(){W.practice.clear(b.dataset.c);drawPractice();};});
+}
+drawPractice();
 })();
 </script>
 </body>
