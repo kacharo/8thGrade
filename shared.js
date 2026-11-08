@@ -6,7 +6,7 @@
 /* ================= SETTINGS YOU MAY CHANGE ================= */
 var CONFIG={owner:'kacharo',repo:'8thGrade',branch:'main'};   // where answers are saved
 // Login: replace this whole line with the one made by "Change login" on the main page (Parent settings).
-var AUTH={user:'student',salt:'8thgrade-v1',hash:'f465c44648e66eeb1941049795efd942ebc953dbb25e5d0166bc4214f8f08caf'};
+   var AUTH={user:'raina',salt:'8thgrade-v1',hash:'a8ca0b1e830bf613fedfa9e183780c525c72af95d12772406221529e19a164f2'};
 var SUBJECTS=[
   {key:'Science',label:'Science',icon:'🔬',color:'#1f9d63',href:'Science/index.html',blurb:'Genetics, matter, Earth'},
   {key:'ELA',label:'ELA',icon:'📖',color:'#2f6fed',href:'ELA/index.html',blurb:'Reading and vocabulary'},
