@@ -69,6 +69,20 @@ W.xp={
   add:function(n){var s=W.store.get('stats',{xp:0})||{xp:0};s.xp=(s.xp||0)+n;W.store.set('stats',s);}
 };
 
+/* ---- practice words: words she could not say after two tries.
+   They are remembered here AND added to "My Words" in the ELA reading app. ---- */
+W.practice={
+  list:function(){return W.store.get('practice',{})||{};},
+  add:function(word,info){
+    info=info||{};var k=String(word).toLowerCase(),p=W.practice.list(),e=p[k]||{word:word,count:0};
+    e.count++;e.when=new Date().toISOString();e.from=info.from||'';p[k]=e;W.store.set('practice',p);
+    var v=W.store.get('vocab',{})||{},x=v[k];
+    if(!x){x=v[k]={w:k,pos:'',def:info.def||'',ex:info.ex||'',ctx:info.ex||'',phonetic:info.phonetic||'',mastery:0,added:Date.now(),helped:0,sv:1};}
+    x.helped=(x.helped||0)+1;x.mastery=0;W.store.set('vocab',v);
+  },
+  clear:function(word){var p=W.practice.list(),k=String(word).toLowerCase();if(p[k]){delete p[k];W.store.set('practice',p);}}
+};
+
 /* ---- saved answers (kept in this browser until they are safely on GitHub) ---- */
 W.subs={
   list:function(subject){var a=W.store.get('subs',[])||[];return subject?a.filter(function(r){return r.subject===subject;}):a;},

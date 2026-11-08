@@ -26,6 +26,8 @@ input[type=text],input[type=password],textarea,select{font:inherit;font-size:18p
 .badge.ok{background:var(--goodbg);color:var(--good)}
 .badge.wait{background:var(--warnbg);color:var(--warn)}
 .dots{letter-spacing:2px;color:var(--good)}
+.chip{display:inline-flex;align-items:center;gap:6px;background:var(--warnbg);color:var(--warn);border-radius:99px;padding:4px 6px 4px 14px;margin:4px;font-weight:700}
+.chip button{border:0;background:#fff;color:var(--ink);border-radius:99px;min-width:36px;height:36px;font-size:16px;cursor:pointer}
 summary{cursor:pointer}
 #toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#22303c;color:#fff;padding:10px 18px;border-radius:99px;opacity:0;transition:.3s;pointer-events:none;z-index:20}
 #toast.on{opacity:1}
