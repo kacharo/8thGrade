@@ -1,0 +1,1009 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Word Explorer</title>
+<style>
+:root{--bg:#f6f4ee;--card:#fff;--ink:#22303c;--muted:#5d6b78;--brand:#2f6fed;--brand2:#e8f0ff;--good:#1f9d63;--goodbg:#dff5ea;--bad:#d64545;--badbg:#fde6e6;--warn:#b86e00;--warnbg:#fff1d6;--line:#e1ddd0;--fs:22px;--lh:1.7}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Atkinson Hyperlegible","Trebuchet MS",Verdana,system-ui,sans-serif;font-size:18px}
+header{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:10px 18px;background:#fff;border-bottom:2px solid var(--line);position:sticky;top:0;z-index:5}
+header h1{font-size:22px;margin:0 8px 0 0}
+nav{display:flex;gap:6px;flex-wrap:wrap;flex:1}
+nav button{border:0;background:transparent;font:inherit;font-weight:700;padding:10px 16px;border-radius:12px;cursor:pointer;color:var(--muted)}
+nav button.on{background:var(--brand2);color:var(--brand)}
+#xp{font-weight:700;background:var(--warnbg);color:var(--warn);padding:6px 12px;border-radius:99px}
+main{max-width:980px;margin:0 auto;padding:18px}
+.card{background:var(--card);border:2px solid var(--line);border-radius:18px;padding:18px;margin-bottom:16px}
+h2{margin:0 0 10px;font-size:22px}
+button.b{font:inherit;font-weight:700;border:0;border-radius:14px;padding:12px 18px;cursor:pointer;background:var(--brand);color:#fff}
+button.b.alt{background:var(--brand2);color:var(--brand)}
+button.b.red{background:var(--badbg);color:var(--bad)}
+button.b.green{background:var(--good)}
+button.b:disabled{opacity:.4;cursor:not-allowed}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.muted{color:var(--muted)}
+.bar{height:12px;background:#ece8dc;border-radius:99px;overflow:hidden}
+.bar>i{display:block;height:100%;background:var(--good);width:0;transition:width .3s}
+#text{font-size:var(--fs);line-height:var(--lh);padding:10px 4px}
+.w{border-radius:8px;padding:0 3px;cursor:pointer;transition:background .15s}
+.w:hover{background:#eef2f7}
+.sent.item{display:block;padding:4px 12px;margin:5px 0;border:1px solid var(--line);border-radius:12px;break-inside:avoid}
+.sent.item.now{box-shadow:0 0 0 3px #fff3b0}
+#text.listmode{column-count:2;column-gap:18px}
+@media (max-width:640px){#text.listmode{column-count:1}}
+.sent.now{background:#fff3b0;border-radius:10px;box-shadow:0 0 0 5px #fff3b0}
+.w.heard{background:var(--brand2)}
+.w.ok{color:var(--good)}
+.w.help{color:var(--warn);text-decoration:underline dotted}
+.w.bad{color:var(--bad);background:var(--badbg);text-decoration:underline;font-weight:700}
+.w.model{background:#cfe3ff}
+@keyframes shake{25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+#coach{font-size:20px;font-weight:700;padding:12px 14px;border-radius:14px;background:var(--brand2);color:var(--brand);margin:10px 0}
+#coach.good{background:var(--goodbg);color:var(--good)}
+#coach.warn{background:var(--warnbg);color:var(--warn)}
+#heard{min-height:24px;color:var(--muted);font-style:italic}
+.banner{background:var(--warnbg);color:var(--warn);padding:10px 14px;border-radius:12px;margin-bottom:12px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:12px}
+.wc{border:2px solid var(--line);border-radius:16px;padding:14px;background:#fff}
+.wc h3{margin:0;font-size:22px}
+.dots{letter-spacing:3px;color:var(--good)}
+.opt{display:block;width:100%;text-align:left;font:inherit;font-size:20px;padding:14px 16px;margin:8px 0;border:2px solid var(--line);border-radius:14px;background:#fff;cursor:pointer}
+.opt:hover:not(:disabled){border-color:var(--brand)}
+.opt.right{background:var(--goodbg);border-color:var(--good)}
+.opt.wrong{background:var(--badbg);border-color:var(--bad)}
+.big{font-size:24px;line-height:1.5}
+input[type=text],textarea,select{font:inherit;padding:10px;border:2px solid var(--line);border-radius:12px;width:100%}
+dialog{border:0;border-radius:20px;max-width:540px;width:92%;padding:22px;box-shadow:0 10px 40px #0004}
+dialog::backdrop{background:#0006}
+.def{margin:6px 0;font-size:19px}
+.pos{font-style:italic;color:var(--muted)}
+.hide{display:none!important}
+
+html{-webkit-text-size-adjust:100%}
+body{-webkit-tap-highlight-color:transparent;touch-action:manipulation;padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-right);padding-bottom:env(safe-area-inset-bottom)}
+button,input,select,textarea{font-size:16px}
+textarea#dict{font-size:18px;min-height:90px;margin-top:8px}
+nav{overflow-x:auto;flex-wrap:nowrap;-webkit-overflow-scrolling:touch}
+nav button{white-space:nowrap;min-height:44px}
+button.b{min-height:44px}
+@media (max-width:640px){
+  :root{--fs:20px;--lh:1.7}
+  body{font-size:16px}
+  header{padding:8px 10px;gap:6px}
+  header h1{font-size:18px;margin:0}
+  nav button{padding:8px 10px;font-size:14px}
+  #xp{font-size:14px;padding:4px 10px}
+  main{padding:10px}
+  .card{padding:12px;border-radius:14px}
+  h2{font-size:19px}
+  #coach{font-size:17px;padding:10px}
+  .row>button.b{flex:1 1 45%}
+  .opt{font-size:17px;padding:12px}
+  .big{font-size:20px}
+  .grid{grid-template-columns:1fr}
+  dialog{padding:16px;width:94%}
+}
+.chip{display:inline-block;background:var(--brand2);color:var(--brand);border-radius:99px;padding:4px 6px 4px 12px;margin:3px;font-weight:700}
+.chip button{border:0;background:transparent;color:var(--brand);font-size:18px;cursor:pointer;padding:0 6px}
+summary{cursor:pointer}
+#toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#22303c;color:#fff;padding:10px 18px;border-radius:99px;opacity:0;transition:.3s;pointer-events:none;z-index:20}
+#toast.on{opacity:1}
+</style>
+<script src="../shared.js" data-home="../index.html"></script>
+</head>
+<body>
+<header>
+  <a href="../index.html" style="text-decoration:none;font-weight:700;padding:8px 12px;border-radius:12px;background:#e8f0ff;color:#2f6fed;white-space:nowrap">🏠 Home</a>
+  <h1>📖 Word Explorer</h1>
+  <nav id="tabs">
+    <button data-tab="read">📚 Read</button>
+    <button data-tab="words">🧠 My Words</button>
+    <button data-tab="play">🎮 Word Quest</button>
+    <button data-tab="lib">📁 Library</button>
+  </nav>
+  <div id="xp">⭐ 0</div>
+</header>
+<main>
+  <section id="tab-read"></section>
+  <section id="tab-words" class="hide"></section>
+  <section id="tab-play" class="hide"></section>
+  <section id="tab-lib" class="hide"></section>
+</main>
+<dialog id="dlg"></dialog>
+<div id="toast"></div>
+
+<script>
+(function(){
+'use strict';
+const $=s=>document.querySelector(s);
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const escRe=s=>s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
+
+/* ---------- storage ---------- */
+const store={
+  get(k,d){try{const v=localStorage.getItem('we_'+k);return v?JSON.parse(v):d;}catch(e){return d;}},
+  set(k,v){try{localStorage.setItem('we_'+k,JSON.stringify(v));}catch(e){toast('Could not save (storage full?)');}}
+};
+let docs=store.get('docs',[]);
+let vocab=store.get('vocab',{});
+let settings=Object.assign({size:22,spacing:1.7,strict:false},store.get('settings',{}));
+let stats=Object.assign({xp:0},store.get('stats',{}));
+let lastDoc=store.get('lastDoc',null);
+const DEFAULT_SKIP='a an the and but or so if of to in on at by for with from as is am are was were be been it its he him his she her hers they them their we us our you your i me my that this these those there here do did does not no can will would could should has have had what who which when where how than then up out all one into over under about after before very just also too'.split(' ');
+let skipList=store.get('skip',null);
+if(!skipList){skipList=DEFAULT_SKIP.slice();store.set('skip',skipList);}
+let skipSet=new Set(skipList);
+const saveSkip=()=>{skipList=Array.from(new Set(skipList)).sort();skipSet=new Set(skipList);store.set('skip',skipList);};
+if(!store.get('skipClean',false)){Object.keys(vocab).forEach(w=>{if(skipSet.has(w))delete vocab[w];});store.set('vocab',vocab);store.set('skipClean',true);}
+let skipOpen=false;
+const triedNow=new Set();
+const saveDocs=()=>store.set('docs',docs), saveVocab=()=>store.set('vocab',vocab), saveStats=()=>{store.set('stats',stats);$('#xp').textContent='⭐ '+stats.xp;};
+function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');setTimeout(()=>t.classList.remove('on'),2200);}
+
+/* ---------- sample ---------- */
+if(!docs.length){
+  docs.push({id:'sample',title:'Sample: The Amazing Octopus',done:[false,false,false],paras:[
+   "An octopus is a clever animal that lives in the ocean. It has eight long arms and a soft body. Scientists are amazed by how smart it is.",
+   "An octopus can change its color in a blink. It uses this trick to hide from enemies and to sneak up on its dinner. This is called camouflage.",
+   "When danger comes close, an octopus can squirt dark ink into the water. The cloud of ink confuses the predator, and the octopus escapes."
+  ]});
+  saveDocs();
+}
+
+/* ---------- speech ---------- */
+const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+function pickVoice(){
+  if(!('speechSynthesis' in window))return null;
+  const vs=speechSynthesis.getVoices();
+  return vs.find(v=>/en[-_]US/i.test(v.lang)&&/(Samantha|Google US|Aria|Jenny|Ava)/i.test(v.name))||vs.find(v=>/^en/i.test(v.lang))||null;
+}
+if('speechSynthesis' in window){speechSynthesis.onvoiceschanged=()=>{};}
+let curU=null;
+function say(text,opts){
+  opts=opts||{};
+  if(!('speechSynthesis' in window)){opts.cb&&opts.cb();return null;}
+  if(curU)curU._cb=null;
+  speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(text);
+  u.rate=opts.rate||0.85;u.lang='en-US';
+  const v=pickVoice();if(v)u.voice=v;
+  u._cb=opts.cb||null;
+  u.onend=u.onerror=()=>{const f=u._cb;u._cb=null;f&&f();};
+  curU=u;
+  speechSynthesis.speak(u);
+  return u;
+}
+function stopSpeech(){if(curU)curU._cb=null;if('speechSynthesis' in window)speechSynthesis.cancel();}
+
+/* ---------- word helpers ---------- */
+const NUMW={'0':'zero','1':'one','2':'two','3':'three','4':'four','5':'five','6':'six','7':'seven','8':'eight','9':'nine','10':'ten','11':'eleven','12':'twelve','13':'thirteen','14':'fourteen','15':'fifteen','16':'sixteen','17':'seventeen','18':'eighteen','19':'nineteen','20':'twenty'};
+const NUMREV={};Object.keys(NUMW).forEach(k=>NUMREV[NUMW[k]]=k);
+const FILL=new Set(['um','uh','hmm','er','ah','uhm','mm','erm']);
+function lev(a,b){const m=a.length,n=b.length;let p=Array.from({length:n+1},(_,j)=>j);for(let i=1;i<=m;i++){const c=[i];for(let j=1;j<=n;j++)c[j]=Math.min(p[j]+1,c[j-1]+1,p[j-1]+(a[i-1]===b[j-1]?0:1));p=c;}return p[n];}
+const SMALL=new Set('a an the and of to in is it at on as or be by he we so if my up do no me us am i you was for are but his her him she our out all can had has not one two too'.split(' '));
+const HOMO=[['to','too','two'],['their','there',"they're"],['for','four','fore'],['no','know'],['one','won'],['right','write'],['see','sea'],['be','bee'],['by','buy','bye'],['hear','here'],['its',"it's"],['whole','hole'],['new','knew'],['would','wood'],['our','are','hour'],['your',"you're"],['an','and','in','en'],['a','uh','ah','eh','i'],['the','thee','da','duh','a'],['of','off','uv'],['weather','whether'],['wear','where'],['eight','ate'],['pair','pear','pare'],['piece','peace'],['sun','son'],['tail','tale'],['wait','weight'],['way','weigh'],['week','weak'],['sail','sale'],['flower','flour'],['made','maid'],['mail','male'],['meat','meet'],['plain','plane'],['road','rode'],['steal','steel'],['threw','through'],['waist','waste']];
+const HOMOMAP={};
+HOMO.forEach(g=>g.forEach(w=>{(HOMOMAP[w]=HOMOMAP[w]||[]).push.apply(HOMOMAP[w],g);}));
+function same(a,b){
+  if(!a||!b)return false;
+  if(a===b)return true;
+  if(NUMW[a]===b||NUMW[b]===a)return true;
+  if(HOMOMAP[a]&&HOMOMAP[a].indexOf(b)>=0)return true;
+  if(settings.strict)return false;
+  if(SMALL.has(b)&&a.length<=4&&lev(a,b)<=1)return true;
+  const L=Math.max(a.length,b.length),lim=L>=10?2:(L>=6?1:0);
+  return lim>0&&Math.abs(a.length-b.length)<=lim&&lev(a,b)<=lim;
+}
+function normExpected(t){
+  return t.toLowerCase().replace(/[’‘]/g,"'").replace(/^[^a-z0-9]+|[^a-z0-9]+$/g,'').replace(/[^a-z0-9']/g,'').replace(/^'+|'+$/g,'');
+}
+function spokenWords(s){
+  return s.toLowerCase().replace(/[’‘]/g,"'").replace(/(\d),(\d)/g,'$1$2').replace(/[^a-z0-9'\s-]/g,' ').replace(/-/g,' ').split(/\s+/).filter(Boolean);
+}
+function tokenize(par){
+  const raw=par.normalize('NFKC').replace(/(\w)-(\w)/g,'$1- $2').replace(/[—–]/g,' — ').split(/\s+/).filter(Boolean);
+  return raw.map(t=>({t,n:normExpected(t),join:/[a-z]-$/i.test(t)})).filter(x=>x.t.length);
+}
+function sentenceWith(par,w){
+  const ss=par.match(/[^.!?]+[.!?]*["')\]]*/g)||[par];
+  const re=new RegExp('\\b'+escRe(w)+'\\b','i');
+  const s=ss.find(x=>re.test(x));
+  return (s||'').trim();
+}
+
+/* ---------- dictionary ---------- */
+const dictCache={};
+function variants(w){
+  const c=[w,w.replace(/ies$/,'y'),w.replace(/ied$/,'y'),w.replace(/es$/,''),w.replace(/s$/,''),w.replace(/ed$/,''),w.replace(/ed$/,'e'),w.replace(/ing$/,''),w.replace(/ing$/,'e'),w.replace(/ly$/,''),w.replace(/er$/,''),w.replace(/est$/,'')];
+  return c.filter((x,i)=>x&&x.length>2&&c.indexOf(x)===i);
+}
+const dictLog={};
+async function getJSON(name,url,ms){
+  const c=new AbortController();const t=setTimeout(()=>c.abort(),ms||8000);
+  try{
+    const r=await fetch(url,{signal:c.signal});clearTimeout(t);
+    if(r.status===404){dictLog[name]='ok';return null;}
+    if(!r.ok){dictLog[name]='error '+r.status;return null;}
+    const j=await r.json();dictLog[name]='ok';return j;
+  }catch(err){clearTimeout(t);dictLog[name]=(err&&err.name==='AbortError')?'timed out':'blocked or offline';return null;}
+}
+const DMPOS={n:'noun',v:'verb',adj:'adjective',adv:'adverb',u:'word'};
+async function define(w){
+  w=w.toLowerCase();
+  if(dictCache[w])return dictCache[w];
+  // 1) dictionaryapi.dev
+  for(const v of variants(w)){
+    const j=await getJSON('dictionaryapi.dev','https://api.dictionaryapi.dev/v2/entries/en/'+encodeURIComponent(v));
+    if(Array.isArray(j)&&j[0]){
+      const e=j[0],ph=e.phonetics||[];
+      const out={word:e.word,phonetic:e.phonetic||(ph.find(p=>p.text)||{}).text||'',audio:(ph.find(p=>p.audio)||{}).audio||'',
+        meanings:(e.meanings||[]).slice(0,4).map(m=>({pos:m.partOfSpeech,defs:m.definitions.slice(0,3).map(d=>({def:d.definition,ex:d.example||''}))}))};
+      if(out.meanings.length){dictCache[w]=out;return out;}
+    }
+  }
+  // 2) Wiktionary
+  const wk=await wikt('en.wiktionary.org',w);
+  if(wk.defs.length){
+    const by={};wk.defs.slice(0,8).forEach(x=>{(by[x.pos||'word']=by[x.pos||'word']||[]).push({def:x.d,ex:''});});
+    const out={word:w,phonetic:'',audio:'',meanings:Object.keys(by).slice(0,4).map(k=>({pos:k,defs:by[k].slice(0,3)}))};
+    if(wk.exs[0])out.meanings[0].defs[0].ex=wk.exs[0];
+    dictCache[w]=out;return out;
+  }
+  // 3) Datamuse (short definitions, no examples)
+  for(const v of variants(w)){
+    const dm=await getJSON('datamuse','https://api.datamuse.com/words?sp='+encodeURIComponent(v)+'&md=d&max=1');
+    if(Array.isArray(dm)&&dm[0]&&dm[0].word===v&&dm[0].defs&&dm[0].defs.length){
+      const by={};
+      dm[0].defs.slice(0,6).forEach(x=>{const i=x.indexOf('\t');const k=DMPOS[x.slice(0,i)]||'word';(by[k]=by[k]||[]).push({def:x.slice(i+1),ex:''});});
+      const out={word:v,phonetic:'',audio:'',meanings:Object.keys(by).slice(0,4).map(k=>({pos:k,defs:by[k].slice(0,3)}))};
+      dictCache[w]=out;return out;
+    }
+  }
+  return null;
+}
+const BADDEF=/\b(archaic|obsolete|dated|rare|plural of|past tense|past participle|present participle|alternative|variant of|misspelling|abbreviation of|initialism|slang|vulgar|offensive|informal)\b/i;
+const TRAIL=new Set(['a','an','the','of','to','and','or','in','with','that','which','for','by','as','is','are','from','on','at']);
+function simplifyDef(t){
+  t=String(t||'').replace(/\([^)]*\)/g,'').replace(/\[[^\]]*\]/g,'').replace(/\s+/g,' ').trim();
+  t=t.split(/;|:\s/)[0].trim();
+  let w=t.split(' ').filter(Boolean);
+  if(w.length>14){
+    let cut=w.slice(0,14).join(' ');
+    const k=cut.lastIndexOf(',');if(k>25)cut=cut.slice(0,k);
+    w=cut.split(' ');
+  }
+  while(w.length>3&&TRAIL.has(w[w.length-1].toLowerCase().replace(/[^a-z]/g,'')))w.pop();
+  t=w.join(' ').replace(/[.,\s]+$/,'');
+  return t?t.charAt(0).toUpperCase()+t.slice(1)+'.':'';
+}
+function scoreDef(t){const w=t.split(/\s+/);return w.length+1.5*(t.replace(/[^a-z]/gi,'').length/w.length);}
+function pickDef(c){
+  let best=null;
+  for(const x of c){
+    if(BADDEF.test(x.d))continue;
+    const sd=simplifyDef(x.d);
+    if(sd.split(/\s+/).length<3)continue;
+    const sc=scoreDef(sd)+(x.bonus||0);
+    if(!best||sc<best.sc)best={s:sd,pos:x.pos,sc};
+  }
+  return best;
+}
+const htmlText=h=>((new DOMParser().parseFromString(String(h||''),'text/html').body.textContent)||'').replace(/\s+/g,' ').trim();
+async function wikt(host,w){
+  const out={defs:[],exs:[]};
+  for(const v of variants(w)){
+    try{
+      const j=await getJSON(host,'https://'+host+'/api/rest_v1/page/definition/'+encodeURIComponent(v));
+      if(!j)continue;
+      for(const part of (j.en||[]))for(const df of (part.definitions||[])){
+        const t=htmlText(df.definition);if(t)out.defs.push({d:t,pos:part.partOfSpeech});
+        (df.examples||[]).concat((df.parsedExamples||[]).map(x=>x.example)).forEach(h=>{const x=htmlText(h);if(x)out.exs.push(x);});
+      }
+      if(out.defs.length)return out;
+    }catch(err){}
+  }
+  return out;
+}
+function pickEx(list){
+  const ok=list.filter(x=>{const n=x.split(/\s+/).length;return n>=4&&n<=22;});
+  ok.sort((a,b)=>a.length-b.length);
+  return ok[0]||'';
+}
+async function enrich(e){
+  try{
+    const sw=await wikt('simple.wiktionary.org',e.w);
+    const d=await define(e.w);
+    const cands=[];
+    sw.defs.forEach(x=>cands.push({d:x.d,pos:x.pos,bonus:-4}));
+    if(d)d.meanings.forEach((m,mi)=>m.defs.forEach((x,xi)=>cands.push({d:x.def,pos:m.pos,bonus:(mi===0&&xi===0)?-3:0})));
+    const best=pickDef(cands);
+    if(best){e.def=best.s;e.pos=best.pos||e.pos;}
+    if(d&&!e.phonetic)e.phonetic=d.phonetic;
+    let exs=sw.exs.slice();
+    if(d)d.meanings.forEach(m=>m.defs.forEach(x=>{if(x.ex)exs.push(x.ex);}));
+    let ex=pickEx(exs);
+    if(!ex){const en=await wikt('en.wiktionary.org',e.w);ex=pickEx(en.exs);}
+    if(ex)e.ex=ex;
+    if(e.def)e.sv=1;
+  }catch(err){}
+  e.fail=!e.def;
+  saveVocab();
+}
+async function addVocab(w,ctx,helped,force){
+  w=w.toLowerCase();
+  if(!force&&skipSet.has(w))return null;
+  let e=vocab[w];
+  if(!e){e=vocab[w]={w,pos:'',def:'',ex:'',ctx:ctx||'',phonetic:'',mastery:0,added:Date.now(),helped:0};}
+  if(helped)e.helped=(e.helped||0)+1;
+  if(ctx&&!e.ctx)e.ctx=ctx;
+  saveVocab();
+  if(!e.def||!e.ex||e.sv!==1){await enrich(e);}
+  return e;
+}
+
+/* ---------- tabs ---------- */
+let tab='read';
+function show(t){
+  stopListening();stopSpeech();stopSay();
+  tab=t;
+  ['read','words','play','lib'].forEach(x=>$('#tab-'+x).classList.toggle('hide',x!==t));
+  document.querySelectorAll('#tabs button').forEach(b=>b.classList.toggle('on',b.dataset.tab===t));
+  ({read:renderRead,words:renderWords,play:renderPlay,lib:renderLib})[t]();
+}
+$('#tabs').addEventListener('click',e=>{const b=e.target.closest('button');if(b)show(b.dataset.tab);});
+
+/* ---------- READER ---------- */
+const R={doc:null,pi:0,words:[],cur:0,fails:0,listening:false,hold:false,helped:new Set(),finished:false};
+let rec=null,recTimer=null;
+
+function openDoc(id,pi){
+  R.doc=docs.find(d=>d.id===id)||null;
+  if(R.doc){
+    lastDoc=id;store.set('lastDoc',id);
+    if(pi==null){const f=R.doc.done.findIndex(x=>!x);pi=f<0?R.doc.paras.length-1:f;}
+    R.pi=pi;
+  }
+}
+function firstUndone(d){const f=d.done.findIndex(x=>!x);return f<0?d.paras.length:f;}
+
+function renderRead(){
+  const el=$('#tab-read');
+  if(!R.doc)openDoc(lastDoc||(docs[0]&&docs[0].id));
+  if(!R.doc){el.innerHTML='<div class="card"><h2>No reading yet</h2><p>Go to Library and add a PDF.</p></div>';return;}
+  const d=R.doc;
+  const doneN=d.done.filter(Boolean).length;
+  const toks=tokenize(d.paras[R.pi]);
+  R.words=toks.filter(w=>w.n);
+  clearTimeout(R.pt);
+  R.fails=0;R.attempt=0;R.acc=[];R.si=0;R.helped=new Set();R.finished=false;
+  R.sents=[];
+  let sStart=0,cnt=0,wi=0,html='',open=false,sidx=0;
+  const ABBR=/^(mr|mrs|ms|dr|st|jr|sr|vs|etc|e\.g|i\.e|u\.s)\.?$/i;
+  toks.forEach((tk,i)=>{
+    if(!open){html+='<span class="sent" data-s="'+sidx+'">';open=true;}
+    if(tk.n){html+=`<span class="w" data-i="${wi}">${esc(tk.t)}</span>`;wi++;cnt++;}
+    else html+=`<span>${esc(tk.t)}</span>`;
+    if(!tk.join)html+=' ';
+    const last=i===toks.length-1;
+    const endS=(/[.!?]["'”’)\]]*$/.test(tk.t)&&!ABBR.test(tk.t.replace(/[^A-Za-z.]/g,'')))||(cnt>=18&&/[,;:]$/.test(tk.t))||last;
+    if(endS&&(cnt>0||last)){
+      html+='</span>';open=false;
+      if(cnt>0){R.sents.push({start:sStart,end:wi-1});sidx++;}
+      sStart=wi;cnt=0;
+    }
+  });
+  if(open)html+='</span>';
+  if(d.mode==='list')html=buildList(d);
+  el.innerHTML=`
+    ${SR?'':'<div class="banner">🎤 This browser can’t listen live (Chrome on iPhone/iPad can’t). <b>Dictation mode</b> is on: tap the microphone key on your keyboard, read the sentence, then tap “Check sentence”. For live listening, open this page in Safari.</div>'}
+    <div class="card">
+      <div class="row" style="justify-content:space-between">
+        <div><b>${esc(d.title)}</b> <span class="muted">· Part ${R.pi+1} of ${d.paras.length}</span></div>
+        <div class="row">
+          <button class="b alt" id="fsm">A−</button><button class="b alt" id="fbig">A+</button>
+          <label class="muted"><input type="checkbox" id="strict" ${settings.strict?'checked':''}> Strict</label>
+        </div>
+      </div>
+      <div class="bar" style="margin-top:8px"><i style="width:${doneN/d.paras.length*100}%"></i></div>
+    </div>
+    <div class="card">
+      <div id="text" class="${d.mode==='list'?'listmode':''}">${html}</div>
+      <div id="coach">Press “Start reading” and read the highlighted ${d.mode==='list'?'word':'sentence'} out loud. Tap any word to learn it.</div>
+      <div id="heard"></div>
+      ${SR?'':'<textarea id="dict" placeholder="Tap the 🎤 on your keyboard and read the highlighted sentence…" autocapitalize="off" autocorrect="off" spellcheck="false"></textarea><div class="row" style="margin:8px 0"><button class="b green" id="dCheck">✅ Check sentence</button></div>'}
+      <div class="row">
+        ${SR?'<button class="b green" id="bStart">🎤 Start reading</button>':''}
+        ${d.mode==='list'?'<button class="b alt" id="bAddAll">➕ Add these words to My Words</button>':''}
+        <button class="b alt" id="bListen">🔊 Listen first</button>
+        <button class="b alt" id="bRestart">↺ Restart</button>
+        <button class="b alt" id="bAccept" title="For a grown-up: accept the current sentence">✔ Accept sentence (grown-up)</button>
+      </div>
+    </div>
+    <div class="row">
+      <button class="b alt" id="bPrev" ${R.pi===0?'disabled':''}>← Back</button>
+      <button class="b" id="bNext" ${(!d.done[R.pi]||R.pi>=d.paras.length-1)?'disabled':''}>Next part →</button>
+    </div>`;
+  document.documentElement.style.setProperty('--fs',settings.size+'px');
+  document.documentElement.style.setProperty('--lh',settings.spacing);
+  markNow();
+  if($('#bStart'))$('#bStart').onclick=()=>R.listening?stopListening(true):startListening();
+  if($('#dCheck'))$('#dCheck').onclick=()=>{
+    if(R.si>=R.sents.length){renderRead();return;}
+    const ta=$('#dict'),ws=spokenWords(ta.value).filter(w=>!FILL.has(w));
+    if(!ws.length){toast('Dictate or type the sentence first');return;}
+    R.acc=ws;ta.value='';
+    $('#heard').textContent='I heard: “'+ws.join(' ')+'”';
+    judge(align(curE(),ws));
+  };
+  $('#bListen').onclick=modelRead;
+  $('#bRestart').onclick=()=>{stopListening();stopSpeech();renderRead();};
+  $('#bAccept').onclick=acceptSentence;
+  if($('#bAddAll'))$('#bAddAll').onclick=async()=>{
+    let n=0;
+    for(const it of d.paras[R.pi].split('\n')){const w=it.toLowerCase().replace(/[^a-z' -]/g,'').trim();if(w){await addVocab(w,'',false,true);n++;}}
+    toast('Added '+n+' words to My Words');
+  };
+  $('#bPrev').onclick=()=>{stopListening();R.pi--;renderRead();};
+  $('#bNext').onclick=()=>{stopListening();R.pi++;renderRead();startListening();};
+  $('#fsm').onclick=()=>{settings.size=Math.max(14,settings.size-2);store.set('settings',settings);document.documentElement.style.setProperty('--fs',settings.size+'px');};
+  $('#fbig').onclick=()=>{settings.size=Math.min(56,settings.size+2);store.set('settings',settings);document.documentElement.style.setProperty('--fs',settings.size+'px');};
+  $('#strict').onchange=e=>{settings.strict=e.target.checked;store.set('settings',settings);};
+  $('#text').onclick=e=>{const s=e.target.closest('.w');if(s){const w=R.words[+s.dataset.i];wordPopup(w.n,R.doc.paras[R.pi]);}};
+  if(d.done[R.pi])setCoach('✅ You already finished this part. Read it again or go to the next part!','good');
+}
+
+function wEl(i){return document.querySelector('#text .w[data-i="'+i+'"]');}
+function sentEl(k){return document.querySelector('#text .sent[data-s="'+k+'"]');}
+function markNow(){
+  document.querySelectorAll('#text .sent.now').forEach(x=>x.classList.remove('now'));
+  const e=sentEl(R.si);if(e){e.classList.add('now');e.scrollIntoView({block:'center',behavior:'smooth'});}
+}
+function setCoach(msg,kind){const c=$('#coach');if(!c)return;c.textContent=msg;c.className=kind||'';}
+function curE(){const t=R.sents[R.si];return R.words.slice(t.start,t.end+1).map(w=>w.n);}
+
+/* Align what she said (S) with the sentence (E). Returns a status for every expected word:
+   ok = said correctly, sub = said something else, miss = skipped. */
+function align(E,S){
+  const m=E.length,n=S.length,INS=0.5;
+  const D=Array.from({length:m+1},()=>new Array(n+1).fill(0));
+  for(let i=1;i<=m;i++)D[i][0]=i;
+  for(let j=1;j<=n;j++)D[0][j]=j*INS;
+  for(let i=1;i<=m;i++)for(let j=1;j<=n;j++){
+    const mt=same(S[j-1],E[i-1])?0:1;
+    D[i][j]=Math.min(D[i-1][j-1]+mt,D[i-1][j]+1,D[i][j-1]+INS);
+  }
+  let js=0,bestc=D[m][0];
+  for(let j=1;j<=n;j++){if(D[m][j]<=bestc){bestc=D[m][j];js=j;}}
+  const st=new Array(m).fill('miss');let i=m,j=js;
+  while(i>0||j>0){
+    if(i>0&&j>0){
+      const eq=same(S[j-1],E[i-1]),mt=eq?0:1;
+      if(D[i][j]===D[i-1][j-1]+mt){st[i-1]=eq?'ok':'sub';i--;j--;continue;}
+    }
+    if(i>0&&D[i][j]===D[i-1][j]+1){st[i-1]='miss';i--;continue;}
+    if(j>0){j--;continue;}
+    i--;
+  }
+  return {cost:bestc,st,jEnd:js};
+}
+function reachedEnd(al){
+  const m=al.st.length,nm=al.st.filter(x=>x!=='miss').length;
+  return al.st[m-1]!=='miss'&&nm>=Math.ceil(m*0.6);
+}
+function paint(al,k,final){
+  const s=R.sents[k];
+  let lastNon=-1;al.st.forEach((x,i)=>{if(x!=='miss')lastNon=i;});
+  al.st.forEach((x,i)=>{
+    const idx=s.start+i,el=wEl(idx);if(!el)return;
+    el.classList.remove('ok','bad','heard','help');
+    if(final){if(x==='ok')el.classList.add(R.helped.has(idx)?'help':'ok');else el.classList.add('bad');}
+    else if(x==='ok'&&i<=lastNon)el.classList.add('heard');
+  });
+}
+function onResult(e){
+  if(!R.listening||R.hold||R.si>=R.sents.length)return;
+  for(let i=e.resultIndex;i<e.results.length;i++){
+    const r=e.results[i],E=curE();
+    if(r.isFinal){
+      clearTimeout(R.pt);
+      let best=null;
+      for(let a=0;a<r.length;a++){
+        const ws=spokenWords(r[a].transcript).filter(w=>!FILL.has(w));
+        const S=R.acc.concat(ws),al=align(E,S);
+        if(!best||al.cost<best.al.cost)best={al,S};
+      }
+      R.acc=best.S;
+      $('#heard').textContent='I heard: “'+R.acc.join(' ')+'”';
+      evaluate();
+    }else{
+      const ws=spokenWords(r[0].transcript).filter(w=>!FILL.has(w));
+      const S=R.acc.concat(ws);
+      paint(align(E,S),R.si,false);
+      $('#heard').textContent='I heard: “'+S.join(' ')+'”';
+    }
+  }
+}
+function evaluate(){
+  clearTimeout(R.pt);
+  if(R.si>=R.sents.length||!R.acc.length)return;
+  const al=align(curE(),R.acc);
+  if(reachedEnd(al))judge(al);
+  else{
+    paint(al,R.si,false);
+    R.pt=setTimeout(()=>{if(R.listening&&!R.hold&&R.acc.length&&R.si<R.sents.length)judge(align(curE(),R.acc));},3500);
+  }
+}
+function speakList(list,cb){
+  if(!list.length){cb();return;}
+  const w=list.shift();
+  say(w,{rate:0.7,cb:()=>setTimeout(()=>speakList(list,cb),500)});
+}
+function judge(al){
+  clearTimeout(R.pt);
+  const k=R.si,s=R.sents[k];
+  const bad=[];al.st.forEach((x,i)=>{if(x!=='ok')bad.push(s.start+i);});
+  const leftover=R.acc.slice(al.jEnd);
+  if(!bad.length){
+    paint(al,k,true);
+    R.acc=SR?leftover:[];R.attempt=0;R.si++;
+    if(R.si>=R.sents.length){completeParagraph();return;}
+    markNow();setCoach('Great! Next sentence.','good');
+    if(R.acc.length)evaluate();
+    return;
+  }
+  // Wrong or skipped words: flag them red, save them to My Words, and keep going.
+  R.attempt=0;
+  bad.forEach(i=>R.helped.add(i));
+  paint(al,k,true);
+  R.acc=SR?leftover:[];
+  const words=bad.map(i=>R.words[i].n).filter((w,i,a)=>a.indexOf(w)===i);
+  const saveWords=words.filter(w=>!skipSet.has(w));
+  saveWords.forEach(w=>addVocab(w,sentenceWith(R.doc.paras[R.pi],w),true));
+  R.si++;
+  setCoach(saveWords.length?'Saved to My Words to practice: '+saveWords.slice(0,6).join(', ')+(saveWords.length>6?'…':'')+'. Keep going!':'A few small words were missed (marked red). Keep going!','warn');
+  if(R.si>=R.sents.length){completeParagraph();return;}
+  markNow();
+  if(R.acc.length)evaluate();
+}
+function acceptSentence(){
+  if(R.si>=R.sents.length)return;
+  const t=R.sents[R.si];
+  for(let i=t.start;i<=t.end;i++){const el=wEl(i);if(el){el.classList.remove('bad','heard');el.classList.add('ok');}}
+  clearTimeout(R.pt);R.acc=[];R.attempt=0;R.si++;
+  if(R.si>=R.sents.length)completeParagraph();else markNow();
+}
+function completeParagraph(){
+  stopListening();
+  document.querySelectorAll('#text .sent.now').forEach(x=>x.classList.remove('now'));
+  const d=R.doc;d.done[R.pi]=true;saveDocs();
+  const n=R.words.length,h=R.helped.size;
+  const hs=Array.from(R.helped).map(i=>R.words[i].n).filter((w,i,a)=>a.indexOf(w)===i&&!skipSet.has(w)).length;
+  stats.xp+=n;saveStats();
+  const last=d.done.every(Boolean);
+  setCoach('🎉 Part complete! You read '+n+' words'+(h?' ('+h+' word'+(h>1?'s':'')+' marked red'+(hs?'; '+hs+' saved in My Words to practice':'')+')':' with no mistakes')+'.'+(last?' You finished the whole reading! Try Word Quest next.':''),'good');
+  const nx=$('#bNext');if(nx&&R.pi<d.paras.length-1)nx.disabled=false;
+  const bs=$('#bStart');if(bs)bs.textContent='🎤 Read again';
+}
+function startRec(){
+  if(!SR)return;
+  if(rec){rec.onend=null;rec.onresult=null;rec.onerror=null;try{rec.abort();}catch(e){}}
+  rec=new SR();rec.lang='en-US';rec.continuous=true;rec.interimResults=true;rec.maxAlternatives=3;
+  rec.onresult=onResult;
+  rec.onerror=ev=>{
+    if(ev.error==='not-allowed'||ev.error==='service-not-allowed'){stopListening();setCoach('The microphone is blocked. Allow the microphone for this page in your browser, then try again.','warn');}
+  };
+  rec.onend=()=>{if(R.listening&&!R.hold){clearTimeout(recTimer);recTimer=setTimeout(startRec,250);}};
+  try{rec.start();}catch(e){}
+}
+function pauseRec(){R.hold=true;if(rec){try{rec.abort();}catch(e){}}}
+function resumeRec(){R.hold=false;if(R.listening)startRec();}
+function startListening(){
+  if(!SR)return;
+  stopSpeech();clearModel();
+  if(R.si>=R.sents.length){renderRead();}
+  R.listening=true;R.hold=false;
+  const b=$('#bStart');if(b){b.textContent='⏹ Stop';b.classList.remove('green');b.classList.add('red');}
+  setCoach('I am listening. Read the highlighted '+(R.doc&&R.doc.mode==='list'?'word':'sentence')+' out loud!');
+  startRec();
+}
+function stopListening(){
+  R.listening=false;R.hold=false;clearTimeout(recTimer);clearTimeout(R.pt);
+  if(rec){rec.onend=null;rec.onresult=null;try{rec.abort();}catch(e){}rec=null;}
+  const b=$('#bStart');if(b){b.textContent='🎤 Start reading';b.classList.add('green');b.classList.remove('red');}
+}
+function clearModel(){document.querySelectorAll('#text .w.model').forEach(x=>x.classList.remove('model'));}
+function modelRead(){
+  stopListening();clearModel();
+  let text='';const offs=[];
+  R.words.forEach(w=>{offs.push(text.length);text+=w.t+' ';});
+  const u=say(text,{rate:0.9,cb:clearModel});
+  if(u)u.onboundary=ev=>{
+    if(ev.name&&ev.name!=='word')return;
+    let k=0;for(let i=0;i<offs.length;i++){if(offs[i]<=ev.charIndex)k=i;}
+    clearModel();const el=wEl(k);if(el)el.classList.add('model');
+  };
+}
+
+/* ---------- word popup ---------- */
+async function wordPopup(w,ctxPar){
+  const dlg=$('#dlg');
+  dlg.innerHTML='<p>Looking up “'+esc(w)+'”…</p>';
+  if(!dlg.open)dlg.showModal();
+  const d=await define(w);
+  const ctx=ctxPar?sentenceWith(ctxPar,w):'';
+  const have=!!vocab[w];
+  let h=`<h2>${esc(w)} <span class="muted" style="font-size:18px">${esc(d?d.phonetic:'')}</span></h2>`;
+  if(d){
+    d.meanings.forEach(m=>{h+=`<div class="def"><span class="pos">${esc(m.pos)}</span><br>`+m.defs.map(x=>'• '+esc(simplifyDef(x.def)||x.def)+(x.ex?'<br><span class="muted">“'+esc(x.ex)+'”</span>':'')).join('<br>')+'</div>';});
+  }else h+='<p>I could not find this word. Either it is not in the dictionary, or the dictionary can’t be reached. In My Words, tap “🔧 Test dictionary”.</p>';
+  if(ctx)h+='<p class="muted">From your reading: “'+esc(ctx)+'”</p>';
+  h+=`<div class="row" style="margin-top:12px"><button class="b alt" id="dHear">🔊 Hear it</button><button class="b green" id="dAdd">${have?'✔ In My Words':'➕ Add to My Words'}</button><button class="b alt" id="dClose">Close</button></div>`;
+  dlg.innerHTML=h;
+  $('#dHear').onclick=()=>say(w,{rate:0.75});
+  $('#dClose').onclick=()=>dlg.close();
+  $('#dAdd').onclick=async()=>{await addVocab(w,ctx,false,true);$('#dAdd').textContent='✔ In My Words';toast('Added “'+w+'”');};
+}
+
+/* ---------- MY WORDS ---------- */
+function renderWords(){
+  const el=$('#tab-words');
+  const list=Object.values(vocab).sort((a,b)=>a.mastery-b.mastery||b.added-a.added);
+  el.innerHTML=`
+    <div class="card"><h2>🧠 My Words (${list.length})</h2>
+      <p class="muted">Words you miss while reading, or add yourself, land here. Small words like “an” or “the” are ignored.</p>
+      <div class="row"><input type="text" id="newWord" placeholder="Type a new word…" style="max-width:320px"><button class="b" id="addW">➕ Add</button><button class="b green" id="goPlay">🎮 Practice</button><button class="b alt" id="refreshW">🔄 Refresh meanings</button><button class="b alt" id="testDict">🔧 Test dictionary</button><button class="b red" id="delAll" ${list.length?'':'disabled'}>🗑 Delete all words</button></div>
+    </div>
+    <details class="card" id="skipBox" ${skipOpen?'open':''}><summary><b>🚫 Ignored words (${skipList.length})</b> <span class="muted">— small words that are never added automatically</span></summary>
+      <div style="margin:10px 0">${skipList.map(w=>`<span class="chip">${esc(w)} <button data-unskip="${esc(w)}" aria-label="Stop ignoring ${esc(w)}">×</button></span>`).join('')}</div>
+      <div class="row"><input type="text" id="skipNew" placeholder="Words to ignore, e.g. then, very" style="max-width:320px"><button class="b" id="skipAdd">➕ Ignore</button><button class="b alt" id="skipReset">Reset list</button></div>
+    </details>
+    <div class="grid">${list.map(v=>`
+      <div class="wc"><h3>${esc(v.w)} <button class="b alt" data-hear="${esc(v.w)}" style="padding:4px 10px">🔊</button></h3>
+      <div class="muted">${esc(v.phonetic||'')} <span class="pos">${esc(v.pos||'')}</span></div>
+      <p><b>Meaning:</b> ${v.def?esc(v.def):(v.fail?'Not found. Try 🔄 Refresh meanings.':'Looking it up…')}</p>
+      ${v.ex?'<p><b>Example:</b> “'+esc(v.ex)+'”</p>':''}
+      ${v.ctx?'<p class="muted"><b>From your reading:</b> “'+esc(v.ctx)+'”</p>':''}
+      <div class="row" style="justify-content:space-between"><span class="dots">${'●'.repeat(v.mastery)}${'○'.repeat(5-v.mastery)}</span>${v.helped?'<span class="muted">⚠ missed '+v.helped+'×</span>':''}</div>
+      <div class="row" style="margin-top:8px"><button class="b alt" data-ignore="${esc(v.w)}" style="padding:6px 12px;min-height:36px">🚫 Ignore this word</button></div></div>`).join('')||'<p class="muted">No words yet. Tap a word in Read to start!</p>'}</div>`;
+  $('#goPlay').onclick=()=>show('play');
+  $('#testDict').onclick=async()=>{
+    const dlg=$('#dlg');dlg.innerHTML='<h2>Testing dictionary connections…</h2><p class="muted">This takes a few seconds.</p>';if(!dlg.open)dlg.showModal();
+    const tests=[['dictionaryapi.dev','https://api.dictionaryapi.dev/v2/entries/en/cat'],['en.wiktionary.org','https://en.wiktionary.org/api/rest_v1/page/definition/cat'],['simple.wiktionary.org','https://simple.wiktionary.org/api/rest_v1/page/definition/cat'],['datamuse','https://api.datamuse.com/words?sp=cat&md=d&max=1']];
+    const rs=[];
+    for(const t of tests){await getJSON(t[0],t[1],8000);rs.push('<div class="def"><b>'+esc(t[0])+':</b> '+(dictLog[t[0]]==='ok'?'✅ working':'❌ '+esc(dictLog[t[0]]))+'</div>');}
+    dlg.innerHTML='<h2>Dictionary test</h2>'+rs.join('')+'<p class="muted">“Blocked or offline” means this browser or network can’t reach that site (a content blocker, filter, VPN or privacy setting can do this). If at least one shows ✅, meanings will still work.</p><div class="row"><button class="b alt" id="tClose">Close</button></div>';
+    $('#tClose').onclick=()=>dlg.close();
+  };
+  $('#refreshW').onclick=()=>{Object.values(vocab).forEach(v=>{v.fail=false;v.sv=0;});triedNow.clear();renderWords();toast('Looking up meanings…');};
+  const need=list.filter(v=>(!v.def||!v.ex||v.sv!==1)&&!triedNow.has(v.w));
+  if(need.length){need.forEach(v=>triedNow.add(v.w));Promise.all(need.map(enrich)).then(()=>{if(tab==='words')renderWords();});}
+  $('#delAll').onclick=()=>{if(confirm('Delete all '+list.length+' words? This cannot be undone.')){vocab={};saveVocab();renderWords();}};
+  $('#addW').onclick=async()=>{const w=$('#newWord').value.trim().toLowerCase();if(!/^[a-z'-]+$/.test(w)){toast('Type one word');return;}await addVocab(w,'',false,true);renderWords();};
+  $('#skipBox').ontoggle=e=>{skipOpen=e.target.open;};
+  $('#skipAdd').onclick=()=>{
+    const ws=$('#skipNew').value.toLowerCase().split(/[\s,]+/).map(w=>w.replace(/[^a-z']/g,'')).filter(Boolean);
+    if(!ws.length){toast('Type a word to ignore');return;}
+    ws.forEach(w=>{skipList.push(w);delete vocab[w];});
+    saveSkip();saveVocab();skipOpen=true;renderWords();
+  };
+  $('#skipReset').onclick=()=>{if(confirm('Reset the ignored list to the standard small words?')){skipList=DEFAULT_SKIP.slice();saveSkip();skipOpen=true;renderWords();}};
+  el.onclick=e=>{
+    const ig=e.target.closest('[data-ignore]');
+    if(ig){const w=ig.dataset.ignore;if(!skipList.includes(w))skipList.push(w);delete vocab[w];saveSkip();saveVocab();toast('“'+w+'” will be ignored. You can undo it in Ignored words.');renderWords();return;}
+    const u=e.target.closest('[data-unskip]');if(u){skipList=skipList.filter(w=>w!==u.dataset.unskip);saveSkip();skipOpen=true;renderWords();return;}
+    const h=e.target.closest('[data-hear]');if(h)say(h.dataset.hear,{rate:0.75});
+    const d=e.target.closest('[data-del]');if(d){delete vocab[d.dataset.del];saveVocab();renderWords();}
+  };
+}
+
+/* ---------- WORD QUEST ---------- */
+const FALLBACK=[{w:'journey',def:'a long trip from one place to another'},{w:'ancient',def:'very, very old'},{w:'brave',def:'ready to face danger without fear'},{w:'curious',def:'eager to learn or know something'},{w:'habitat',def:'the natural home of an animal or plant'},{w:'invent',def:'to make something new for the first time'},{w:'fragile',def:'easily broken'},{w:'gather',def:'to bring things together'},{w:'mystery',def:'something hard to explain or understand'},{w:'tremble',def:'to shake a little, often from fear or cold'},{w:'honest',def:'telling the truth'},{w:'survive',def:'to stay alive'},{w:'enormous',def:'extremely big'},{w:'scatter',def:'to throw or spread things in many directions'},{w:'predict',def:'to say what will happen in the future'},{w:'protect',def:'to keep safe from harm'}];
+const G={q:[],i:0,score:0,streak:0,ok:0,missed:[],ans:false};
+let sayRec=null;
+function stopSay(){if(sayRec){sayRec.onresult=null;sayRec.onend=null;sayRec.onerror=null;try{sayRec.abort();}catch(e){}sayRec=null;}}
+function renderPlay(){
+  const el=$('#tab-play');
+  const n=Object.keys(vocab).length;
+  el.innerHTML=`<div class="card"><h2>🎮 Word Quest</h2>
+   <p class="big">${n?'You have <b>'+n+'</b> word'+(n>1?'s':'')+' to practice.':'You have no words yet. Read a part first, then come back!'}</p>
+   <p class="muted">Match meanings, listen and pick the spelling, fill in the blank${SR?', and say the word out loud':''}. Tricky words come back more often.</p>
+   <button class="b green" id="go" ${n?'':'disabled'}>▶ Play</button></div><div id="game"></div>`;
+  $('#go').onclick=startGame;
+}
+function pickWeighted(pool,avoid){
+  const ws=pool.map(v=>(v.w===avoid&&pool.length>1)?0:(6-v.mastery));
+  let r=Math.random()*ws.reduce((a,b)=>a+b,0);
+  for(let i=0;i<pool.length;i++){r-=ws[i];if(r<=0)return pool[i];}
+  return pool[0];
+}
+function startGame(){
+  const pool=Object.values(vocab);
+  const n=Math.min(10,Math.max(5,pool.length*2));
+  G.q=[];G.i=0;G.score=0;G.streak=0;G.ok=0;G.missed=[];
+  let prev='';
+  for(let k=0;k<n;k++){
+    const v=pickWeighted(pool,prev);prev=v.w;
+    const types=['hear'];
+    if(v.def){types.push('def','w2d');}
+    const sent=v.ctx||v.ex;
+    if(sent&&new RegExp('\\b'+escRe(v.w)+'\\b','i').test(sent))types.push('blank');
+    if(SR&&k%4===3)types.push('say','say');
+    G.q.push({v,type:types[Math.floor(Math.random()*types.length)]});
+  }
+  $('#go').classList.add('hide');
+  nextQ();
+}
+function wordOptions(v){
+  const others=shuffle(Object.values(vocab).filter(x=>x.w!==v.w)).map(x=>x.w);
+  const fb=shuffle(FALLBACK.map(x=>x.w).filter(x=>x!==v.w&&!others.includes(x)));
+  return shuffle([v.w].concat(others.concat(fb).slice(0,3)));
+}
+function defOptions(v){
+  const others=shuffle(Object.values(vocab).filter(x=>x.w!==v.w&&x.def)).map(x=>x.def);
+  const fb=shuffle(FALLBACK.map(x=>x.def));
+  return shuffle([v.def].concat(others.concat(fb).slice(0,3)));
+}
+function nextQ(){
+  stopSay();
+  const g=$('#game');
+  if(G.i>=G.q.length){
+    const pct=G.ok/G.q.length,stars=pct>=.9?3:pct>=.6?2:1;
+    g.innerHTML=`<div class="card"><h2>🏁 Quest complete!</h2><p class="big">${'⭐'.repeat(stars)}<br>You got <b>${G.ok}</b> of ${G.q.length}. Score: <b>${G.score}</b></p>
+    ${G.missed.length?'<p><b>Words to review:</b></p>'+G.missed.map(v=>`<div class="def"><b>${esc(v.w)}</b> — ${esc(v.def)}</div>`).join(''):'<p>🎉 No misses!</p>'}
+    <div class="row"><button class="b green" id="again">▶ Play again</button><button class="b alt" id="back">Back to reading</button></div></div>`;
+    $('#again').onclick=startGame;$('#back').onclick=()=>show('read');
+    return;
+  }
+  G.ans=false;
+  const q=G.q[G.i],v=q.v;
+  const head=`<div class="card"><div class="row" style="justify-content:space-between"><b>Question ${G.i+1} of ${G.q.length}</b><span>🔥 Streak ${G.streak} · Score ${G.score}</span></div><div class="bar" style="margin:8px 0"><i style="width:${G.i/G.q.length*100}%"></i></div>`;
+  let body='';
+  if(q.type==='def'){body=`<p class="big">Which word means:<br><b>${esc(v.def)}</b></p><div id="opts">${wordOptions(v).map(o=>`<button class="opt" data-a="${esc(o)}">${esc(o)}</button>`).join('')}</div>`;q.ans=v.w;}
+  else if(q.type==='w2d'){body=`<p class="big">What does <b>${esc(v.w)}</b> mean? <button class="b alt" id="hear">🔊</button></p><div id="opts">${defOptions(v).map(o=>`<button class="opt" data-a="${esc(o)}">${esc(o)}</button>`).join('')}</div>`;q.ans=v.def;}
+  else if(q.type==='hear'){body=`<p class="big">Listen, then pick the word you hear. <button class="b" id="hear">🔊 Play</button></p><div id="opts">${wordOptions(v).map(o=>`<button class="opt" data-a="${esc(o)}">${esc(o)}</button>`).join('')}</div>`;q.ans=v.w;}
+  else if(q.type==='blank'){
+    const s=(v.ctx||v.ex).replace(new RegExp('\\b'+escRe(v.w)+'\\b','i'),'_____');
+    body=`<p class="big">Fill in the blank:<br><b>${esc(s)}</b></p><div id="opts">${wordOptions(v).map(o=>`<button class="opt" data-a="${esc(o)}">${esc(o)}</button>`).join('')}</div>`;q.ans=v.w;
+  }else{
+    body=`<p class="big">🎤 Say this word out loud!<br><span class="muted">${v.def?esc(v.def):'Tap 🔊 to hear it first.'}</span></p><div class="row"><button class="b alt" id="hear">🔊 Hear it</button><button class="b green" id="mic">🎤 Tap and say it</button></div><p id="heardq" class="muted"></p>`;q.ans=v.w;q.tries=0;
+  }
+  g.innerHTML=head+body+'<div id="fb"></div></div>';
+  const hb=$('#hear');if(hb)hb.onclick=()=>say(v.w,{rate:0.75});
+  if(q.type==='hear')say(v.w,{rate:0.75});
+  const opts=$('#opts');
+  if(opts)opts.onclick=e=>{const b=e.target.closest('.opt');if(b&&!G.ans)answer(b.dataset.a===q.ans,b);};
+  const mic=$('#mic');if(mic)mic.onclick=()=>sayChallenge(q);
+}
+function sayChallenge(q){
+  stopSay();stopSpeech();
+  sayRec=new SR();sayRec.lang='en-US';sayRec.interimResults=false;sayRec.maxAlternatives=5;
+  $('#heardq').textContent='Listening…';
+  sayRec.onresult=e=>{
+    const r=e.results[0];let ok=false,txt=r[0].transcript;
+    for(let a=0;a<r.length;a++){if(spokenWords(r[a].transcript).some(w=>same(w,q.v.w))){ok=true;break;}}
+    $('#heardq').textContent='I heard: “'+txt+'”';
+    if(ok)answer(true);
+    else{q.tries++;if(q.tries>=2){say(q.v.w,{rate:0.7});answer(false);}else $('#heardq').textContent+=' — try once more!';}
+  };
+  sayRec.onerror=()=>{$('#heardq').textContent='I could not hear you. Tap the mic and try again.';};
+  try{sayRec.start();}catch(e){}
+}
+function beep(f,d){try{const c=new (window.AudioContext||window.webkitAudioContext)(),o=c.createOscillator(),g=c.createGain();o.frequency.value=f;g.gain.value=.08;o.connect(g);g.connect(c.destination);o.start();setTimeout(()=>{o.stop();c.close();},d);}catch(e){}}
+function answer(ok,btn){
+  if(G.ans)return;G.ans=true;stopSay();
+  const q=G.q[G.i],v=q.v;
+  const e=vocab[v.w];
+  if(ok){G.ok++;G.streak++;const pts=10+Math.min(G.streak*2,10);G.score+=pts;stats.xp+=pts;e.mastery=Math.min(5,e.mastery+1);beep(660,150);}
+  else{G.streak=0;G.missed.push(v);e.mastery=Math.max(0,e.mastery-1);beep(220,250);}
+  saveVocab();saveStats();
+  document.querySelectorAll('#opts .opt').forEach(b=>{b.disabled=true;if(b.dataset.a===q.ans)b.classList.add('right');else if(b===btn)b.classList.add('wrong');});
+  $('#fb').innerHTML=`<div id="coach" class="${ok?'good':'warn'}">${ok?'✅ Yes! ':'The answer is “'+esc(v.w)+'”. '}${esc(v.def||'')}</div><button class="b" id="nx">Next →</button>`;
+  if(!ok&&q.type!=='say')say(v.w,{rate:0.75});
+  $('#nx').onclick=()=>{G.i++;nextQ();};
+}
+
+/* ---------- LIBRARY ---------- */
+function renderLib(){
+  const el=$('#tab-lib');
+  el.innerHTML=`
+  <div class="card"><h2>☁️ Cloud library</h2>
+    <p class="muted">PDFs stored in your GitHub repository (<b>${esc(CLOUD.folder)}</b> folder). They are available on every device.</p>
+    <div class="row" style="margin-bottom:8px"><button class="b alt" id="cloudRefresh">🔄 Refresh list</button></div>
+    <div id="cloudList"></div>
+  </div>
+  <div class="card"><h2>➕ Add a reading</h2>
+    <p>Choose a PDF (or .txt file). The app cuts it into short parts so each one is easy to read aloud.</p>
+    <div class="row"><input type="file" id="file" accept=".pdf,.txt,application/pdf,text/plain">
+      <select id="size" style="max-width:240px"><option value="50">Short pages (up to 50 words)</option><option value="100">Medium pages (up to 100 words)</option><option value="150" selected>Long pages (up to 150 words)</option></select></div>
+    <p id="status" class="muted"></p>
+    <details><summary><b>Or paste text</b></summary>
+      <input type="text" id="ptitle" placeholder="Title" style="margin:8px 0"><textarea id="ptext" rows="5" placeholder="Paste text here…"></textarea>
+      <button class="b" id="pbtn" style="margin-top:8px">Add text</button></details>
+  </div>
+  ${docs.map(d=>{const n=d.done.filter(Boolean).length;return `<div class="card"><div class="row" style="justify-content:space-between"><div><b>${esc(d.title)}</b><br><span class="muted">${n} of ${d.paras.length} parts finished</span></div>
+   <div class="row"><button class="b" data-open="${esc(d.id)}">Open</button><button class="b red" data-rm="${esc(d.id)}">Delete</button></div></div><div class="bar" style="margin-top:8px"><i style="width:${n/d.paras.length*100}%"></i></div></div>`;}).join('')}`;
+  $('#file').onchange=handleFile;
+  $('#cloudRefresh').onclick=loadCloud;
+  loadCloud();
+  $('#pbtn').onclick=()=>{const t=$('#ptext').value.trim();if(!t){toast('Paste some text first');return;}addDoc($('#ptitle').value.trim()||'My text',textToParas(t),+$('#size').value);};
+  el.onclick=e=>{
+    const cl=e.target.closest('[data-cloud]');if(cl){importCloud(cl.dataset.cloud);return;}
+    const o=e.target.closest('[data-open]');if(o){R.doc=null;openDoc(o.dataset.open);show('read');}
+    const r=e.target.closest('[data-rm]');if(r&&confirm('Delete this reading?')){docs=docs.filter(d=>d.id!==r.dataset.rm);saveDocs();if(R.doc&&R.doc.id===r.dataset.rm)R.doc=null;renderLib();}
+  };
+}
+function chunk(paras,max){
+  const out=[];let buf=[],cnt=0;const min=Math.round(max*0.5);
+  const flush=()=>{if(buf.length){out.push(buf.join(' ').trim());buf=[];cnt=0;}};
+  for(const p of paras){
+    const ss=p.replace(/\s+/g,' ').trim().match(/[^.!?]+[.!?]*["')\]”’]*\s*/g)||[];
+    for(const s of ss){
+      const n=s.trim().split(/\s+/).filter(Boolean).length;if(!n)continue;
+      if(cnt+n>max&&cnt>=Math.min(min,10))flush();
+      buf.push(s.trim());cnt+=n;
+    }
+    if(cnt>=min)flush();
+  }
+  flush();
+  return out.filter(x=>x.split(/\s+/).length>=3);
+}
+function textToParas(text){const p=text.split(/\n\s*\n/);p.rawLines=text.split(/\r?\n/);return p;}
+function parseList(lines){
+  const items=[];
+  (lines||[]).forEach(l=>String(l).split(/[\t,;•·|]|\s{3,}/).forEach(x=>{
+    x=x.replace(/^\s*(\(?\d+[.)]|[-–*•])\s*/,'').trim();
+    if(x)items.push(x);
+  }));
+  return items;
+}
+function looksLikeList(items){
+  if(items.length<6)return false;
+  const n=items.length;
+  const short=items.filter(x=>x.split(/\s+/).length<=3).length/n;
+  const sentLike=items.filter(x=>/[.!?]$/.test(x)).length/n;
+  const avg=items.reduce((a,x)=>a+x.split(/\s+/).length,0)/n;
+  return short>=0.85&&sentLike<0.15&&avg<=2.5;
+}
+function addListDoc(title,items,max,cloudName){
+  const seen=new Set();
+  const uniq=items.filter(x=>{const k=x.toLowerCase();if(seen.has(k))return false;seen.add(k);return true;});
+  const per=max<=50?6:(max<=100?10:15);
+  const pages=[];for(let i=0;i<uniq.length;i+=per)pages.push(uniq.slice(i,i+per).join('\n'));
+  const d={id:'d'+Date.now(),title,paras:pages,done:pages.map(()=>false),mode:'list'};
+  if(cloudName)d.cloud=cloudName;
+  docs.push(d);saveDocs();toast('Added word list “'+title+'” ('+uniq.length+' words)');
+  R.doc=null;openDoc(d.id,0);show('read');
+}
+function buildList(d){
+  let html='';R.words=[];R.sents=[];
+  d.paras[R.pi].split('\n').forEach(item=>{
+    const tk=tokenize(item),sp=tk.filter(w=>w.n);
+    if(!sp.length)return;
+    const start=R.words.length;let wi=start;
+    html+='<div class="sent item" data-s="'+R.sents.length+'">';
+    tk.forEach(t=>{
+      if(t.n){html+='<span class="w" data-i="'+wi+'">'+esc(t.t)+'</span>';wi++;}
+      else html+='<span>'+esc(t.t)+'</span>';
+      if(!t.join)html+=' ';
+    });
+    html+='</div>';
+    R.words=R.words.concat(sp);R.sents.push({start,end:wi-1});
+  });
+  return html;
+}
+function addDoc(title,paras,max,cloudName){
+  const items=paras.rawLines?parseList(paras.rawLines):[];
+  if(looksLikeList(items))return addListDoc(title,items,max,cloudName);
+  const ch=chunk(paras,max);
+  if(!ch.length){$('#status')&&($('#status').textContent='I could not find readable text. Scanned PDFs (pictures of pages) do not work yet.');return;}
+  const d={id:'d'+Date.now(),title,paras:ch,done:ch.map(()=>false)};
+  if(cloudName)d.cloud=cloudName;
+  docs.push(d);saveDocs();toast('Added “'+title+'” ('+ch.length+' parts)');
+  R.doc=null;openDoc(d.id,0);show('read');
+}
+let pdfReady=null;
+function loadPdfJs(){
+  if(pdfReady)return pdfReady;
+  pdfReady=new Promise((res,rej)=>{
+    const s=document.createElement('script');
+    s.src='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
+    s.onload=async()=>{
+      try{
+        const t=await (await fetch('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js')).text();
+        pdfjsLib.GlobalWorkerOptions.workerSrc=URL.createObjectURL(new Blob([t],{type:'text/javascript'}));
+        res();
+      }catch(e){rej(e);}
+    };
+    s.onerror=()=>rej(new Error('Could not load PDF reader (internet needed).'));
+    document.head.appendChild(s);
+  });
+  return pdfReady;
+}
+async function pdfParas(file,onProg){
+  await loadPdfJs();
+  const pdf=await pdfjsLib.getDocument({data:await file.arrayBuffer()}).promise;
+  const paras=[],rawLines=[];
+  for(let p=1;p<=pdf.numPages;p++){
+    onProg('Reading page '+p+' of '+pdf.numPages+'…');
+    const tc=await (await pdf.getPage(p)).getTextContent();
+    const lines=[];let cur=null;
+    for(const it of tc.items){
+      if(!it.str&&!it.hasEOL)continue;
+      const y=it.transform[5],x=it.transform[4];
+      if(cur&&Math.abs(cur.y-y)<2.5){
+        if(cur.end!=null&&x-cur.end>(it.height||10)*1.2&&cur.t&&it.str.trim())cur.t+='\t';
+        cur.t+=it.str;
+      }else{cur={y,t:it.str};lines.push(cur);}
+      cur.end=x+(it.width||0);
+    }
+    const L=lines.filter(l=>l.t.trim());
+    L.forEach(l=>rawLines.push(l.t));
+    const gaps=[];for(let i=1;i<L.length;i++){const g=L[i-1].y-L[i].y;if(g>0)gaps.push(g);}
+    gaps.sort((a,b)=>a-b);const med=gaps.length?gaps[Math.floor(gaps.length/2)]:12;
+    let curP='';
+    const push=()=>{const t=curP.replace(/\s+/g,' ').trim();if(t.split(' ').length>=3&&!/^\d+$/.test(t))paras.push(t);curP='';};
+    for(let i=0;i<L.length;i++){
+      const gap=i>0?L[i-1].y-L[i].y:0;
+      if(i>0&&(gap>med*1.6||gap<0))push();
+      const t=L[i].t.trim();
+      if(/[a-z]-$/i.test(curP)&&/^[a-z]/.test(t))curP=curP.slice(0,-1)+t;else curP+=(curP?' ':'')+t;
+    }
+    push();
+  }
+  paras.rawLines=rawLines;
+  return paras;
+}
+const CLOUD={repo:'kacharo/WordExplorer',folder:'readings'};
+let cloudFiles=[];
+const prettyName=n=>n.replace(/\.(pdf|txt)$/i,'').replace(/[_]+/g,' ').trim();
+async function loadCloud(){
+  const box=$('#cloudList');if(!box)return;
+  box.innerHTML='<p class="muted">Loading…</p>';
+  try{
+    const r=await fetch('https://api.github.com/repos/'+CLOUD.repo+'/contents/'+CLOUD.folder);
+    if(r.status===404){box.innerHTML='<p class="muted">No “'+esc(CLOUD.folder)+'” folder in the repository yet. Add a PDF to it, then tap Refresh.</p>';return;}
+    if(r.status===403){box.innerHTML='<p class="muted">GitHub asked us to slow down. Wait a few minutes and tap Refresh.</p>';return;}
+    if(!r.ok)throw new Error('HTTP '+r.status);
+    const j=await r.json();
+    cloudFiles=(Array.isArray(j)?j:[]).filter(f=>f.type==='file'&&/\.(pdf|txt)$/i.test(f.name));
+    if(!cloudFiles.length){box.innerHTML='<p class="muted">The folder is empty. Add a PDF to it, then tap Refresh.</p>';return;}
+    box.innerHTML=cloudFiles.map(f=>{
+      const have=docs.find(d=>d.cloud===f.name);
+      return `<div class="row" style="justify-content:space-between;padding:8px 0;border-top:1px solid var(--line)"><div><b>${esc(prettyName(f.name))}</b><br><span class="muted">${Math.round(f.size/1024)} KB${have?' · ✅ in your library':''}</span></div>
+      <button class="b ${have?'alt':''}" ${have?'data-open="'+esc(have.id)+'"':'data-cloud="'+esc(f.name)+'"'}>${have?'Open':'⬇ Add to my library'}</button></div>`;
+    }).join('');
+  }catch(err){box.innerHTML='<p class="muted">Could not reach GitHub ('+esc(err.message||'offline')+'). Check the internet and tap Refresh.</p>';}
+}
+async function importCloud(name){
+  const f=cloudFiles.find(x=>x.name===name);if(!f)return;
+  const st=$('#status'),max=+$('#size').value;
+  try{
+    st.textContent='Downloading '+f.name+'…';
+    const r=await fetch(f.download_url);if(!r.ok)throw new Error('download failed ('+r.status+')');
+    const blob=await r.blob();
+    const paras=/\.txt$/i.test(f.name)?textToParas(await blob.text()):await pdfParas(blob,m=>st.textContent=m);
+    addDoc(prettyName(f.name),paras,max,f.name);
+  }catch(err){st.textContent='Sorry, I could not add that reading. '+(err&&err.message||'');}
+}
+async function handleFile(e){
+  const f=e.target.files[0];if(!f)return;
+  const st=$('#status');const max=+$('#size').value;
+  const title=f.name.replace(/\.(pdf|txt)$/i,'');
+  try{
+    let paras;
+    if(/\.txt$/i.test(f.name)||f.type==='text/plain')paras=textToParas(await f.text());
+    else paras=await pdfParas(f,m=>st.textContent=m);
+    addDoc(title,paras,max);
+  }catch(err){st.textContent='Sorry, that file could not be opened. '+(err&&err.message||'');}
+}
+
+/* ---------- init ---------- */
+saveStats();
+show('read');
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Science - 8th Grade Learning Hub</title>
+<link rel="stylesheet" href="../shared.css">
+</head>
+<body>
+<div id="toast"></div>
+<header>
+  <a class="b alt" href="../index.html">🏠 Home</a>
+  <h1>🔬 Science</h1>
+  <div id="xp">⭐ 0</div>
+</header>
+<main>
+  <div class="card"><h2>Exercises</h2><div class="grid" id="list"></div></div>
+  <div class="card" id="practice" style="display:none"></div>
+  <div class="card" id="words"></div>
+  <div class="card" id="saved"></div>
+</main>
+<script src="../shared.js" data-home="../index.html"></script>
+<script src="words.js"></script>
+<script>
+(function(){
+// To add an exercise: put its .html file in this folder and add one line to this list.
+var EXERCISES=[{"id": "mouse", "icon": "🐭", "title": "Mouse Genetics (One Trait)", "unit": "Genetic Variation", "desc": "Alleles, dominant and recessive, Punnett squares.", "href": "mouse-genetics.html"}];
+var SUBJECT='Science';
+var $=function(s){return document.querySelector(s);};
+$('#xp').textContent='⭐ '+W.xp.get();
+$('#list').innerHTML=EXERCISES.length?EXERCISES.map(function(x){
+  var best=(W.store.get('ex_'+x.id,{best:0})||{}).best||0;
+  return '<div class="wc"><h3>'+x.icon+' '+W.esc(x.title)+'</h3><div class="muted">'+W.esc(x.unit)+'</div><div class="def">'+W.esc(x.desc)+'</div>'+
+    (best?'<div class="dots">Best: '+best+' points</div>':'')+'<div class="row" style="margin-top:8px"><a class="b" href="'+W.esc(x.href)+'">Open</a></div></div>';}).join('')
+  :'<p class="muted">No exercises here yet. New ones will show up on this page.</p>';
+W.ui.saved($('#saved'),SUBJECT);
+function drawPractice(){
+  var pr=W.practice.list(),ks=Object.keys(pr),el=$('#practice');
+  if(!ks.length){el.style.display='none';return;}
+  el.style.display='';
+  el.innerHTML='<h2>🔁 Words to practice</h2><p class="muted">Tap 🔊 to hear the word. When you can say it, tap ✓.</p>'+ks.map(function(k){
+    return '<span class="chip">'+W.esc(pr[k].word)+' <button data-h="'+W.esc(k)+'" aria-label="Hear it">🔊</button><button data-c="'+W.esc(k)+'" aria-label="I can say it">✓</button></span>';}).join('');
+  el.querySelectorAll('[data-h]').forEach(function(b){b.onclick=function(){try{speechSynthesis.cancel();var u=new SpeechSynthesisUtterance(pr[b.dataset.h].word);u.rate=0.7;u.lang='en-US';speechSynthesis.speak(u);}catch(e){}};});
+  el.querySelectorAll('[data-c]').forEach(function(b){b.onclick=function(){W.practice.clear(b.dataset.c);drawPractice();drawWords();};});
+}
+drawPractice();
+function say(t){try{speechSynthesis.cancel();var u=new SpeechSynthesisUtterance(t);u.rate=0.75;u.lang='en-US';speechSynthesis.speak(u);}catch(e){}}
+function drawWords(){
+  var words=window.WORDS||[],pr=W.practice.list(),only=!!W.store.get('wl_only',false),el=$('#words');
+  var np=words.filter(function(x){return pr[x.w.toLowerCase()];}).length;
+  var list=words.filter(function(x){return !only||pr[x.w.toLowerCase()];});
+  if(!words.length){el.innerHTML='<h2>📚 Word list</h2><p class="muted">No words here yet. The words from each exercise will be listed here.</p>';return;}
+  el.innerHTML='<h2>📚 Word list ('+words.length+')</h2><div class="row" style="margin-bottom:12px"><button class="b'+(only?' alt':'')+'" id="wAll">All words</button><button class="b'+(only?'':' alt')+'" id="wPr">🔁 Practice only ('+np+')</button></div>'+
+   (list.length?'<div class="grid">'+list.map(function(x,i){
+     return '<div class="wc"><h3 style="display:flex;justify-content:space-between;align-items:center;gap:8px"><span>'+W.esc(x.w)+(pr[x.w.toLowerCase()]?' <span class="badge wait">🔁 practice</span>':'')+'</span><span style="display:flex;gap:6px"><button class="say" data-w="'+words.indexOf(x)+'" aria-label="Hear the word">🔊</button><button class="say" data-s="'+words.indexOf(x)+'" aria-label="Hear it in a sentence">💬</button></span></h3>'+
+       '<div class="rs">say it: '+W.esc(x.say||'')+'</div><div>'+W.esc(x.def||'')+'</div>'+(x.ex?'<div class="ex">'+W.esc(x.ex)+'</div>':'')+'</div>';}).join('')+'</div>'
+     :'<p class="muted">No practice words right now. Great job!</p>');
+  $('#wAll').onclick=function(){W.store.set('wl_only',false);drawWords();};
+  $('#wPr').onclick=function(){W.store.set('wl_only',true);drawWords();};
+  el.querySelectorAll('[data-w]').forEach(function(b){b.onclick=function(){say(words[+b.dataset.w].w);};});
+  el.querySelectorAll('[data-s]').forEach(function(b){b.onclick=function(){say(words[+b.dataset.s].ex||words[+b.dataset.s].w);};});
+}
+drawWords();
+})();
+</script>
+</body>
+</html>
