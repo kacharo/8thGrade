@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Social Studies - 8th Grade Learning Hub</title>
-<link rel="stylesheet" href="../shared.css">
+<link rel="stylesheet" href="../shared.css?v=20261108a">
 </head>
 <body>
 <div id="toast"></div>
@@ -16,30 +16,28 @@
 <main>
   <div class="card"><h2>Exercises</h2><div class="grid" id="list"></div></div>
   <div class="card" id="practice" style="display:none"></div>
-<<<<<<< HEAD
   <div class="card" id="words"></div>
   <div class="card" id="saved"></div>
 </main>
-<script src="../shared.js" data-home="../index.html"></script>
-<script src="words.js"></script>
-=======
-  <div class="card" id="saved"></div>
-</main>
-<script src="../shared.js" data-home="../index.html"></script>
->>>>>>> 6d1bd18a44db4ad97575d417a3a5f1c6e211855d
+<script src="../shared.js?v=20261108a" data-home="../index.html"></script>
+<script src="words.js?v=20261108a"></script>
 <script>
 (function(){
+function banner(h){var m=document.querySelector('main'),d=document.createElement('div');d.className='banner';d.innerHTML=h;m.insertBefore(d,m.firstChild);}
+if(!window.W){banner('<b>The page could not load <code>shared.js</code>.</b> Upload <code>shared.js</code> to the main folder of the repository, then refresh this page.');return;}
 // To add an exercise: put its .html file in this folder and add one line to this list.
 var EXERCISES=[];
 var SUBJECT='Social-Study';
 var $=function(s){return document.querySelector(s);};
 $('#xp').textContent='⭐ '+W.xp.get();
+if(!(W.practice&&W.ui&&W.subs&&W.gh&&W.VERSION==='20261108a'))banner('<b>Some site files are out of date.</b> Upload the newest <code>shared.js</code> (main folder), then refresh this page. If you just uploaded it, wait a few minutes and refresh again.');
+if(!window.WORDS)banner('<b>The word list file is missing.</b> Upload <code>words.js</code> to this folder.');
 $('#list').innerHTML=EXERCISES.length?EXERCISES.map(function(x){
   var best=(W.store.get('ex_'+x.id,{best:0})||{}).best||0;
   return '<div class="wc"><h3>'+x.icon+' '+W.esc(x.title)+'</h3><div class="muted">'+W.esc(x.unit)+'</div><div class="def">'+W.esc(x.desc)+'</div>'+
     (best?'<div class="dots">Best: '+best+' points</div>':'')+'<div class="row" style="margin-top:8px"><a class="b" href="'+W.esc(x.href)+'">Open</a></div></div>';}).join('')
   :'<p class="muted">No exercises here yet. New ones will show up on this page.</p>';
-W.ui.saved($('#saved'),SUBJECT);
+try{W.ui.saved($('#saved'),SUBJECT);}catch(e){}
 function drawPractice(){
   var pr=W.practice.list(),ks=Object.keys(pr),el=$('#practice');
   if(!ks.length){el.style.display='none';return;}
@@ -47,10 +45,9 @@ function drawPractice(){
   el.innerHTML='<h2>🔁 Words to practice</h2><p class="muted">Tap 🔊 to hear the word. When you can say it, tap ✓.</p>'+ks.map(function(k){
     return '<span class="chip">'+W.esc(pr[k].word)+' <button data-h="'+W.esc(k)+'" aria-label="Hear it">🔊</button><button data-c="'+W.esc(k)+'" aria-label="I can say it">✓</button></span>';}).join('');
   el.querySelectorAll('[data-h]').forEach(function(b){b.onclick=function(){try{speechSynthesis.cancel();var u=new SpeechSynthesisUtterance(pr[b.dataset.h].word);u.rate=0.7;u.lang='en-US';speechSynthesis.speak(u);}catch(e){}};});
-<<<<<<< HEAD
   el.querySelectorAll('[data-c]').forEach(function(b){b.onclick=function(){W.practice.clear(b.dataset.c);drawPractice();drawWords();};});
 }
-drawPractice();
+try{drawPractice();}catch(e){}
 function say(t){try{speechSynthesis.cancel();var u=new SpeechSynthesisUtterance(t);u.rate=0.75;u.lang='en-US';speechSynthesis.speak(u);}catch(e){}}
 function drawWords(){
   var words=window.WORDS||[],pr=W.practice.list(),only=!!W.store.get('wl_only',false),el=$('#words');
@@ -67,12 +64,7 @@ function drawWords(){
   el.querySelectorAll('[data-w]').forEach(function(b){b.onclick=function(){say(words[+b.dataset.w].w);};});
   el.querySelectorAll('[data-s]').forEach(function(b){b.onclick=function(){say(words[+b.dataset.s].ex||words[+b.dataset.s].w);};});
 }
-drawWords();
-=======
-  el.querySelectorAll('[data-c]').forEach(function(b){b.onclick=function(){W.practice.clear(b.dataset.c);drawPractice();};});
-}
-drawPractice();
->>>>>>> 6d1bd18a44db4ad97575d417a3a5f1c6e211855d
+try{drawWords();}catch(e){}
 })();
 </script>
 </body>
