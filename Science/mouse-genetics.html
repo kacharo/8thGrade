@@ -202,7 +202,7 @@ function hl(sentence,word){return esc(sentence).replace(new RegExp('('+escRe(wor
 function learn(){
   stage.innerHTML='<div class="card"><h2>1. Learn the words</h2><p class="muted">Tap 🔊 to hear the word. Tap 💬 to hear it in a sentence.</p>'+
    '<div class="card" style="background:#eef3fb"><div class="big">A gene has two <b>alleles</b>: <b>F</b> = black fur (dominant) and <b>f</b> = white fur (recessive). A baby gets <b>one allele from each parent</b>.</div><div style="margin-top:8px"><button class="say" id="sayIntro">🔊</button></div></div>'+
-   '<div class="grid">'+VOCAB.map(function(v,i){return '<div class="wc"><h3><span>'+esc(v[0])+'</span><span class="row" style="gap:6px;flex-wrap:nowrap"><button class="say" data-w="'+i+'" aria-label="Hear '+esc(v[0])+'">🔊</button><button class="say" data-s="'+i+'" aria-label="Hear it in a sentence">💬</button></span></h3>'+
+   '<div class="grid">'+VOCAB.map(function(v,i){return '<div class="wc"><h3><span>'+esc(v[0])+(W.practice.list()[v[0].toLowerCase()]?' <span class="badge wait">🔁 practice</span>':'')+'</span><span class="row" style="gap:6px;flex-wrap:nowrap"><button class="say" data-w="'+i+'" aria-label="Hear '+esc(v[0])+'">🔊</button><button class="say" data-s="'+i+'" aria-label="Hear it in a sentence">💬</button></span></h3>'+
      '<div class="rs">say it: '+esc(v[3])+'</div><div>'+esc(v[1])+'</div><div class="ex">In a sentence: '+hl(v[2],v[0])+'</div></div>';}).join('')+'</div>'+
    '<div class="row" style="margin-top:16px"><button class="b green" id="next">I’m ready &rarr;</button></div></div>';
   $('#sayIntro').onclick=function(){say('A gene has two alleles. Capital F is black fur, and it is dominant. Little f is white fur, and it is recessive. A baby gets one allele from each parent.');};
@@ -221,45 +221,93 @@ function heardOK(heard,word){
   return hc.indexOf(wc)>=0||lev(hc,wc)<=Math.max(1,Math.floor(wc.length/4));
 }
 function saySpell(){
-  var order=shuffle(VOCAB.map(function(v,i){return i;})),n=0;
-  S.max+=VOCAB.length*10;
+  var pnow=W.practice.list(),isP=function(i){return !!pnow[VOCAB[i][0].toLowerCase()];};
+  var idx=VOCAB.map(function(v,i){return i;});
+  // words she needs to practice come first
+  var order=shuffle(idx.filter(isP)).concat(shuffle(idx.filter(function(i){return !isP(i);}))),n=0;
+  var okFirst=0,okSecond=0,missed=[];
+  S.max+=VOCAB.length*10+(SRC?VOCAB.length*10:0);
   var recog=null;
   function stopRec(){try{if(recog)recog.abort();}catch(e){}recog=null;}
+  function summary(){
+    stopRec();
+    stage.innerHTML='<div class="card"><h2>2. Say and spell: results</h2>'+
+     (SRC?'<div class="big">Pronunciation: <b>'+okFirst+'</b> on the first try, <b>'+okSecond+'</b> on the second try, <b>'+missed.length+'</b> to practice.</div>':'<div class="big">Spelling is done!</div>')+
+     (missed.length?'<div class="banner">🔁 <b>Words to practice:</b><br>'+missed.map(esc).join(', ')+'<br>They were added to <b>My Words</b> in the ELA reading app, and they come first next time.</div>':(SRC?'<div class="good" style="margin-top:10px">No practice words. Great talking!</div>':''))+
+     '<div class="row" style="margin-top:14px"><button class="b green" id="next">Next: Match &rarr;</button>'+(missed.length?'<a class="b alt" href="../ELA/index.html">Open the reading app</a>':'')+'</div></div>';
+    $('#next').onclick=function(){go(2);};
+  }
   function show(){
     stopRec();
     var v=VOCAB[order[n]],word=v[0],target=word.toUpperCase();
     var head='<div class="card"><h2>2. Say and spell</h2><p class="muted">Word '+(n+1)+' of '+VOCAB.length+'</p>'+bar(n,VOCAB.length);
-    /* ---- part A: say it ---- */
-    stage.innerHTML=head+'<div class="muted">Step A: say it</div><div class="big" style="margin:6px 0"><b>'+esc(word)+'</b></div>'+
+    var tries=[],logged=false,listening=false,passed=false,failed=false,inSpell=false;
+    function logSay(extra){
+      if(logged)return;logged=true;
+      var e={sec:'2. Say & Spell',q:'Say the word: '+word,tried:tries.length?tries.slice():['(not tested)'],answer:word+' ('+v[3]+')',first:false};
+      for(var k in extra)e[k]=extra[k];LOG.push(e);
+    }
+    /* ---------- part A: say it (two tries) ---------- */
+    stage.innerHTML=head+'<div class="muted">Step A: say it'+(pnow[word.toLowerCase()]?' &middot; <span class="badge wait">🔁 practice word</span>':'')+'</div>'+
+     '<div class="big" style="margin:6px 0"><b>'+esc(word)+'</b></div>'+
      '<div class="rs" style="font-size:22px">say it: '+esc(v[3])+'</div>'+
      '<div class="row" style="margin:8px 0"><button class="b alt" id="hear">🔊 Hear it</button><button class="b alt" id="hears">💬 In a sentence</button>'+
-     (SRC?'<button class="b" id="mic">🎤 Say it</button>':'')+'<button class="b green" id="said">'+(SRC?'I said it':'✓ I said it out loud')+'</button></div>'+
-     '<div class="sent">'+hl(v[2],word)+'</div><div id="fb"></div></div>';
+     (SRC?'<button class="b" id="mic">🎤 Tap, then say it</button>':'<button class="b green" id="said">Next: spell it &rarr;</button>')+'</div>'+
+     (SRC?'<div id="tryinfo" class="muted">Try 1 of 2</div>':'<div class="muted">This browser cannot listen, so your pronunciation is not tested here.</div>')+
+     '<div class="sent">'+hl(v[2],word)+'</div><div id="fb"></div><div class="row" id="goRow"></div>'+
+     (SRC?'<div style="margin-top:10px"><button class="b alt" id="skipSay" style="min-height:36px;padding:6px 12px;font-size:15px">Skip (microphone not working)</button></div>':'')+'</div>';
     $('#hear').onclick=function(){say(word,0.7);};
     $('#hears').onclick=function(){say(v[2]);};
-    var logged=false;
-    function logSay(note,okk){if(logged)return;logged=true;LOG.push({sec:'2. Say & Spell',q:'Say the word: '+word,tried:[note],answer:word+' ('+v[3]+')',first:okk});}
-    function toSpell(){stopRec();spell();}
-    $('#said').onclick=function(){logSay('said it out loud (self-reported)',true);toSpell();};
-    if(SRC&&$('#mic'))$('#mic').onclick=function(){
-      var f=$('#fb');f.className='warn';f.textContent='Listening… say the word.';
-      try{
-        recog=new SRC();recog.lang='en-US';recog.interimResults=false;recog.maxAlternatives=5;
-        recog.onresult=function(e){
-          var alts=[];for(var k=0;k<e.results[0].length;k++)alts.push(e.results[0][k].transcript);
-          var okk=alts.some(function(a){return heardOK(a,word);});
-          if(okk){f.className='good';f.textContent='✓ I heard "'+word+'". Nice!';logSay('heard: "'+alts[0]+'"',true);setTimeout(toSpell,900);}
-          else{f.className='warn';f.textContent='I heard "'+alts[0]+'". Listen and try again, or press "I said it".';}
-        };
-        recog.onerror=function(){f.className='warn';f.textContent='I could not hear you. Try again or press "I said it".';};
-        recog.start();
-      }catch(err){f.className='warn';f.textContent='The microphone is not available. Press "I said it".';}
-    };
-    /* ---- part B: spell it ---- */
+    if(!SRC){$('#said').onclick=function(){logSay({first:true,tried:['(not tested: this browser cannot listen)']});spell();};}
+    else{
+      $('#skipSay').onclick=function(){if(logged)return;stopRec();logSay({first:false,skipped:true,tried:['skipped (microphone not working)']});spell();};
+      $('#mic').onclick=function(){
+        if(listening||passed||failed)return;
+        var f=$('#fb'),btn=$('#mic');
+        f.className='warn';f.textContent='Listening… say "'+word+'".';btn.disabled=true;listening=true;
+        try{
+          recog=new SRC();recog.lang='en-US';recog.interimResults=false;recog.maxAlternatives=5;
+          recog.onresult=function(e){
+            var alts=[];for(var k=0;k<e.results[0].length;k++)alts.push(e.results[0][k].transcript);
+            tries.push('try '+(tries.length+1)+': heard "'+alts[0]+'"');
+            if(alts.some(function(a){return heardOK(a,word);})){
+              passed=true;var first=tries.length===1;S.pts+=first?10:5;if(first)okFirst++;else okSecond++;
+              W.practice.clear(word);logSay({first:first,pass:true});
+              f.className='good';f.textContent='✓ I heard "'+alts[0]+'". '+(first?'Great!':'Nice job!');
+              btn.style.display='none';$('#skipSay').style.display='none';
+              setTimeout(spell,1100);
+            }else if(tries.length>=2){
+              failed=true;missed.push(word);
+              W.practice.add(word,{def:v[1],ex:v[2],phonetic:v[3],from:'Mouse Genetics'});
+              logSay({first:false,practice:true});
+              f.className='warn';f.innerHTML='I heard "'+esc(alts[0])+'". That was your second try, so let’s move on. <b>"'+esc(word)+'" was added to your practice words.</b>';
+              btn.style.display='none';$('#skipSay').style.display='none';$('#tryinfo').textContent='';
+              $('#goRow').innerHTML='<button class="b green" id="goSpell">Next: spell it &rarr;</button>';$('#goSpell').onclick=spell;
+            }else{
+              f.className='warn';f.textContent='I heard "'+alts[0]+'". Listen once more, then try again.';$('#tryinfo').textContent='Try 2 of 2';
+            }
+          };
+          recog.onerror=function(e){
+            var er=e&&e.error,m;
+            if(er==='aborted')return;
+            if(er==='not-allowed'||er==='service-not-allowed')m='The microphone is blocked. Allow it in the browser settings, or press Skip.';
+            else if(er==='audio-capture')m='I cannot find a microphone. Press Skip.';
+            else if(er==='network')m='Listening needs the internet. Try again, or press Skip.';
+            else if(er==='no-speech')m='I did not hear anything. Tap the mic and say the word. (This does not use up a try.)';
+            else m='I could not hear you. Try again, or press Skip. (This does not use up a try.)';
+            f.className='warn';f.textContent=m;
+          };
+          recog.onend=function(){listening=false;if(!passed&&!failed)btn.disabled=false;};
+          recog.start();
+        }catch(err){listening=false;btn.disabled=false;f.className='warn';f.textContent='The microphone is not available. Press Skip.';}
+      };
+    }
+    /* ---------- part B: spell it ---------- */
     function spell(){
+      if(inSpell)return;inSpell=true;stopRec();
       var letters=target.replace(/ /g,'').split('');
       var pool=shuffle(letters.map(function(c,k){return {c:c,k:k,used:false};}));
-      var slots=[],tries=[],peeked=false,marks=null,solved=false;
+      var slots=[],stries=[],peeked=false,marks=null,solved=false;
       var blank=v[2].replace(new RegExp(escRe(word),'ig'),'_____');
       stage.innerHTML=head+'<div class="muted">Step B: spell it</div><div class="big" style="margin:6px 0">Meaning: '+esc(v[1])+'</div>'+
        '<div class="sent">'+esc(blank)+'</div>'+
@@ -285,13 +333,13 @@ function saySpell(){
       $('#clr').onclick=function(){if(solved)return;slots.forEach(function(t){t.used=false;});slots=[];marks=null;draw();};
       $('#peek').onclick=function(){peeked=true;var f=$('#fb');f.className='warn';f.textContent='The word is: '+word+'. Now spell it.';};
       $('#chk').onclick=function(){
-        var attempt=slots.map(function(t){return t.c;}).join('');tries.push(attempt);
+        var attempt=slots.map(function(t){return t.c;}).join('');stries.push(attempt);
         if(attempt===letters.join('')){
           solved=true;marks=letters.map(function(){return true;});
-          var firstTry=tries.length===1&&!peeked;if(firstTry)S.pts+=10;
-          LOG.push({sec:'2. Say & Spell',q:'Spell the word that means: '+v[1],tried:tries.concat(peeked?['(peeked at the word)']:[]),answer:word,first:firstTry});
+          var firstTry=stries.length===1&&!peeked;if(firstTry)S.pts+=10;
+          LOG.push({sec:'2. Say & Spell',q:'Spell the word that means: '+v[1],tried:stries.concat(peeked?['(peeked at the word)']:[]),answer:word,first:firstTry});
           draw();var f=$('#fb');f.className='good';f.textContent=(firstTry?'✓ Perfect spelling! ':'✓ You spelled it! ')+word;
-          $('#next').style.display='';$('#next').onclick=function(){n++;if(n<VOCAB.length)show();else go(2);};
+          $('#next').style.display='';$('#next').onclick=function(){n++;if(n<VOCAB.length)show();else summary();};
           $('#undo').disabled=$('#clr').disabled=$('#peek').disabled=true;
         }else{
           marks=slots.map(function(t,i){return t.c===letters[i];});draw();
@@ -418,11 +466,13 @@ function buildReport(name,when){
   var L=['MOUSE GENETICS (ONE TRAIT) - STUDENT ANSWERS','',
     'Name: '+(name||'(not entered)'),'Date: '+when.toLocaleString(),
     'Score: '+S.pts+' of '+S.max+' points ('+pct+'%)','Right on the first try: '+ok+' of '+LOG.length+' questions','',
-    '[OK] = right on the first try     [RETRY] = needed more than one try'];
+    '[OK] = right on the first try     [RETRY] = needed more than one try     [PRACTICE] = could not say it in two tries'];
+  var pw=LOG.filter(function(e){return e.practice;}).map(function(e){return e.q.replace('Say the word: ','');});
+  if(pw.length)L.splice(6,0,'Words to practice: '+pw.join(', '));
   var sec='';
   LOG.forEach(function(e){
     if(e.sec!==sec){sec=e.sec;L.push('');L.push('== '+sec+' ==');}
-    L.push((e.first?'[OK]    ':'[RETRY] ')+e.q);
+    L.push((e.practice?'[PRACTICE] ':(e.first?'[OK]    ':'[RETRY] '))+e.q);
     L.push('        Her answers: '+e.tried.join('  >  '));
     L.push('        Correct answer: '+e.answer);
   });
