@@ -16,11 +16,17 @@
 <main>
   <div class="card"><h2>Exercises</h2><div class="grid" id="list"></div></div>
   <div class="card" id="practice" style="display:none"></div>
+<<<<<<< HEAD
   <div class="card" id="words"></div>
   <div class="card" id="saved"></div>
 </main>
 <script src="../shared.js" data-home="../index.html"></script>
 <script src="words.js"></script>
+=======
+  <div class="card" id="saved"></div>
+</main>
+<script src="../shared.js" data-home="../index.html"></script>
+>>>>>>> 6d1bd18a44db4ad97575d417a3a5f1c6e211855d
 <script>
 (function(){
 // To add an exercise: put its .html file in this folder and add one line to this list.
@@ -41,6 +47,7 @@ function drawPractice(){
   el.innerHTML='<h2>🔁 Words to practice</h2><p class="muted">Tap 🔊 to hear the word. When you can say it, tap ✓.</p>'+ks.map(function(k){
     return '<span class="chip">'+W.esc(pr[k].word)+' <button data-h="'+W.esc(k)+'" aria-label="Hear it">🔊</button><button data-c="'+W.esc(k)+'" aria-label="I can say it">✓</button></span>';}).join('');
   el.querySelectorAll('[data-h]').forEach(function(b){b.onclick=function(){try{speechSynthesis.cancel();var u=new SpeechSynthesisUtterance(pr[b.dataset.h].word);u.rate=0.7;u.lang='en-US';speechSynthesis.speak(u);}catch(e){}};});
+<<<<<<< HEAD
   el.querySelectorAll('[data-c]').forEach(function(b){b.onclick=function(){W.practice.clear(b.dataset.c);drawPractice();drawWords();};});
 }
 drawPractice();
@@ -61,6 +68,11 @@ function drawWords(){
   el.querySelectorAll('[data-s]').forEach(function(b){b.onclick=function(){say(words[+b.dataset.s].ex||words[+b.dataset.s].w);};});
 }
 drawWords();
+=======
+  el.querySelectorAll('[data-c]').forEach(function(b){b.onclick=function(){W.practice.clear(b.dataset.c);drawPractice();};});
+}
+drawPractice();
+>>>>>>> 6d1bd18a44db4ad97575d417a3a5f1c6e211855d
 })();
 </script>
 </body>

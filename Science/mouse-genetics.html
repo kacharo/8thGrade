@@ -5,7 +5,10 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Mouse Genetics Exercise</title>
 <script src="../shared.js" data-home="../index.html"></script>
+<<<<<<< HEAD
 <script src="words.js"></script>
+=======
+>>>>>>> 6d1bd18a44db4ad97575d417a3a5f1c6e211855d
 <style>
 :root{--bg:#f6f4ee;--card:#fff;--ink:#22303c;--muted:#5d6b78;--brand:#2f6fed;--brand2:#e8f0ff;--good:#1f9d63;--goodbg:#dff5ea;--bad:#d64545;--badbg:#fde6e6;--warn:#b86e00;--warnbg:#fff1d6;--line:#e1ddd0}
 *{box-sizing:border-box}
@@ -122,8 +125,27 @@ function say(t,rate){
 function stopSay(){try{if('speechSynthesis' in window)speechSynthesis.cancel();}catch(e){}}
 
 /* ---- content ---- */
+<<<<<<< HEAD
 var VOCAB=(window.WORDS||[]).map(function(x){return [x.w,x.def,x.ex,x.say];});   // list lives in words.js
 
+=======
+var VOCAB=[   // [word, meaning, sentence that uses the word, how to say it]
+ ['heredity','Passing of traits from parents to offspring.','Heredity is why a baby mouse looks like its parents.','huh-RED-ih-tee'],
+ ['trait','A feature of a living thing.','Black fur is a trait that a mouse can inherit.','TRAYT'],
+ ['DNA','The molecule that holds the instructions for traits.','DNA carries the instructions for every trait.','dee-en-AY'],
+ ['gene','A piece of DNA that controls one trait.','One gene controls the color of a mouse\u2019s fur.','JEEN'],
+ ['allele','One version of a gene.','A mouse can have a black allele or a white allele.','uh-LEEL'],
+ ['genotype','The pair of alleles an organism has.','The genotype Ff means one black allele and one white allele.','JEE-nuh-type'],
+ ['phenotype','How the trait looks.','The phenotype of an Ff mouse is black fur.','FEE-nuh-type'],
+ ['dominant allele','An allele that always shows when it is present.','A dominant allele always shows up, so Ff mice are black.','DOM-ih-nunt uh-LEEL'],
+ ['recessive allele','An allele that is hidden when a dominant one is present.','A recessive allele only shows up when a mouse has two of them.','rih-SESS-iv uh-LEEL'],
+ ['homozygous','Two alleles that are the same.','A mouse with the genotype ff is homozygous.','hoh-moh-ZY-gus'],
+ ['heterozygous','Two alleles that are different.','A mouse with the genotype Ff is heterozygous.','het-er-oh-ZY-gus'],
+ ['hybrid','Offspring of parents with different traits.','A pup from a black mouse and a white mouse is a hybrid.','HY-brid'],
+ ['inheritance','The way traits are received from parents.','Inheritance means getting one allele from each parent.','in-HAIR-ih-tunce'],
+ ['Punnett square','A grid used to predict the genotypes of offspring.','A Punnett square predicts what the babies will look like.','PUN-it skwair']
+];
+>>>>>>> 6d1bd18a44db4ad97575d417a3a5f1c6e211855d
 var MATCH=[
  ['gene','A piece of DNA that controls a trait'],
  ['allele','One version of a gene'],
@@ -214,14 +236,23 @@ function saySpell(){
   var order=shuffle(idx.filter(isP)).concat(shuffle(idx.filter(function(i){return !isP(i);}))),n=0;
   var okFirst=0,okSecond=0,missed=[];
   S.max+=VOCAB.length*10+(SRC?VOCAB.length*10:0);
+<<<<<<< HEAD
   var recog=null,micBroken=false;
+=======
+  var recog=null;
+>>>>>>> 6d1bd18a44db4ad97575d417a3a5f1c6e211855d
   function stopRec(){try{if(recog)recog.abort();}catch(e){}recog=null;}
   function summary(){
     stopRec();
     stage.innerHTML='<div class="card"><h2>2. Say and spell: results</h2>'+
+<<<<<<< HEAD
      (SRC&&(okFirst+okSecond+missed.length>0)?'<div class="big">Pronunciation: <b>'+okFirst+'</b> on the first try, <b>'+okSecond+'</b> on the second try, <b>'+missed.length+'</b> to practice.</div>':'<div class="big">Spelling is done!</div>')+
      (micBroken?'<div class="banner">The microphone was not available on this device, so some words were not tested for pronunciation.<br><small>iPhone: allow the microphone for this site in Safari, and turn on Dictation in Settings, General, Keyboard.</small></div>':'')+
      (missed.length?'<div class="banner">🔁 <b>Words to practice:</b><br>'+missed.map(esc).join(', ')+'<br>They were added to <b>My Words</b> in the ELA reading app, and they come first next time.</div>':(SRC&&!micBroken?'<div class="good" style="margin-top:10px">No practice words. Great talking!</div>':''))+
+=======
+     (SRC?'<div class="big">Pronunciation: <b>'+okFirst+'</b> on the first try, <b>'+okSecond+'</b> on the second try, <b>'+missed.length+'</b> to practice.</div>':'<div class="big">Spelling is done!</div>')+
+     (missed.length?'<div class="banner">🔁 <b>Words to practice:</b><br>'+missed.map(esc).join(', ')+'<br>They were added to <b>My Words</b> in the ELA reading app, and they come first next time.</div>':(SRC?'<div class="good" style="margin-top:10px">No practice words. Great talking!</div>':''))+
+>>>>>>> 6d1bd18a44db4ad97575d417a3a5f1c6e211855d
      '<div class="row" style="margin-top:14px"><button class="b green" id="next">Next: Match &rarr;</button>'+(missed.length?'<a class="b alt" href="../ELA/index.html">Open the reading app</a>':'')+'</div></div>';
     $('#next').onclick=function(){go(2);};
   }
@@ -236,11 +267,15 @@ function saySpell(){
       for(var k in extra)e[k]=extra[k];LOG.push(e);
     }
     /* ---------- part A: say it (two tries) ---------- */
+<<<<<<< HEAD
     var useMic=SRC&&!micBroken;
+=======
+>>>>>>> 6d1bd18a44db4ad97575d417a3a5f1c6e211855d
     stage.innerHTML=head+'<div class="muted">Step A: say it'+(pnow[word.toLowerCase()]?' &middot; <span class="badge wait">🔁 practice word</span>':'')+'</div>'+
      '<div class="big" style="margin:6px 0"><b>'+esc(word)+'</b></div>'+
      '<div class="rs" style="font-size:22px">say it: '+esc(v[3])+'</div>'+
      '<div class="row" style="margin:8px 0"><button class="b alt" id="hear">🔊 Hear it</button><button class="b alt" id="hears">💬 In a sentence</button>'+
+<<<<<<< HEAD
      (useMic?'<button class="b" id="mic">🎤 Tap, then say it</button>':'<button class="b green" id="said">Next: spell it &rarr;</button>')+'</div>'+
      (useMic?'<div id="tryinfo" class="muted">Try 1 of 2</div>':'<div class="muted">'+(micBroken?'The microphone is not available on this device, so pronunciation is not tested.':'This browser cannot listen, so your pronunciation is not tested here.')+'</div>')+
      '<div class="sent">'+hl(v[2],word)+'</div><div id="fb"></div><div class="row" id="goRow"></div></div>';
@@ -302,6 +337,56 @@ function saySpell(){
           arm(25000);                                           // backstop if the phone never starts
           recog.start();
         }catch(err){resolve('broken',[],'cannot start');}
+=======
+     (SRC?'<button class="b" id="mic">🎤 Tap, then say it</button>':'<button class="b green" id="said">Next: spell it &rarr;</button>')+'</div>'+
+     (SRC?'<div id="tryinfo" class="muted">Try 1 of 2</div>':'<div class="muted">This browser cannot listen, so your pronunciation is not tested here.</div>')+
+     '<div class="sent">'+hl(v[2],word)+'</div><div id="fb"></div><div class="row" id="goRow"></div>'+
+     (SRC?'<div style="margin-top:10px"><button class="b alt" id="skipSay" style="min-height:36px;padding:6px 12px;font-size:15px">Skip (microphone not working)</button></div>':'')+'</div>';
+    $('#hear').onclick=function(){say(word,0.7);};
+    $('#hears').onclick=function(){say(v[2]);};
+    if(!SRC){$('#said').onclick=function(){logSay({first:true,tried:['(not tested: this browser cannot listen)']});spell();};}
+    else{
+      $('#skipSay').onclick=function(){if(logged)return;stopRec();logSay({first:false,skipped:true,tried:['skipped (microphone not working)']});spell();};
+      $('#mic').onclick=function(){
+        if(listening||passed||failed)return;
+        var f=$('#fb'),btn=$('#mic');
+        f.className='warn';f.textContent='Listening… say "'+word+'".';btn.disabled=true;listening=true;
+        try{
+          recog=new SRC();recog.lang='en-US';recog.interimResults=false;recog.maxAlternatives=5;
+          recog.onresult=function(e){
+            var alts=[];for(var k=0;k<e.results[0].length;k++)alts.push(e.results[0][k].transcript);
+            tries.push('try '+(tries.length+1)+': heard "'+alts[0]+'"');
+            if(alts.some(function(a){return heardOK(a,word);})){
+              passed=true;var first=tries.length===1;S.pts+=first?10:5;if(first)okFirst++;else okSecond++;
+              W.practice.clear(word);logSay({first:first,pass:true});
+              f.className='good';f.textContent='✓ I heard "'+alts[0]+'". '+(first?'Great!':'Nice job!');
+              btn.style.display='none';$('#skipSay').style.display='none';
+              setTimeout(spell,1100);
+            }else if(tries.length>=2){
+              failed=true;missed.push(word);
+              W.practice.add(word,{def:v[1],ex:v[2],phonetic:v[3],from:'Mouse Genetics'});
+              logSay({first:false,practice:true});
+              f.className='warn';f.innerHTML='I heard "'+esc(alts[0])+'". That was your second try, so let’s move on. <b>"'+esc(word)+'" was added to your practice words.</b>';
+              btn.style.display='none';$('#skipSay').style.display='none';$('#tryinfo').textContent='';
+              $('#goRow').innerHTML='<button class="b green" id="goSpell">Next: spell it &rarr;</button>';$('#goSpell').onclick=spell;
+            }else{
+              f.className='warn';f.textContent='I heard "'+alts[0]+'". Listen once more, then try again.';$('#tryinfo').textContent='Try 2 of 2';
+            }
+          };
+          recog.onerror=function(e){
+            var er=e&&e.error,m;
+            if(er==='aborted')return;
+            if(er==='not-allowed'||er==='service-not-allowed')m='The microphone is blocked. Allow it in the browser settings, or press Skip.';
+            else if(er==='audio-capture')m='I cannot find a microphone. Press Skip.';
+            else if(er==='network')m='Listening needs the internet. Try again, or press Skip.';
+            else if(er==='no-speech')m='I did not hear anything. Tap the mic and say the word. (This does not use up a try.)';
+            else m='I could not hear you. Try again, or press Skip. (This does not use up a try.)';
+            f.className='warn';f.textContent=m;
+          };
+          recog.onend=function(){listening=false;if(!passed&&!failed)btn.disabled=false;};
+          recog.start();
+        }catch(err){listening=false;btn.disabled=false;f.className='warn';f.textContent='The microphone is not available. Press Skip.';}
+>>>>>>> 6d1bd18a44db4ad97575d417a3a5f1c6e211855d
       };
     }
     /* ---------- part B: spell it ---------- */
@@ -468,13 +553,21 @@ function buildReport(name,when){
   var L=['MOUSE GENETICS (ONE TRAIT) - STUDENT ANSWERS','',
     'Name: '+(name||'(not entered)'),'Date: '+when.toLocaleString(),
     'Score: '+S.pts+' of '+S.max+' points ('+pct+'%)','Right on the first try: '+ok+' of '+LOG.length+' questions','',
+<<<<<<< HEAD
     '[OK] = right on the first try     [RETRY] = needed more than one try     [PRACTICE] = could not say it in two tries     [NOT TESTED] = no microphone'];
+=======
+    '[OK] = right on the first try     [RETRY] = needed more than one try     [PRACTICE] = could not say it in two tries'];
+>>>>>>> 6d1bd18a44db4ad97575d417a3a5f1c6e211855d
   var pw=LOG.filter(function(e){return e.practice;}).map(function(e){return e.q.replace('Say the word: ','');});
   if(pw.length)L.splice(6,0,'Words to practice: '+pw.join(', '));
   var sec='';
   LOG.forEach(function(e){
     if(e.sec!==sec){sec=e.sec;L.push('');L.push('== '+sec+' ==');}
+<<<<<<< HEAD
     L.push((e.practice?'[PRACTICE] ':(e.notTested?'[NOT TESTED] ':(e.first?'[OK]    ':'[RETRY] ')))+e.q);
+=======
+    L.push((e.practice?'[PRACTICE] ':(e.first?'[OK]    ':'[RETRY] '))+e.q);
+>>>>>>> 6d1bd18a44db4ad97575d417a3a5f1c6e211855d
     L.push('        Her answers: '+e.tried.join('  >  '));
     L.push('        Correct answer: '+e.answer);
   });
