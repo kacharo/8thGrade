@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Science - 8th Grade Learning Hub</title>
+<link rel="stylesheet" href="../shared.css">
+</head>
+<body>
+<div id="toast"></div>
+<header>
+  <a class="b alt" href="../index.html">🏠 Home</a>
+  <h1>🔬 Science</h1>
+  <div id="xp">⭐ 0</div>
+</header>
+<main>
+  <div class="card"><h2>Exercises</h2><div class="grid" id="list"></div></div>
+  <div class="card" id="saved"></div>
+</main>
+<script src="../shared.js" data-home="../index.html"></script>
+<script>
+(function(){
+// To add an exercise: put its .html file in this folder and add one line to this list.
+var EXERCISES=[{"id": "mouse", "icon": "🐭", "title": "Mouse Genetics (One Trait)", "unit": "Genetic Variation", "desc": "Alleles, dominant and recessive, Punnett squares.", "href": "mouse-genetics.html"}];
+var SUBJECT='Science';
+var $=function(s){return document.querySelector(s);};
+$('#xp').textContent='⭐ '+W.xp.get();
+$('#list').innerHTML=EXERCISES.length?EXERCISES.map(function(x){
+  var best=(W.store.get('ex_'+x.id,{best:0})||{}).best||0;
+  return '<div class="wc"><h3>'+x.icon+' '+W.esc(x.title)+'</h3><div class="muted">'+W.esc(x.unit)+'</div><div class="def">'+W.esc(x.desc)+'</div>'+
+    (best?'<div class="dots">Best: '+best+' points</div>':'')+'<div class="row" style="margin-top:8px"><a class="b" href="'+W.esc(x.href)+'">Open</a></div></div>';}).join('')
+  :'<p class="muted">No exercises here yet. New ones will show up on this page.</p>';
+W.ui.saved($('#saved'),SUBJECT);
+})();
+</script>
+</body>
+</html>
