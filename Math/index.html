@@ -26,7 +26,7 @@
 function banner(h){var m=document.querySelector('main'),d=document.createElement('div');d.className='banner';d.innerHTML=h;m.insertBefore(d,m.firstChild);}
 if(!window.W){banner('<b>The page could not load <code>shared.js</code>.</b> Upload <code>shared.js</code> to the main folder of the repository, then refresh this page.');return;}
 // To add an exercise: put its .html file in this folder and add one line to this list.
-var EXERCISES=[];
+var EXERCISES=[{"id": "simtri", "icon": "📐", "title": "Similar Triangles", "unit": "Unit 2 Lesson 7", "desc": "Angles add to 180°, the Angle-Angle rule, similar or not.", "href": "similar-triangles.html"}];
 var SUBJECT='Math';
 var $=function(s){return document.querySelector(s);};
 $('#xp').textContent='⭐ '+W.xp.get();
