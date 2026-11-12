@@ -1,0 +1,602 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>A Mystery Man - ELA Exercise</title>
+<script src="../shared.js?v=20261108a" data-home="../index.html"></script>
+<script src="words.js?v=20261108a"></script>
+<style>
+:root{--bg:#f6f4ee;--card:#fff;--ink:#22303c;--muted:#5d6b78;--brand:#2f6fed;--brand2:#e8f0ff;--good:#1f9d63;--goodbg:#dff5ea;--bad:#d64545;--badbg:#fde6e6;--warn:#b86e00;--warnbg:#fff1d6;--line:#e1ddd0}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Atkinson Hyperlegible","Trebuchet MS",Verdana,system-ui,sans-serif;font-size:18px;-webkit-tap-highlight-color:transparent;touch-action:manipulation;padding-bottom:env(safe-area-inset-bottom)}
+header{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:10px 18px;background:#fff;border-bottom:2px solid var(--line);position:sticky;top:0;z-index:5}
+header h1{font-size:22px;margin:0;flex:1}
+#xp{font-weight:700;background:var(--warnbg);color:var(--warn);padding:6px 12px;border-radius:99px}
+main{max-width:860px;margin:0 auto;padding:18px}
+.card{background:var(--card);border:2px solid var(--line);border-radius:18px;padding:18px;margin-bottom:16px}
+h2{margin:0 0 10px;font-size:22px}
+a.b,button.b{display:inline-block;text-decoration:none;font:inherit;font-weight:700;border:0;border-radius:14px;padding:12px 18px;cursor:pointer;background:var(--brand);color:#fff;min-height:44px}
+.b.alt{background:var(--brand2);color:var(--brand)}
+.b.green{background:var(--good)}
+.b:disabled{opacity:.4;cursor:not-allowed}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.muted{color:var(--muted)}
+.steps{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.steps span{flex:1 1 auto;text-align:center;padding:6px 8px;border-radius:99px;background:#ece8dc;color:var(--muted);font-size:14px;font-weight:700;white-space:nowrap}
+.steps span.on{background:var(--brand);color:#fff}
+.steps span.done{background:var(--goodbg);color:var(--good)}
+.bar{height:12px;background:#ece8dc;border-radius:99px;overflow:hidden;margin:8px 0 14px}
+.bar>i{display:block;height:100%;background:var(--good);width:0;transition:width .3s}
+.big{font-size:24px;line-height:1.5}
+.opt{display:block;width:100%;text-align:left;font:inherit;font-size:20px;padding:14px 16px;margin:8px 0;border:2px solid var(--line);border-radius:14px;background:#fff;cursor:pointer;color:var(--ink)}
+.opt:hover:not(:disabled){border-color:var(--brand)}
+.opt.right{background:var(--goodbg);border-color:var(--good)}
+.opt.wrong{background:var(--badbg);border-color:var(--bad)}
+.opt.sel{border-color:var(--brand);background:var(--brand2)}
+.opt:disabled{cursor:default;color:var(--ink)}
+#fb{font-size:20px;font-weight:700;padding:12px 14px;border-radius:14px;margin:10px 0;display:none}
+#fb.good{display:block;background:var(--goodbg);color:var(--good)}
+#fb.warn{display:block;background:var(--warnbg);color:var(--warn)}
+.wc{border:2px solid var(--line);border-radius:16px;padding:12px 14px;background:#fff}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
+.wc h3{margin:0 0 4px;font-size:22px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.say{border:0;background:var(--brand2);color:var(--brand);border-radius:99px;width:40px;height:40px;font-size:18px;cursor:pointer;flex:none}
+.ex{font-style:italic;color:var(--muted);margin-top:4px}
+.mt{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.mt .opt{margin:6px 0;font-size:18px}
+.mt .opt.done{background:var(--goodbg);border-color:var(--good);opacity:.75}
+@keyframes shake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.shake{animation:shake .3s}
+.badge{display:inline-block;padding:4px 12px;border-radius:99px;font-weight:700;background:var(--brand2);color:var(--brand);margin:0 6px 6px 0}
+.rs{color:var(--brand);font-weight:700;margin:2px 0 4px}
+.ex b{color:var(--ink)}
+.slots{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0}
+.slot{width:46px;height:54px;border:2px solid var(--brand);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:800;background:#fff}
+.slot.ok{background:var(--goodbg);border-color:var(--good);color:var(--good)}
+.slot.no{background:var(--badbg);border-color:var(--bad);color:var(--bad)}
+.gap{width:22px}
+.tiles{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.tile{width:50px;height:54px;border:2px solid var(--line);border-radius:12px;background:#fff;font:inherit;font-size:24px;font-weight:800;color:var(--ink);cursor:pointer}
+.tile:hover:not(:disabled){border-color:var(--brand)}
+.tile:disabled{opacity:.25;cursor:default}
+.sent{background:#eef3fb;border-radius:12px;padding:10px 12px;margin:10px 0}
+.rules{display:grid;gap:10px;margin-top:12px}
+.rule{display:flex;gap:12px;align-items:flex-start;border:2px solid var(--line);border-radius:14px;padding:12px}
+.rule .n{flex:none;width:34px;height:34px;border-radius:99px;background:var(--warn);color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center}
+.rule.ok{background:var(--goodbg);border-color:var(--good)}.rule.ok .n{background:var(--good)}
+.tl{display:grid;gap:10px;margin:10px 0}
+.pi{font-size:28px;flex:none;line-height:1}
+mark{background:#ffe7a3;color:var(--ink);font-weight:700;border-radius:4px;padding:0 3px}
+.tip{background:#eef3fb;border-radius:12px;padding:8px 12px;margin-top:8px;font-size:16px;color:var(--muted)}
+.banner{background:var(--warnbg);color:var(--warn);padding:10px 14px;border-radius:12px;margin:10px 0}
+.good{background:var(--goodbg);color:var(--good);padding:10px 14px;border-radius:12px}
+textarea{font:inherit;font-size:20px;padding:12px;border:2px solid var(--line);border-radius:12px;width:100%;line-height:1.5}
+input[type=text]{font:inherit;font-size:18px;padding:10px;border:2px solid var(--line);border-radius:12px;width:100%}
+@media (max-width:640px){
+  .slot{width:36px;height:46px;font-size:21px}.tile{width:42px;height:48px;font-size:20px}
+  body{font-size:16px}
+  header{padding:8px 10px}header h1{font-size:18px}
+  main{padding:10px}.card{padding:12px;border-radius:14px}
+  .opt{font-size:17px;padding:12px}.big{font-size:20px}
+  .mt{grid-template-columns:1fr}
+  .steps span{font-size:12px;padding:5px 6px}
+}
+</style>
+</head>
+<body>
+<header>
+  <a class="b alt" href="index.html" id="back">&larr; ELA</a>
+  <h1>🔨 A Mystery Man</h1>
+  <div id="xp">⭐ 0</div>
+</header>
+<main>
+  <div class="steps" id="steps"></div>
+  <div id="stage"></div>
+</main>
+
+<script>
+(function(){
+'use strict';
+var $=function(s){return document.querySelector(s);};
+var esc=function(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});};
+var escRe=function(s){return s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');};
+var shuffle=function(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}return a;};
+
+/* ---- storage and stars come from ../shared.js (same keys as the rest of the hub) ---- */
+function lsGet(k,d){return W.store.get(k,d);}
+function lsSet(k,v){W.store.set(k,v);}
+function totalXP(){return W.xp.get();}
+function addXP(n){W.xp.add(n);showXP();}
+function showXP(){$('#xp').textContent='⭐ '+totalXP();}
+showXP();
+
+/* ---- read aloud ---- */
+function say(t,rate){
+  if(!('speechSynthesis' in window))return;
+  try{speechSynthesis.cancel();var u=new SpeechSynthesisUtterance(t);u.rate=rate||0.85;u.lang='en-US';
+    var vs=speechSynthesis.getVoices();var v=vs.filter(function(x){return /en[-_]US/i.test(x.lang);})[0]||vs.filter(function(x){return /^en/i.test(x.lang);})[0];
+    if(v)u.voice=v;speechSynthesis.speak(u);}catch(e){}
+}
+function stopSay(){try{if('speechSynthesis' in window)speechSynthesis.cancel();}catch(e){}}
+
+
+/* ---- content ---- */
+var VOCAB=(window.WORDS||[]).map(function(x){return [x.w,x.def,x.ex,x.say];});   // list lives in words.js
+
+var STORY=[
+ {icon:'🎵',t:'It is Sunday night, the night before a summer trip. Six-year-old Veronica bounces on her bed and sings a song about John Henry, a mighty man who built railroad tracks.'},
+ {icon:'😤',t:'Her big brother James is nine. He is grumpy. He wanted to relax at home and play video games all summer.'},
+ {icon:'🚂',t:'Instead, Mom is sending them on a train to West Virginia, to stay with Grandfather and Grandmother on their farm.'},
+ {icon:'🐔',t:'James likes to grumble about it. He says Grandfather will talk all day about working on the railroad, and the kids will have to feed mean chickens and milk a cow.'},
+ {icon:'😴',t:'James finally manages to fall asleep, still muttering. Later, a loud BANG wakes him up.'},
+ {icon:'🔨',t:'A tall, strong stranger in denim overalls and work boots is sitting by his bed. He can wield a giant hammer like it is as light as a pencil. Bang! Bang! Bang!'},
+ {icon:'😱',t:'James is horrified. He tries to scream, but no sound comes out. Suddenly, the man swings the hammer down toward him… To be continued in Part 2!'}
+];
+var PEOPLE=[
+ ['🧒🏾 James','Age 9. Grumpy and annoyed about the trip.'],
+ ['👧🏾 Veronica','Age 6. James’s little sister. Loves trains, the farm, and the John Henry song.'],
+ ['👴🏾 Grandfather','Used to work on railroad tracks. Sings the John Henry song.'],
+ ['❓ The mystery man','Tall and strong. Wears overalls and boots. Swings a giant silver hammer.']
+];
+
+var MATCH=[
+ ['mighty','Very strong and powerful'],
+ ['manage','Get it done, even when it is hard'],
+ ['mutter','Talk low and quiet, hard to hear'],
+ ['suddenly','Fast, with no warning'],
+ ['determined','Will not give up'],
+ ['grumble','Complain in an unhappy voice'],
+ ['wield','Hold and use a tool'],
+ ['horrified','Very shocked and scared']
+];
+var TF=[
+ {q:'Veronica is James’s older sister.',opts:['True','False'],ans:1,why:'Veronica is 6 and James is 9. She is his LITTLE sister.'},
+ {q:'James is excited about the trip to his grandparents’ farm.',opts:['True','False'],ans:1,why:'James is annoyed. He thinks it will be the most boring summer ever.'},
+ {q:'The kids will ride a train to West Virginia.',opts:['True','False'],ans:0,why:'Mom is sending them on the train.'},
+ {q:'Grandfather used to work on railroad tracks.',opts:['True','False'],ans:0,why:'James says Grandfather talks all the time about working on the tracks.'},
+ {q:'The stranger in James’s room was holding a hammer.',opts:['True','False'],ans:0,why:'He banged a big silver hammer on the floor.'},
+ {q:'At the end, James is safe and happy.',opts:['True','False'],ans:1,why:'The story stops right when the hammer swings at James. That is called a cliffhanger.'}
+];
+var MC=[
+ {q:'Who is Veronica’s song about?',opts:['John Henry, a strong man who built railroad tracks','A stranger who wakes kids up at night','Grandfather’s farm animals','How to make hammers'],ans:0,why:'The song is about John Henry building the railroad.'},
+ {q:'How does James feel about visiting his grandparents?',opts:['Annoyed and frustrated','Excited and happy','Calm and peaceful','Proud'],ans:0,why:'He groans, grumbles, and punches his pillow.'},
+ {q:'Why does Veronica’s singing bother James so much?',opts:['It reminds him of the trip he does not want to take','He loves the song too much','She sings too quietly','He wants to sing it himself'],ans:0,why:'It is Grandfather’s song, so it adds to his frustration about the trip.'},
+ {q:'The stranger wears overalls and work boots and carries a hammer. What can you infer about him?',opts:['He does hard work with his hands','He works in an office','He is a scientist in a lab','He is a singer'],ans:0,why:'Overalls, boots, and a hammer are clues for outdoor, hands-on work.'},
+ {q:'Think about the clues: very strong, a giant hammer, and a song about the railroad. Who might the mystery man be?',opts:['John Henry from the song','Grandmother','Mom','A video game character'],ans:0,why:'The stranger matches the John Henry in the song. We will find out in Part 2!'},
+ {q:'“Veronica seemed determined to annoy James.” What does determined mean here?',opts:['Sure and not giving up','Scared and crying','Tired and sleepy','Careful and nervous'],ans:0,why:'She kept singing and would not stop.'},
+ {q:'What is the main idea of the story?',opts:['James does not want to visit his grandparents, but then a stranger with a hammer appears in the night.','James loves farm animals.','Building railroads takes many tools.','James plays video games all week.'],ans:0,why:'The main idea tells about the whole story, not one small detail.'}
+];
+var FILL=[
+ {q:'John Henry was a ____ man who could lift a giant hammer.',opts:['mighty','horrified','suddenly','muttered'],ans:0,why:'Mighty means very strong.'},
+ {q:'Even with all the singing, James ____ to fall asleep.',opts:['managed','wield','mighty','grumble'],ans:0,why:'Managed means he got it done, even though it was hard.'},
+ {q:'James ____ to himself under the sheets, so no one could hear.',opts:['muttered','wielded','determined','mighty'],ans:0,why:'Muttered means talked low and quiet.'},
+ {q:'____, the stranger stood up and raised his hammer.',opts:['Suddenly','Mighty','Determined','Grumble'],ans:0,why:'Suddenly means with no warning.'},
+ {q:'Veronica was ____ to keep singing until James fell asleep.',opts:['determined','horrified','suddenly','wield'],ans:0,why:'Determined means she would not give up.'},
+ {q:'James likes to ____ about feeding the mean chickens.',opts:['grumble','wield','mighty','suddenly'],ans:0,why:'Grumble means complain in an unhappy voice.'},
+ {q:'The stranger could ____ the heavy hammer like a pencil.',opts:['wield','mutter','manage','suddenly'],ans:0,why:'Wield means hold and use a tool.'},
+ {q:'James felt ____ when the hammer came toward him.',opts:['horrified','mighty','determined','managed'],ans:0,why:'Horrified means very shocked and scared.'},
+ {q:'James fell asleep, ____ a loud bang woke him up.',opts:['but','such as','also','meanwhile'],ans:0,why:'“But” shows a change: first he slept, but then something woke him.'}
+];
+var ORDER=[
+ 'At Friday dinner, Mom says the kids are going to Grandfather’s farm.',
+ 'Veronica sings the John Henry song at every meal.',
+ 'On Sunday night, Veronica sings the song in bed.',
+ 'James finally falls asleep, muttering.',
+ 'A loud BANG wakes James up.',
+ 'James sees a stranger with a hammer by his bed.',
+ 'The stranger swings the hammer down toward James.'
+];
+var THINK=[
+ {q:'According to James, what does Grandfather talk about a lot?',start:'James says Grandfather talks about',model:'James says Grandfather talks about how he used to work on railroad tracks, and he sings the John Henry song.'},
+ {q:'Why does James not want to visit his grandparents?',start:'James does not want to go because',model:'James does not want to go because he wanted to stay home and play video games, and he thinks the farm will be boring.'},
+ {q:'Predict: What do you think happens in Part 2?',start:'I think the mystery man',model:'Any idea that uses clues is great! Maybe the man is John Henry, and he takes James to see the railroad.'}
+];
+var FACTS=[
+ 'John Henry is an American folk hero. In the legend, he raced a steam-powered drill to dig a tunnel, and he won.',
+ 'Many stories say John Henry worked on the Big Bend Tunnel in West Virginia in the 1870s. That is the same state James and Veronica are going to!',
+ 'There is a statue of John Henry near the Big Bend Tunnel in Talcott, West Virginia.',
+ 'Workers called “steel drivers” swung heavy hammers to pound steel spikes into rock, making holes for blasting tunnels.',
+ 'Some historians think John Henry was a real person, not just a character in a song.'
+];
+var NAMES=['Learn','Say & Spell','Match','True / False','Quiz','Fill in','Story order','Think','Submit'];
+
+
+/* ---- state ---- */
+var S={step:0,pts:0,max:0};
+var LOG=[];   // every answer she gives, for the saved answer file
+var stage=$('#stage');
+function renderSteps(){
+  $('#steps').innerHTML=NAMES.map(function(n,i){return '<span class="'+(i===S.step?'on':(i<S.step?'done':''))+'">'+(i<S.step?'✓ ':'')+esc(n)+'</span>';}).join('');
+}
+function go(n){stopSay();S.step=n;renderSteps();window.scrollTo(0,0);[learn,saySpell,match,runTF,runMC,runFill,runOrder,runThink,done][n]();}
+function bar(i,n){return '<div class="bar"><i style="width:'+Math.round(i/n*100)+'%"></i></div>';}
+
+/* ---- 1. learn ---- */
+function hl(sentence,word){return esc(sentence).replace(new RegExp('('+escRe(word)+')','ig'),'<b>$1</b>');}
+function hlAll(t){
+  var s=esc(t);
+  VOCAB.forEach(function(v){s=s.replace(new RegExp('\\b('+escRe(v[0])+'(?:s|d|ed|ing|ly)?)\\b','ig'),'<mark>$1</mark>');});
+  return s;
+}
+function learn(){
+  stage.innerHTML='<div class="card"><h2>1. Learn: the story in short</h2>'+
+   '<div class="banner" style="background:#eef3fb;color:var(--ink)">📄 This goes with your reading <b>“A Mystery Man” (Nightmare on the Tracks, Part 1)</b>. Tap 🔊 to hear each part. <b>Yellow</b> words are today’s words.</div>'+
+   '<div class="row" style="margin:10px 0"><button class="b alt" id="sayAll">🔊 Read it all to me</button><button class="b alt" id="stopAll">⏹ Stop</button></div>'+
+   '<div class="tl">'+STORY.map(function(p,i){return '<div class="rule"><span class="n">'+(i+1)+'</span><div class="pi">'+p.icon+'</div><div style="flex:1">'+hlAll(p.t)+'</div><button class="say" data-p="'+i+'" aria-label="Read aloud">🔊</button></div>';}).join('')+'</div>'+
+   '<h2 style="margin-top:16px">Who is in the story?</h2><div class="grid">'+PEOPLE.map(function(p){return '<div class="wc"><h3 style="font-size:20px">'+esc(p[0])+'</h3><div>'+esc(p[1])+'</div></div>';}).join('')+'</div>'+
+   '<div class="card" style="background:var(--warnbg);border-color:#f1d9a8;margin-top:14px"><b>📌 Reading skill: making an inference.</b> An <b>inference</b> is a smart guess you make from clues. <br>Clue: the man wears overalls and boots and holds a hammer. <br>Inference: he probably does hard work with his hands.</div>'+
+   '<h2 style="margin-top:16px">Words for today</h2><p class="muted">Tap 🔊 to hear the word. Tap 💬 to hear it in a sentence.</p>'+
+   '<div class="grid">'+VOCAB.map(function(v,i){return '<div class="wc"><h3><span>'+esc(v[0])+(W.practice.list()[v[0].toLowerCase()]?' <span class="badge wait">🔁 practice</span>':'')+'</span><span class="row" style="gap:6px;flex-wrap:nowrap"><button class="say" data-w="'+i+'" aria-label="Hear '+esc(v[0])+'">🔊</button><button class="say" data-s="'+i+'" aria-label="Hear it in a sentence">💬</button></span></h3>'+
+     '<div class="rs">say it: '+esc(v[3])+'</div><div>'+esc(v[1])+'</div><div class="ex">In a sentence: '+hl(v[2],v[0])+'</div></div>';}).join('')+'</div>'+
+   '<div class="row" style="margin-top:16px"><button class="b green" id="next">I’m ready &rarr;</button></div></div>';
+  stage.querySelectorAll('.say[data-p]').forEach(function(b){b.onclick=function(){say(STORY[+b.dataset.p].t,0.9);};});
+  $('#sayAll').onclick=function(){say(STORY.map(function(p){return p.t;}).join(' '),0.9);};
+  $('#stopAll').onclick=stopSay;
+  stage.querySelectorAll('.say[data-w]').forEach(function(b){b.onclick=function(){var v=VOCAB[+b.dataset.w];say(v[0],0.7);};});
+  stage.querySelectorAll('.say[data-s]').forEach(function(b){b.onclick=function(){say(VOCAB[+b.dataset.s][2]);};});
+  $('#next').onclick=function(){go(1);};
+}
+
+
+/* ---- 2. say and spell ---- */
+function lev(a,b){var m=a.length,n=b.length,p=[],j,i;for(j=0;j<=n;j++)p[j]=j;for(i=1;i<=m;i++){var c=[i];for(j=1;j<=n;j++)c[j]=Math.min(p[j]+1,c[j-1]+1,p[j-1]+(a[i-1]===b[j-1]?0:1));p=c;}return p[n];}
+var SRC=window.SpeechRecognition||window.webkitSpeechRecognition;
+function heardOK(heard,word){
+  var h=String(heard).toLowerCase().replace(/[^a-z ]/g,'').replace(/\s+/g,' ').trim(),w=word.toLowerCase().replace(/[^a-z ]/g,'');
+  var hc=h.replace(/ /g,''),wc=w.replace(/ /g,'');
+  if(!hc)return false;
+  return hc.indexOf(wc)>=0||lev(hc,wc)<=Math.max(1,Math.floor(wc.length/4));
+}
+function saySpell(){
+  var pnow=W.practice.list(),isP=function(i){return !!pnow[VOCAB[i][0].toLowerCase()];};
+  var idx=VOCAB.map(function(v,i){return i;});
+  // words she needs to practice come first
+  var order=shuffle(idx.filter(isP)).concat(shuffle(idx.filter(function(i){return !isP(i);}))),n=0;
+  var okFirst=0,okSecond=0,missed=[];
+  S.max+=VOCAB.length*10+(SRC?VOCAB.length*10:0);
+  var recog=null,micBroken=false;
+  function stopRec(){try{if(recog)recog.abort();}catch(e){}recog=null;}
+  function summary(){
+    stopRec();
+    stage.innerHTML='<div class="card"><h2>2. Say and spell: results</h2>'+
+     (SRC&&(okFirst+okSecond+missed.length>0)?'<div class="big">Pronunciation: <b>'+okFirst+'</b> on the first try, <b>'+okSecond+'</b> on the second try, <b>'+missed.length+'</b> to practice.</div>':'<div class="big">Spelling is done!</div>')+
+     (micBroken?'<div class="banner">The microphone was not available on this device, so some words were not tested for pronunciation.<br><small>iPhone: allow the microphone for this site in Safari, and turn on Dictation in Settings, General, Keyboard.</small></div>':'')+
+     (missed.length?'<div class="banner">🔁 <b>Words to practice:</b><br>'+missed.map(esc).join(', ')+'<br>They were added to <b>My Words</b> in the ELA reading app, and they come first next time.</div>':(SRC&&!micBroken?'<div class="good" style="margin-top:10px">No practice words. Great talking!</div>':''))+
+     '<div class="row" style="margin-top:14px"><button class="b green" id="next">Next: Match &rarr;</button>'+(missed.length?'<a class="b alt" href="index.html">Open the reading app</a>':'')+'</div></div>';
+    $('#next').onclick=function(){go(2);};
+  }
+  function show(){
+    stopRec();
+    var v=VOCAB[order[n]],word=v[0],target=word.toUpperCase();
+    var head='<div class="card"><h2>2. Say and spell</h2><p class="muted">Word '+(n+1)+' of '+VOCAB.length+'</p>'+bar(n,VOCAB.length);
+    var tries=[],logged=false,listening=false,passed=false,failed=false,inSpell=false;
+    function logSay(extra){
+      if(logged)return;logged=true;
+      var e={sec:'2. Say & Spell',q:'Say the word: '+word,tried:tries.length?tries.slice():['(not tested)'],answer:word+' ('+v[3]+')',first:false};
+      for(var k in extra)e[k]=extra[k];LOG.push(e);
+    }
+    /* ---------- part A: say it (two tries) ---------- */
+    var useMic=SRC&&!micBroken;
+    stage.innerHTML=head+'<div class="muted">Step A: say it'+(pnow[word.toLowerCase()]?' &middot; <span class="badge wait">🔁 practice word</span>':'')+'</div>'+
+     '<div class="big" style="margin:6px 0"><b>'+esc(word)+'</b></div>'+
+     '<div class="rs" style="font-size:22px">say it: '+esc(v[3])+'</div>'+
+     '<div class="row" style="margin:8px 0"><button class="b alt" id="hear">🔊 Hear it</button><button class="b alt" id="hears">💬 In a sentence</button>'+
+     (useMic?'<button class="b" id="mic">🎤 Tap, then say it</button>':'<button class="b green" id="said">Next: spell it &rarr;</button>')+'</div>'+
+     (useMic?'<div id="tryinfo" class="muted">Try 1 of 2</div>':'<div class="muted">'+(micBroken?'The microphone is not available on this device, so pronunciation is not tested.':'This browser cannot listen, so your pronunciation is not tested here.')+'</div>')+
+     '<div class="sent">'+hl(v[2],word)+'</div><div id="fb"></div><div class="row" id="goRow"></div></div>';
+    $('#hear').onclick=function(){say(word,0.7);};
+    $('#hears').onclick=function(){say(v[2]);};
+    if(!useMic){
+      $('#said').onclick=function(){logSay({first:false,notTested:true,tried:[micBroken?'(not tested: microphone not available)':'(not tested: this browser cannot listen)']});spell();};
+    }else{
+      $('#mic').onclick=function(){
+        if(listening||passed||failed)return;
+        var f=$('#fb'),btn=$('#mic'),resolved=false,wd=null;
+        try{speechSynthesis.cancel();}catch(e){}              // iPhone: stop talking before listening
+        f.className='warn';f.textContent='Listening… say "'+word+'".';btn.disabled=true;listening=true;
+        function arm(ms){clearTimeout(wd);wd=setTimeout(function(){resolve('empty',[]);},ms);}
+        // Every press ends here exactly once, whatever the phone does (result, error, silence, or nothing at all).
+        function resolve(kind,alts,code){
+          if(resolved)return;resolved=true;clearTimeout(wd);listening=false;stopRec();
+          if(kind==='broken'){
+            micBroken=true;S.max-=10*(VOCAB.length-n);
+            logSay({first:false,notTested:true,tried:tries.concat(['microphone not available ('+(code||'unknown')+')'])});
+            f.className='warn';f.innerHTML='I cannot use the microphone on this device, so pronunciation will not be tested.<br><small>iPhone: allow the microphone for this site in Safari, and turn on Dictation in Settings, General, Keyboard.</small>';
+            btn.style.display='none';$('#tryinfo').textContent='';
+            $('#goRow').innerHTML='<button class="b green" id="goSpell">Next: spell it &rarr;</button>';$('#goSpell').onclick=spell;
+            return;
+          }
+          tries.push('try '+(tries.length+1)+': '+(alts&&alts.length?'heard "'+alts[0]+'"':'nothing heard'));
+          var heard=alts&&alts.length?alts[0]:'';
+          if(alts&&alts.some(function(a){return heardOK(a,word);})){
+            passed=true;var first=tries.length===1;S.pts+=first?10:5;if(first)okFirst++;else okSecond++;
+            W.practice.clear(word);logSay({first:first,pass:true});
+            f.className='good';f.textContent='✓ I heard "'+heard+'". '+(first?'Great!':'Nice job!');
+            btn.style.display='none';
+            setTimeout(spell,1100);
+          }else if(tries.length>=2){
+            failed=true;missed.push(word);
+            W.practice.add(word,{def:v[1],ex:v[2],phonetic:v[3],from:'A Mystery Man'});
+            logSay({first:false,practice:true});
+            f.className='warn';f.innerHTML=(heard?'I heard "'+esc(heard)+'". ':'I did not hear you. ')+'That was your second try, so let’s move on. <b>"'+esc(word)+'" was added to your practice words.</b>';
+            btn.style.display='none';$('#tryinfo').textContent='';
+            $('#goRow').innerHTML='<button class="b green" id="goSpell">Next: spell it &rarr;</button>';$('#goSpell').onclick=spell;
+          }else{
+            f.className='warn';f.textContent=heard?'I heard "'+heard+'". Listen once more, then try again.':'I did not hear you. Tap the mic and say the word.';
+            $('#tryinfo').textContent='Try 2 of 2';btn.disabled=false;
+          }
+        }
+        try{
+          recog=new SRC();recog.lang='en-US';recog.continuous=false;recog.interimResults=false;recog.maxAlternatives=5;
+          recog.onstart=function(){arm(10000);};               // starts counting once the phone is really listening
+          recog.onresult=function(e){
+            var alts=[];try{for(var k=0;k<e.results[0].length;k++)alts.push(e.results[0][k].transcript);}catch(x){}
+            resolve('heard',alts);
+          };
+          recog.onerror=function(e){
+            var er=e&&e.error;
+            if(er==='not-allowed'||er==='service-not-allowed'||er==='audio-capture')resolve('broken',[],er);
+            else resolve('empty',[],er);                        // no-speech, aborted, network, anything else: counts as a try
+          };
+          recog.onend=function(){resolve('empty',[]);};         // ended without a result: counts as a try
+          arm(25000);                                           // backstop if the phone never starts
+          recog.start();
+        }catch(err){resolve('broken',[],'cannot start');}
+      };
+    }
+    /* ---------- part B: spell it ---------- */
+    function spell(){
+      if(inSpell)return;inSpell=true;stopRec();
+      var letters=target.replace(/ /g,'').split('');
+      var pool=shuffle(letters.map(function(c,k){return {c:c,k:k,used:false};}));
+      var slots=[],stries=[],peeked=false,marks=null,solved=false;
+      var blank=v[2].replace(new RegExp(escRe(word),'ig'),'_____');
+      stage.innerHTML=head+'<div class="muted">Step B: spell it</div><div class="big" style="margin:6px 0">Meaning: '+esc(v[1])+'</div>'+
+       '<div class="sent">'+esc(blank)+'</div>'+
+       '<div class="row"><button class="b alt" id="hear2">🔊 Hear the word</button><button class="b alt" id="hear3">💬 Hear the sentence</button></div>'+
+       '<div class="slots" id="slots"></div><div class="tiles" id="tiles"></div>'+
+       '<div class="row"><button class="b green" id="chk" disabled>Check my spelling</button><button class="b alt" id="undo">⌫ Undo</button><button class="b alt" id="clr">Clear</button><button class="b alt" id="peek">👀 Show me the word</button></div>'+
+       '<div id="fb"></div><div class="row"><button class="b green" id="next" style="display:none">'+(n===VOCAB.length-1?'Finish &rarr;':'Next word &rarr;')+'</button></div></div>';
+      $('#hear2').onclick=function(){say(word,0.7);};$('#hear3').onclick=function(){say(v[2]);};
+      function draw(){
+        var si=0,out='';
+        for(var c=0;c<target.length;c++){
+          if(target[c]===' '){out+='<span class="gap"></span>';continue;}
+          var t=slots[si],cls=marks?(marks[si]?'ok':'no'):'';
+          out+='<div class="slot '+cls+'">'+(t?esc(t.c):'')+'</div>';si++;
+        }
+        $('#slots').innerHTML=out;
+        $('#tiles').innerHTML=pool.map(function(t,i){return '<button class="tile" data-i="'+i+'"'+(t.used||solved?' disabled':'')+'>'+esc(t.c)+'</button>';}).join('');
+        $('#tiles').querySelectorAll('.tile').forEach(function(b){b.onclick=function(){
+          if(slots.length>=letters.length)return;var t=pool[+b.dataset.i];t.used=true;slots.push(t);marks=null;draw();};});
+        $('#chk').disabled=solved||slots.length!==letters.length;
+      }
+      $('#undo').onclick=function(){if(solved||!slots.length)return;slots.pop().used=false;marks=null;draw();};
+      $('#clr').onclick=function(){if(solved)return;slots.forEach(function(t){t.used=false;});slots=[];marks=null;draw();};
+      $('#peek').onclick=function(){peeked=true;var f=$('#fb');f.className='warn';f.textContent='The word is: '+word+'. Now spell it.';};
+      $('#chk').onclick=function(){
+        var attempt=slots.map(function(t){return t.c;}).join('');stries.push(attempt);
+        if(attempt===letters.join('')){
+          solved=true;marks=letters.map(function(){return true;});
+          var firstTry=stries.length===1&&!peeked;if(firstTry)S.pts+=10;
+          LOG.push({sec:'2. Say & Spell',q:'Spell the word that means: '+v[1],tried:stries.concat(peeked?['(peeked at the word)']:[]),answer:word,first:firstTry});
+          draw();var f=$('#fb');f.className='good';f.textContent=(firstTry?'✓ Perfect spelling! ':'✓ You spelled it! ')+word;
+          $('#next').style.display='';$('#next').onclick=function(){n++;if(n<VOCAB.length)show();else summary();};
+          $('#undo').disabled=$('#clr').disabled=$('#peek').disabled=true;
+        }else{
+          marks=slots.map(function(t,i){return t.c===letters[i];});draw();
+          var f2=$('#fb');f2.className='warn';f2.textContent='Not quite. Red letters are in the wrong place. Tap Undo to fix them.';
+        }
+      };
+      draw();
+    }
+  }
+  show();
+}
+
+/* ---- 2. match ---- */
+function match(){
+  var terms=MATCH.map(function(m,i){return {i:i,t:m[0]};});
+  var defs=shuffle(MATCH.map(function(m,i){return {i:i,t:m[1]};}));
+  var sel=null,left=MATCH.length,firstTry={},misses=0,wrong={};
+  S.max+=MATCH.length*10;
+  stage.innerHTML='<div class="card"><h2>3. Match the word to its meaning</h2><p class="muted">Tap a word, then tap its meaning.</p><div class="mt"><div id="L"></div><div id="R"></div></div><div id="fb"></div><div class="row"><button class="b green hide" id="next" style="display:none">Next &rarr;</button></div></div>';
+  function draw(){
+    $('#L').innerHTML=terms.map(function(x){return '<button class="opt'+(x.done?' done':'')+(sel===x.i?' sel':'')+'" data-t="'+x.i+'"'+(x.done?' disabled':'')+'>'+esc(x.t)+'</button>';}).join('');
+    $('#R').innerHTML=defs.map(function(x){return '<button class="opt'+(x.done?' done':'')+'" data-d="'+x.i+'"'+(x.done?' disabled':'')+'>'+esc(x.t)+'</button>';}).join('');
+    $('#L').querySelectorAll('[data-t]').forEach(function(b){b.onclick=function(){sel=+b.dataset.t;say(MATCH[sel][0]);draw();};});
+    $('#R').querySelectorAll('[data-d]').forEach(function(b){b.onclick=function(){pick(+b.dataset.d,b);};});
+  }
+  function pick(d,btn){
+    if(sel===null){fb('Tap a word on the left first.','warn');return;}
+    if(d===sel){
+      terms.filter(function(x){return x.i===d;})[0].done=true;defs.filter(function(x){return x.i===d;})[0].done=true;
+      if(!firstTry[d]){firstTry[d]=1;S.pts+=firstTry['m'+d]?0:10;}
+      LOG.push({sec:'3. Match',q:MATCH[d][0],tried:(wrong[d]||[]).concat([MATCH[d][1]]),answer:MATCH[d][1],first:!(wrong[d]&&wrong[d].length)});
+      left--;sel=null;fb('✓ Yes!','good');draw();
+      if(!left){$('#next').style.display='';$('#next').classList.remove('hide');$('#next').onclick=function(){go(3);};fb('All matched! ⭐','good');}
+    }else{
+      firstTry['m'+sel]=1;(wrong[sel]=wrong[sel]||[]).push(btn.textContent);btn.classList.add('wrong','shake');fb('Not that one. Try again.','warn');
+      setTimeout(function(){btn.classList.remove('wrong','shake');},500);
+    }
+  }
+  function fb(m,c){var f=$('#fb');f.textContent=m;f.className=c;}
+  draw();
+}
+
+/* ---- generic one-at-a-time question runner (true/false, quiz, fill in, sort, detective) ---- */
+function spoken(t){return t.replace(/____/g,'blank');}
+function runQs(title,intro,items,nextStep,shuffleOpts){
+  var i=0;S.max+=items.length*10;
+  function show(){
+    var it=items[i],first=true,locked=false,tried=[];
+    var order=it.opts.map(function(o,k){return {o:o,k:k};});
+    if(shuffleOpts)order=shuffle(order);
+    stage.innerHTML='<div class="card"><h2>'+esc(title)+'</h2><p class="muted">'+esc(intro)+' ('+(i+1)+' of '+items.length+')</p>'+bar(i,items.length)+
+     (it.fig||'')+
+     '<div class="big">'+esc(it.q)+' <button class="say" id="sq" aria-label="Read aloud">🔊</button></div><div id="opts">'+
+     order.map(function(x){return '<button class="opt" data-k="'+x.k+'">'+esc(x.o)+'</button>';}).join('')+'</div><div id="fb"></div><div class="row"><button class="b green" id="next" style="display:none">'+(i===items.length-1?'Finish &rarr;':'Next &rarr;')+'</button></div></div>';
+    $('#sq').onclick=function(){say(spoken(it.q));};
+    stage.querySelectorAll('.opt').forEach(function(b){b.onclick=function(){
+      if(locked)return;var k=+b.dataset.k;
+      if(k===it.ans){
+        locked=true;b.classList.add('right');if(first)S.pts+=10;
+        tried.push(it.opts[k]);LOG.push({sec:title,q:it.q,tried:tried.slice(),answer:it.opts[it.ans],first:first});
+        stage.querySelectorAll('.opt').forEach(function(x){x.disabled=true;});
+        var f=$('#fb');f.className='good';f.textContent=(first?'✓ Correct! ':'✓ Got it! ')+it.why;
+        $('#next').style.display='';$('#next').onclick=function(){i++;if(i<items.length)show();else go(nextStep);};
+      }else{
+        first=false;tried.push(it.opts[k]);b.classList.add('wrong','shake');b.disabled=true;
+        var f2=$('#fb');f2.className='warn';f2.textContent='Not quite. Try another one.';
+      }
+    };});
+  }
+  show();
+}
+function runTF(){runQs('4. True or False','Tap True or False.',TF,4,false);}
+function runMC(){runQs('5. Quiz','Pick the best answer.',MC,5,true);}
+function runFill(){runQs('6. Fill in the blank','Pick the word that fits.',FILL,6,true);}
+
+/* ---- 7. story order: tap what happened next ---- */
+function runOrder(){
+  var pos=0,pool=shuffle(ORDER.map(function(t,i){return {t:t,i:i};})),missTry=[];
+  S.max+=ORDER.length*10;
+  stage.innerHTML='<div class="card"><h2>7. Story order</h2><p class="muted">Tap what happened <b>first</b>, then what happened next. Tap 🔊 to hear them.</p>'+
+   '<div id="done" class="tl"></div><div id="opts"></div><div id="fb"></div><div class="row"><button class="b green" id="next" style="display:none">Next &rarr;</button></div></div>';
+  function draw(){
+    $('#done').innerHTML=ORDER.slice(0,pos).map(function(t,i){return '<div class="rule ok"><span class="n">'+(i+1)+'</span><div>'+esc(t)+'</div></div>';}).join('');
+    var left=pool.filter(function(x){return x.i>=pos;});
+    $('#opts').innerHTML=left.length?'<p class="muted" style="margin:10px 0 0">'+(pos?'What happened next? (#'+(pos+1)+')':'What happened first?')+'</p>'+left.map(function(x){return '<div class="row" style="flex-wrap:nowrap;gap:8px"><button class="opt" data-i="'+x.i+'">'+esc(x.t)+'</button><button class="say" data-h="'+x.i+'" aria-label="Read aloud">🔊</button></div>';}).join(''):'';
+    stage.querySelectorAll('.say[data-h]').forEach(function(b){b.onclick=function(){say(ORDER[+b.dataset.h]);};});
+    stage.querySelectorAll('.opt[data-i]').forEach(function(b){b.onclick=function(){
+      var i=+b.dataset.i;
+      if(i===pos){
+        var first=!missTry.length;if(first)S.pts+=10;
+        LOG.push({sec:'7. Story order',q:'Event #'+(pos+1),tried:missTry.concat([ORDER[i]]),answer:ORDER[i],first:first});
+        missTry=[];pos++;draw();
+        if(pos===ORDER.length){fb('✓ You put the whole story in order! ⭐','good');$('#next').style.display='';$('#next').onclick=function(){go(7);};}
+        else fb('✓ Yes!','good');
+      }else{
+        missTry.push(ORDER[i]);b.classList.add('wrong','shake');fb('Not yet. That happens later. Try another one.','warn');
+        setTimeout(function(){b.classList.remove('wrong','shake');},500);
+      }
+    };});
+  }
+  function fb(m,c){var f=$('#fb');f.textContent=m;f.className=c;}
+  draw();
+}
+
+/* ---- 8. think: short answers with a sentence starter ---- */
+function runThink(){
+  var i=0;S.max+=THINK.length*10;
+  function words(t){return String(t).trim().split(/\s+/).filter(Boolean).length;}
+  function show(){
+    var it=THINK[i],checked=false;
+    stage.innerHTML='<div class="card"><h2>8. Think and answer</h2><p class="muted">Finish the sentence. A few words is enough. ('+(i+1)+' of '+THINK.length+')</p>'+bar(i,THINK.length)+
+     '<div class="big">'+esc(it.q)+' <button class="say" id="sq" aria-label="Read aloud">🔊</button></div>'+
+     '<div class="tip">💡 Don’t like typing? Tap the 🎤 on your keyboard and say your answer.</div>'+
+     '<textarea id="ans" rows="3" style="margin-top:10px">'+esc(it.start)+' </textarea>'+
+     '<div id="fb"></div><div class="row" style="margin-top:10px"><button class="b green" id="chk">Done</button><button class="b green" id="next" style="display:none">'+(i===THINK.length-1?'Finish &rarr;':'Next &rarr;')+'</button></div></div>';
+    $('#sq').onclick=function(){say(it.q+' Start with: '+it.start);};
+    var ta=$('#ans');
+    try{ta.focus();ta.setSelectionRange(ta.value.length,ta.value.length);}catch(e){}
+    $('#chk').onclick=function(){
+      if(checked)return;
+      var v=ta.value.trim(),extra=words(v)-words(it.start);
+      if(v.indexOf(it.start)!==0)extra=words(v);
+      if(extra<2){var f0=$('#fb');f0.className='warn';f0.textContent='Add a few more words to finish the sentence.';return;}
+      checked=true;S.pts+=10;ta.readOnly=true;
+      LOG.push({sec:'8. Think and answer',q:it.q,tried:[v],answer:'Example: '+it.model,first:true});
+      var f=$('#fb');f.className='good';f.innerHTML='✓ Nice thinking! <span style="font-weight:400">Here is one example answer: '+esc(it.model)+'</span>';
+      $('#chk').style.display='none';$('#next').style.display='';$('#next').onclick=function(){i++;if(i<THINK.length)show();else go(8);};
+    };
+  }
+  show();
+}
+
+
+/* ---- submit + save ---- */
+function pad(n){return (n<10?'0':'')+n;}
+function stamp(d){return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())+'_'+pad(d.getHours())+pad(d.getMinutes());}
+function buildReport(name,when){
+  var pct=S.max?Math.round(S.pts/S.max*100):0,ok=LOG.filter(function(e){return e.first;}).length;
+  var L=['A MYSTERY MAN (NIGHTMARE ON THE TRACKS, PART 1) - STUDENT ANSWERS','',
+    'Name: '+(name||'(not entered)'),'Date: '+when.toLocaleString(),
+    'Score: '+S.pts+' of '+S.max+' points ('+pct+'%)','Right on the first try: '+ok+' of '+LOG.length+' questions','',
+    '[OK] = right on the first try     [RETRY] = needed more than one try     [PRACTICE] = could not say it in two tries     [NOT TESTED] = no microphone'];
+  var pw=LOG.filter(function(e){return e.practice;}).map(function(e){return e.q.replace('Say the word: ','');});
+  if(pw.length)L.splice(6,0,'Words to practice: '+pw.join(', '));
+  var sec='';
+  LOG.forEach(function(e){
+    if(e.sec!==sec){sec=e.sec;L.push('');L.push('== '+sec+' ==');}
+    L.push((e.practice?'[PRACTICE] ':(e.notTested?'[NOT TESTED] ':(e.first?'[OK]    ':'[RETRY] ')))+e.q);
+    L.push('        Her answers: '+e.tried.join('  >  '));
+    L.push('        Correct answer: '+e.answer);
+  });
+  return L.join('\n')+'\n';
+}
+function saveFile(text,fname){
+  try{var bl=new Blob([text],{type:'text/plain'});var a=document.createElement('a');a.href=URL.createObjectURL(bl);a.download=fname;
+    document.body.appendChild(a);a.click();setTimeout(function(){try{URL.revokeObjectURL(a.href);}catch(e){}a.remove();},800);return true;}catch(e){return false;}
+}
+function done(){
+  var pct=S.max?Math.round(S.pts/S.max*100):0,cfg=W.gh.cfg(),sending=false;
+  stage.innerHTML='<div class="card"><h2>9. Submit your answers</h2><div class="big">You finished everything! You earned <b>'+S.pts+'</b> of '+S.max+' points ('+pct+'%).</div>'+
+   '<p class="muted">Type your first name, then press Submit. '+(cfg?'Your answers will be saved to GitHub.':'GitHub saving is not set up yet, so a file will be downloaded instead. A parent can set it up on the Home page, under Parent settings.')+'</p>'+
+   '<input type="text" id="nm" placeholder="Your first name" autocomplete="given-name" style="max-width:360px">'+
+   '<div class="row" style="margin-top:14px"><button class="b green" id="sub">✅ Submit my answers</button></div><div id="after"></div></div>';
+  $('#sub').onclick=function(){
+    $('#sub').disabled=true;
+    var when=new Date(),name=($('#nm').value||'').trim();
+    var report=buildReport(name,when);
+    var fname='mystery-man-answers_'+(name?name.replace(/[^A-Za-z0-9]+/g,'-')+'_':'')+stamp(when)+'.txt';
+    var rec={id:when.getTime(),when:when.toISOString(),name:name,pts:S.pts,max:S.max,pct:pct,file:fname,report:report,log:LOG.slice(),ghStatus:cfg?'pending':'none',subject:'ELA',exercise:'mystery-man',title:'A Mystery Man (Nightmare on the Tracks, Part 1)',dir:W.dir('ELA')};
+    W.subs.add(rec);
+    var prev=lsGet('ex_mystery1',{best:0})||{best:0},best=prev.best||0,gain=Math.max(0,S.pts-best);
+    if(gain>0){addXP(gain);lsSet('ex_mystery1',{best:S.pts,when:when.toISOString()});}
+    var starLine=(gain>0?'⭐ <b>+'+gain+'</b> added to your stars. ':'You already earned this many stars before. Try again to beat your best of '+best+'. ');
+    function buttons(retry){
+      return '<div class="row" style="margin-top:14px"><a class="b" href="index.html">&larr; Back to ELA</a>'+(retry?'<button class="b" id="retry">↻ Try sending again</button>':'')+
+        '<button class="b alt" id="dl">⬇ Download answers</button><button class="b alt" id="again">Play again</button></div>';
+    }
+    function facts(){return '<h2 style="margin-top:14px">Fun facts</h2><ul style="padding-left:20px">'+FACTS.map(function(f){return '<li style="margin:6px 0">'+esc(f)+'</li>';}).join('')+'</ul>';}
+    function wire(){
+      $('#dl').onclick=function(){saveFile(report,fname);};
+      $('#again').onclick=function(){S={step:0,pts:0,max:0};LOG=[];go(0);};
+      if($('#retry'))$('#retry').onclick=send;
+    }
+    function send(){
+      if(sending)return;sending=true;
+      $('#after').innerHTML='<div id="fb" class="warn" style="display:block;margin-top:14px">Sending your answers to GitHub…</div>';
+      W.gh.saveRecord(rec).then(function(r){
+        sending=false;
+        if(r.ok){
+          W.subs.patch(rec.id,{ghStatus:'sent',ghErr:''});
+          $('#after').innerHTML='<div id="fb" class="good" style="display:block;margin-top:14px">✓ Submitted! Your answers are saved to GitHub.</div><p>'+starLine+'</p>'+facts()+buttons(false);
+        }else{
+          W.subs.patch(rec.id,{ghStatus:'pending',ghErr:W.gh.msg(r)});
+          $('#after').innerHTML='<div id="fb" class="warn" style="display:block;margin-top:14px">Your answers are saved on this device, but they did not reach GitHub yet.</div>'+
+            '<p>'+esc(W.gh.msg(r))+'</p><p class="muted">They will be sent automatically the next time this subject page or the Home page is opened with internet, or press the button.</p><p>'+starLine+'</p>'+buttons(true);
+        }
+        wire();
+      });
+    }
+    if(cfg){send();}
+    else{
+      var okDl=saveFile(report,fname);
+      $('#after').innerHTML='<div id="fb" class="good" style="display:block;margin-top:14px">✓ Submitted!</div><p>'+starLine+'</p>'+
+        '<p class="muted">GitHub saving is not set up, so your answers were saved on this device'+(okDl?' and a file named <b>'+esc(fname)+'</b> was downloaded.':'. Use the download button.')+'</p>'+facts()+buttons(false);
+      wire();
+    }
+  };
+}
+
+if(!VOCAB.length){
+  stage.innerHTML='<div class="card"><h2>One file is missing</h2><div class="banner"><b>The word list file (<code>words.js</code>) was not found.</b> Upload <code>words.js</code> to the <b>ELA</b> folder of the repository, then refresh this page.</div><a class="b alt" href="index.html">&larr; Back to ELA</a></div>';
+}else go(0);
+})();
+</script>
+</body>
+</html>
