@@ -1,0 +1,687 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>DNA: The Code of Life</title>
+<script src="../shared.js?v=20261108a" data-home="../index.html"></script>
+<script src="words.js?v=20261114a"></script>
+<style>
+:root{--bg:#f6f4ee;--card:#fff;--ink:#22303c;--muted:#5d6b78;--brand:#2f6fed;--brand2:#e8f0ff;--good:#1f9d63;--goodbg:#dff5ea;--bad:#d64545;--badbg:#fde6e6;--warn:#b86e00;--warnbg:#fff1d6;--line:#e1ddd0}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Atkinson Hyperlegible","Trebuchet MS",Verdana,system-ui,sans-serif;font-size:18px;-webkit-tap-highlight-color:transparent;touch-action:manipulation;padding-bottom:env(safe-area-inset-bottom)}
+header{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:10px 18px;background:#fff;border-bottom:2px solid var(--line);position:sticky;top:0;z-index:5}
+header h1{font-size:22px;margin:0;flex:1}
+#xp{font-weight:700;background:var(--warnbg);color:var(--warn);padding:6px 12px;border-radius:99px}
+main{max-width:860px;margin:0 auto;padding:18px}
+.card{background:var(--card);border:2px solid var(--line);border-radius:18px;padding:18px;margin-bottom:16px}
+h2{margin:0 0 10px;font-size:22px}
+a.b,button.b{display:inline-block;text-decoration:none;font:inherit;font-weight:700;border:0;border-radius:14px;padding:12px 18px;cursor:pointer;background:var(--brand);color:#fff;min-height:44px}
+.b.alt{background:var(--brand2);color:var(--brand)}
+.b.green{background:var(--good)}
+.b:disabled{opacity:.4;cursor:not-allowed}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.muted{color:var(--muted)}
+.steps{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.steps span{flex:1 1 auto;text-align:center;padding:6px 8px;border-radius:99px;background:#ece8dc;color:var(--muted);font-size:14px;font-weight:700;white-space:nowrap}
+.steps span.on{background:var(--brand);color:#fff}
+.steps span.done{background:var(--goodbg);color:var(--good)}
+.bar{height:12px;background:#ece8dc;border-radius:99px;overflow:hidden;margin:8px 0 14px}
+.bar>i{display:block;height:100%;background:var(--good);width:0;transition:width .3s}
+.big{font-size:24px;line-height:1.5}
+.opt{display:block;width:100%;text-align:left;font:inherit;font-size:20px;padding:14px 16px;margin:8px 0;border:2px solid var(--line);border-radius:14px;background:#fff;cursor:pointer;color:var(--ink)}
+.opt:hover:not(:disabled){border-color:var(--brand)}
+.opt.right{background:var(--goodbg);border-color:var(--good)}
+.opt.wrong{background:var(--badbg);border-color:var(--bad)}
+.opt.sel{border-color:var(--brand);background:var(--brand2)}
+.opt:disabled{cursor:default;color:var(--ink)}
+#fb{font-size:20px;font-weight:700;padding:12px 14px;border-radius:14px;margin:10px 0;display:none}
+#fb.good{display:block;background:var(--goodbg);color:var(--good)}
+#fb.warn{display:block;background:var(--warnbg);color:var(--warn)}
+.wc{border:2px solid var(--line);border-radius:16px;padding:12px 14px;background:#fff}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
+.wc h3{margin:0 0 4px;font-size:22px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.say{border:0;background:var(--brand2);color:var(--brand);border-radius:99px;width:40px;height:40px;font-size:18px;cursor:pointer;flex:none}
+.ex{font-style:italic;color:var(--muted);margin-top:4px}
+.mt{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.mt .opt{margin:6px 0;font-size:18px}
+.mt .opt.done{background:var(--goodbg);border-color:var(--good);opacity:.75}
+@keyframes shake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.shake{animation:shake .3s}
+.pz{display:flex;gap:22px;flex-wrap:wrap;align-items:center}
+.ps{border-collapse:collapse}
+.ps td,.ps th{border:2px solid var(--brand);width:84px;height:62px;text-align:center;font-size:26px;font-weight:800}
+.ps th{background:#dce6f5}
+.ps th.side{background:#fbe3c6}
+.ps td button{width:100%;height:100%;border:0;background:#fff;font:inherit;font-weight:800;color:var(--ink);cursor:pointer}
+.ps td button.q{color:#b8b8b8}
+.ps td button.ok{background:var(--goodbg);color:var(--good)}
+.ps td button.no{background:var(--badbg);color:var(--bad)}
+.pct{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0}
+.pct .opt{width:auto;margin:0;padding:10px 16px}
+.badge{display:inline-block;padding:4px 12px;border-radius:99px;font-weight:700;background:var(--brand2);color:var(--brand);margin:0 6px 6px 0}
+.rs{color:var(--brand);font-weight:700;margin:2px 0 4px}
+.ex b{color:var(--ink)}
+.slots{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0}
+.slot{width:46px;height:54px;border:2px solid var(--brand);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:800;background:#fff}
+.slot.ok{background:var(--goodbg);border-color:var(--good);color:var(--good)}
+.slot.no{background:var(--badbg);border-color:var(--bad);color:var(--bad)}
+.gap{width:22px}
+.tiles{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.tile{width:50px;height:54px;border:2px solid var(--line);border-radius:12px;background:#fff;font:inherit;font-size:24px;font-weight:800;color:var(--ink);cursor:pointer}
+.tile:hover:not(:disabled){border-color:var(--brand)}
+.tile:disabled{opacity:.25;cursor:default}
+.sent{background:#eef3fb;border-radius:12px;padding:10px 12px;margin:10px 0}
+@media (max-width:640px){
+  .slot{width:36px;height:46px;font-size:21px}.tile{width:42px;height:48px;font-size:20px}
+  body{font-size:16px}
+  header{padding:8px 10px}header h1{font-size:18px}
+  main{padding:10px}.card{padding:12px;border-radius:14px}
+  .opt{font-size:17px;padding:12px}.big{font-size:20px}
+  .mt{grid-template-columns:1fr}
+  .ps td,.ps th{width:70px;height:56px;font-size:22px}
+  .steps span{font-size:12px;padding:5px 6px}
+}
+.bx{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:8px;color:#fff;font-weight:800;font-size:20px;vertical-align:middle;border:2px solid transparent}
+.bx.big{width:46px;height:52px;font-size:26px}
+.bx.empty{background:#fff;border:2px dashed var(--brand);color:var(--ink);font:inherit;font-weight:800;font-size:26px;cursor:pointer;padding:0}
+.bA{background:#e53935!important;color:#fff!important}.bT{background:#f2b705!important;color:#fff!important}.bG{background:#2f6fd6!important;color:#fff!important}.bC{background:#43a047!important;color:#fff!important}.bU{background:#8e24aa!important;color:#fff!important}
+.bx.empty.bA,.bx.empty.bT,.bx.empty.bG,.bx.empty.bC,.bx.empty.bU{border-style:solid;border-color:#fff}
+.bx.ok{box-shadow:0 0 0 4px var(--good)}.bx.no{box-shadow:0 0 0 4px var(--bad)}
+.strand{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0 12px}
+.lbl{font-weight:700;color:var(--muted)}
+.tile.bA,.tile.bT,.tile.bG,.tile.bC,.tile.bU{border:0}
+.rule{background:#f1e8fa;border-radius:12px;padding:10px 12px;margin:8px 0 12px;line-height:2}
+.flow{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.fs{color:#fff;border-radius:12px;padding:8px 10px;text-align:center;min-width:98px;flex:1 1 98px}
+.fs b{display:block;font-size:19px}.fs small{font-size:13px;line-height:1.2;display:block}
+.arr{color:var(--muted);font-size:22px}
+.an{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}
+.an div{background:#eef3fb;border-radius:12px;padding:8px 10px;display:flex;flex-direction:column}
+.an b{font-size:20px}
+.mm{display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start}
+.monbox{width:240px;max-width:100%;background:#fffdf5;border:2px solid var(--line);border-radius:16px;padding:6px}
+.mon{width:100%;height:auto;display:block}
+.cc{border-collapse:collapse;width:100%;margin-top:8px;font-size:16px}
+.cc th,.cc td{border:1px solid var(--line);padding:6px 8px;text-align:left}
+.cc tr:first-child th{background:#fce4ec}
+.cc tr.cur{background:#fff1d6;outline:3px solid var(--warn)}
+.cc td b{color:#c2185b}
+.cd{color:#c2185b;letter-spacing:2px}
+@media (max-width:640px){.bx.big{width:36px;height:44px;font-size:21px}.bx.empty{font-size:21px}.cc{font-size:14px}.cc td,.cc th{padding:4px}.monbox{width:100%}}
+</style>
+</head>
+<body>
+<header>
+  <a class="b alt" href="index.html" id="back">&larr; Science</a>
+  <h1>🧬 DNA: The Code of Life</h1>
+  <div id="xp">⭐ 0</div>
+</header>
+<main>
+  <div class="steps" id="steps"></div>
+  <div id="stage"></div>
+</main>
+
+<script>
+(function(){
+'use strict';
+var $=function(s){return document.querySelector(s);};
+var esc=function(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});};
+var escRe=function(s){return s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');};
+var shuffle=function(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}return a;};
+
+/* ---- storage and stars come from ../shared.js (same keys as the rest of the hub) ---- */
+function lsGet(k,d){return W.store.get(k,d);}
+function lsSet(k,v){W.store.set(k,v);}
+function totalXP(){return W.xp.get();}
+function addXP(n){W.xp.add(n);showXP();}
+function showXP(){$('#xp').textContent='⭐ '+totalXP();}
+showXP();
+
+/* ---- read aloud ---- */
+function say(t,rate){
+  if(!('speechSynthesis' in window))return;
+  try{speechSynthesis.cancel();var u=new SpeechSynthesisUtterance(t);u.rate=rate||0.85;u.lang='en-US';
+    var vs=speechSynthesis.getVoices();var v=vs.filter(function(x){return /en[-_]US/i.test(x.lang);})[0]||vs.filter(function(x){return /^en/i.test(x.lang);})[0];
+    if(v)u.voice=v;speechSynthesis.speak(u);}catch(e){}
+}
+function stopSay(){try{if('speechSynthesis' in window)speechSynthesis.cancel();}catch(e){}}
+
+/* ---- content ---- */
+var VOCAB=(window.WORDS||[]).filter(function(x){return !x.sets||x.sets.indexOf('dna')>=0;}).map(function(x){return [x.w,x.def,x.ex,x.say];});   // list lives in words.js
+
+var MATCH=[
+ ['nucleus','Stores the DNA in the cell'],
+ ['gene','A section of DNA for one trait'],
+ ['chromosome','A packed bundle of DNA, like a chapter'],
+ ['double helix','The twisted-ladder shape of DNA'],
+ ['mRNA','Copies the instructions from DNA'],
+ ['tRNA','Brings protein pieces to the mRNA'],
+ ['ribosome','Reads the mRNA and builds the protein'],
+ ['protein','Built from DNA instructions; gives us traits']
+];
+var TF=[
+ {q:'DNA is stored in the nucleus of the cell.',opts:['True','False'],ans:0,why:'Yes! The nucleus keeps the DNA safe.'},
+ {q:'Adenine (A) always pairs with Cytosine (C).',opts:['True','False'],ans:1,why:'A pairs with T. C pairs with G.'},
+ {q:'Genes are found on chromosomes.',opts:['True','False'],ans:0,why:'Chromosomes are like chapters, and genes are the paragraphs inside them.'},
+ {q:'mRNA brings small protein pieces to build the protein.',opts:['True','False'],ans:1,why:'tRNA brings the pieces. mRNA copies the instructions.'},
+ {q:'RNA uses the letter U instead of T.',opts:['True','False'],ans:0,why:'RNA has U (uracil) where DNA has T.'},
+ {q:'Proteins give living things their traits.',opts:['True','False'],ans:0,why:'DNA is the recipe, and proteins make the traits.'},
+ {q:'Every species has exactly the same order of DNA letters.',opts:['True','False'],ans:1,why:'The order changes from species to species. That makes each one unique.'},
+ {q:'The sides of the DNA ladder are made of sugar and phosphate.',opts:['True','False'],ans:0,why:'Like the orange and green beads in our model.'}
+];
+var MC=[
+ {q:'What does DNA stand for?',opts:['Deoxyribonucleic Acid','Double Nucleus Acid','Dino Nature Animal','Deep Nitrogen Atom'],ans:0,why:'D-N-A: DeoxyriboNucleic Acid.'},
+ {q:'Where is DNA stored?',opts:['In the nucleus','In the skin only','In the ribosome','Outside the cell'],ans:0,why:'DNA stays in the nucleus.'},
+ {q:'Which base pairs with Guanine (G)?',opts:['C','A','T','U'],ans:0,why:'G always pairs with C.'},
+ {q:'Which molecule COPIES the instructions from DNA?',opts:['mRNA','tRNA','Protein','Chromosome'],ans:0,why:'m is for messenger. It copies and carries the message.'},
+ {q:'If DNA is an instruction manual, a GENE is like a...',opts:['paragraph','whole library','book cover','page number'],ans:0,why:'A gene is one paragraph of instructions for one trait.'},
+ {q:'Why is DNA evidence of evolution?',opts:['All living things use the same 4-letter code','DNA is always green','Only humans have DNA','DNA never changes'],ans:0,why:'Every living thing uses A, T, C and G, so they are related.'}
+];
+var FILL=[
+ {q:'DNA is kept safe inside the ____ of the cell.',opts:['nucleus','ribosome','protein','codon'],ans:0,why:'The nucleus.'},
+ {q:'DNA is packed into structures called ____.',opts:['chromosomes','proteins','codons','ribosomes'],ans:0,why:'Chromosomes.'},
+ {q:'Adenine (A) always pairs with ____.',opts:['T','C','G','U'],ans:0,why:'A pairs with T.'},
+ {q:'Cytosine (C) always pairs with ____.',opts:['G','A','T','U'],ans:0,why:'C pairs with G.'},
+ {q:'When you twist the DNA ladder, it makes a ____ shape.',opts:['double helix','circle','square','codon'],ans:0,why:'A double helix.'},
+ {q:'____ carries protein pieces to the mRNA.',opts:['tRNA','DNA','The nucleus','A gene'],ans:0,why:'tRNA is the transporter.'},
+ {q:'A 3-letter word in the mRNA code is called a ____.',opts:['codon','base','gene','cell'],ans:0,why:'A codon, like AUG.'}
+];
+var PAIR={A:'T',T:'A',C:'G',G:'C'},TOMRNA={A:'U',T:'A',C:'G',G:'C'};
+var CODE=[
+ {kind:'pair',dna:'ATGCCATG'},
+ {kind:'pair',dna:'GGCATTAC'},
+ {kind:'mrna',dna:'TACGGA'},
+ {kind:'mrna',dna:'CATTGC'}
+];
+var GENES=[
+ {g:'Body',k:'body',dna:'TAC',opts:[['AUG','Green glob','green'],['AAA','Purple puff','purple'],['CCC','Orange blob','orange']]},
+ {g:'Eyes',k:'eyes',dna:'CGT',opts:[['UUU','1 big eye','1'],['CAG','2 eyes','2'],['GCA','6 eyes','6']]},
+ {g:'Horns',k:'horns',dna:'ACC',opts:[['ACU','No horns','none'],['UGG','2 curved horns','curved'],['CUA','Spiky horns','spiky']]},
+ {g:'Mouth',k:'mouth',dna:'TCG',opts:[['GAU','Big smile','smile'],['UCC','Sharp fangs','fangs'],['AGC','Tongue out','tongue']]},
+ {g:'Arms',k:'arms',dna:'GCA',opts:[['CGU','2 red arms','2'],['UAU','4 arms','4'],['GUC','Tentacles','tent']]},
+ {g:'Feet',k:'feet',dna:'TGG',opts:[['ACC','2 flipper feet','flip'],['GGG','3 claw feet','claw'],['CAU','No feet (it floats!)','none']]}
+];
+var FACTS=[
+ 'If you unwound the DNA from just ONE of your cells, it would be about 2 meters (over 6 feet) long!',
+ 'You share about 60% of your DNA with a banana. All living things use the same A, T, C, G code.',
+ 'Humans share about 99.9% of their DNA with each other. The tiny 0.1% makes each person unique.',
+ 'The Monster Maker game has over 240,000 possible monsters, all built from a few codes!',
+ 'If you typed out all your DNA letters, they would fill about 1,000 books with 1,000 pages each.'
+];
+var NAMES=['Learn','Say & Spell','Match','True / False','Quiz','Fill in','Code Breaker','Monster Maker','Submit'];
+
+/* ---- state ---- */
+var S={step:0,pts:0,max:0};
+var LOG=[];   // every answer she gives, for the saved answer file
+var stage=$('#stage');
+function renderSteps(){
+  $('#steps').innerHTML=NAMES.map(function(n,i){return '<span class="'+(i===S.step?'on':(i<S.step?'done':''))+'">'+(i<S.step?'✓ ':'')+esc(n)+'</span>';}).join('');
+}
+function go(n){stopSay();S.step=n;renderSteps();window.scrollTo(0,0);[learn,saySpell,match,runTF,runMC,runFill,codeBreaker,monster,done][n]();}
+function bar(i,n){return '<div class="bar"><i style="width:'+Math.round(i/n*100)+'%"></i></div>';}
+function baseBox(c,cls){return '<span class="bx b'+c+(cls?' '+cls:'')+'">'+c+'</span>';}
+
+/* ---- 1. learn ---- */
+function hl(sentence,word){return esc(sentence).replace(new RegExp('('+escRe(word)+')','ig'),'<b>$1</b>');}
+var INTRO1='All living things are made of cells. Inside each cell is a nucleus, and the nucleus holds DNA, the code of life. DNA is packed into chromosomes. Chromosomes hold genes, and each gene gives the instructions for a trait.';
+var INTRO2='DNA uses only four letters, called bases: A, T, C and G. A always pairs with T, and C always pairs with G. RNA is DNA’s helper. It uses U instead of T.';
+var INTRO3='Step 1, DNA holds the code. Step 2, m R N A copies it. Step 3, the ribosome reads it three letters at a time. Step 4, t R N A brings the protein pieces. Step 5, the protein is built. Step 6, the protein makes a trait.';
+function learn(){
+  var flow=[['DNA','the code, stays in the nucleus','#5b2c83'],['mRNA','copies the instructions','#c2185b'],['Ribosome','reads 3 letters at a time','#1f7a8c'],['tRNA','brings protein pieces','#e07a1f'],['Protein','built piece by piece','#2f6fd6'],['Trait','horns, eye color, dimples','#3e9b3e']];
+  stage.innerHTML='<div class="card"><h2>1. Learn: DNA, the Code of Life</h2>'+
+   '<div class="card" style="background:#f1e8fa"><div class="big">All living things are made of <b>cells</b>. The <b>nucleus</b> holds <b>DNA</b>. DNA is packed into <b>chromosomes</b>. Chromosomes hold <b>genes</b>. Each gene gives the instructions for a <b>trait</b>.</div><div style="margin-top:8px"><button class="say" id="i1" aria-label="Read aloud">🔊</button></div></div>'+
+   '<div class="card"><h3 style="margin:0 0 8px">📖 DNA is an instruction manual</h3><div class="an">'+
+     [['📚 Whole manual','DNA'],['📑 Chapters','Chromosomes'],['📝 Paragraphs','Genes'],['🔤 Letters','Bases A T C G']].map(function(a){return '<div><span class="muted">'+a[0]+'</span><b>'+a[1]+'</b></div>';}).join('')+'</div></div>'+
+   '<div class="card" style="background:#eef3fb"><div class="big">4 letters: '+baseBox('A')+' '+baseBox('T')+' '+baseBox('C')+' '+baseBox('G')+'<br>'+baseBox('A')+' pairs with '+baseBox('T')+' &nbsp; '+baseBox('C')+' pairs with '+baseBox('G')+'<br>RNA uses '+baseBox('U')+' instead of '+baseBox('T')+'</div><div style="margin-top:8px"><button class="say" id="i2" aria-label="Read aloud">🔊</button></div></div>'+
+   '<div class="card"><h3 style="margin:0 0 8px">🧬 From DNA to a trait <button class="say" id="i3" aria-label="Read aloud">🔊</button></h3><div class="flow">'+
+     flow.map(function(f,i){return (i?'<span class="arr">&#10140;</span>':'')+'<div class="fs" style="background:'+f[2]+'"><b>'+f[0]+'</b><small>'+f[1]+'</small></div>';}).join('')+'</div></div>'+
+   '<h3>Words to know</h3><p class="muted">Tap 🔊 to hear the word. Tap 💬 to hear it in a sentence.</p>'+
+   '<div class="grid">'+VOCAB.map(function(v,i){return '<div class="wc"><h3><span>'+esc(v[0])+(W.practice.list()[v[0].toLowerCase()]?' <span class="badge wait">🔁 practice</span>':'')+'</span><span class="row" style="gap:6px;flex-wrap:nowrap"><button class="say" data-w="'+i+'" aria-label="Hear '+esc(v[0])+'">🔊</button><button class="say" data-s="'+i+'" aria-label="Hear it in a sentence">💬</button></span></h3>'+
+     '<div class="rs">say it: '+esc(v[3])+'</div><div>'+esc(v[1])+'</div><div class="ex">In a sentence: '+hl(v[2],v[0])+'</div></div>';}).join('')+'</div>'+
+   '<div class="row" style="margin-top:16px"><button class="b green" id="next">I’m ready &rarr;</button></div></div>';
+  $('#i1').onclick=function(){say(INTRO1);};$('#i2').onclick=function(){say(INTRO2);};$('#i3').onclick=function(){say(INTRO3);};
+  stage.querySelectorAll('.say[data-w]').forEach(function(b){b.onclick=function(){var v=VOCAB[+b.dataset.w];say(spoken(v[0]),0.7);};});
+  stage.querySelectorAll('.say[data-s]').forEach(function(b){b.onclick=function(){say(spoken(VOCAB[+b.dataset.s][2]));};});
+  $('#next').onclick=function(){go(1);};
+}
+// read letter words like mRNA as letters
+function spoken(t){return String(t).replace(/\bmRNA\b/g,'m R N A').replace(/\btRNA\b/g,'t R N A').replace(/\bRNA\b/g,'R N A').replace(/\bDNA\b/g,'D N A').replace(/\b([ATCGU]{3})\b/g,function(m){return m.split('').join(' ');});}
+
+/* ---- letter-slot puzzle used by Code Breaker and Monster Maker ---- */
+// opts: el, given (string or null), want (string), letters (array of tile letters), onDone(firstTry, tries)
+function slotPuzzle(el,o){
+  var slots=o.want.split('').map(function(){return '';}),marks=null,tries=[],solved=false;
+  el.innerHTML=(o.given?'<div class="lbl">'+esc(o.givenLabel)+'</div><div class="strand">'+o.given.split('').map(function(c){return baseBox(c,'big');}).join('')+'</div>':'')+
+    '<div class="lbl">'+esc(o.wantLabel)+'</div><div class="strand" id="sl"></div>'+
+    '<div class="tiles">'+o.letters.map(function(c){return '<button class="tile b'+c+'" data-l="'+c+'">'+c+'</button>';}).join('')+'</div>'+
+    '<div class="row"><button class="b green" id="pchk" disabled>Check</button><button class="b alt" id="pundo">⌫ Undo</button><button class="b alt" id="pclr">Clear</button></div><div class="muted" style="margin-top:6px">Tap a filled box to empty it.</div>';
+  function draw(){
+    el.querySelector('#sl').innerHTML=slots.map(function(c,i){var m=marks?(marks[i]?' ok':' no'):'';return '<button class="bx big empty'+(c?' b'+c:'')+m+'" data-i="'+i+'">'+(c||'')+'</button>';}).join('');
+    el.querySelectorAll('#sl [data-i]').forEach(function(b){b.onclick=function(){if(solved)return;slots[+b.dataset.i]='';marks=null;draw();};});
+    el.querySelector('#pchk').disabled=solved||slots.indexOf('')>=0;
+  }
+  el.querySelectorAll('.tile').forEach(function(b){b.onclick=function(){
+    if(solved)return;var k=slots.indexOf('');if(k<0)return;slots[k]=b.dataset.l;marks=null;draw();};});
+  el.querySelector('#pundo').onclick=function(){if(solved)return;for(var k=slots.length-1;k>=0;k--){if(slots[k]){slots[k]='';break;}}marks=null;draw();};
+  el.querySelector('#pclr').onclick=function(){if(solved)return;slots=slots.map(function(){return '';});marks=null;draw();};
+  el.querySelector('#pchk').onclick=function(){
+    var a=slots.join('');tries.push(a);
+    marks=slots.map(function(c,i){return c===o.want[i];});
+    if(a===o.want){solved=true;draw();el.querySelectorAll('.tile').forEach(function(t){t.disabled=true;});
+      el.querySelector('#pundo').disabled=el.querySelector('#pclr').disabled=true;o.onDone(tries.length===1,tries);}
+    else{draw();o.onWrong&&o.onWrong();}
+  };
+  draw();
+}
+
+/* ---- 7. code breaker ---- */
+function codeBreaker(){
+  var i=0;S.max+=CODE.length*10;
+  function show(){
+    var c=CODE[i],isPair=c.kind==='pair';
+    var want=c.dna.split('').map(function(x){return (isPair?PAIR:TOMRNA)[x];}).join('');
+    stage.innerHTML='<div class="card"><h2>7. Code Breaker</h2><p class="muted">Puzzle '+(i+1)+' of '+CODE.length+'</p>'+bar(i,CODE.length)+
+      '<div class="rule">'+(isPair?'<b>Build the other side of the DNA ladder.</b><br>'+baseBox('A')+'&#8596;'+baseBox('T')+' &nbsp; '+baseBox('C')+'&#8596;'+baseBox('G')
+        :'<b>Copy the DNA into mRNA.</b> RNA has no T. It uses U.<br>'+baseBox('A')+'&#8594;'+baseBox('U')+' &nbsp; '+baseBox('T')+'&#8594;'+baseBox('A')+' &nbsp; '+baseBox('C')+'&#8594;'+baseBox('G')+' &nbsp; '+baseBox('G')+'&#8594;'+baseBox('C'))+
+      ' <button class="say" id="sr" aria-label="Read aloud">🔊</button></div>'+
+      '<div id="pz"></div><div id="fb"></div><div class="row"><button class="b green" id="next" style="display:none">'+(i===CODE.length-1?'Next: Monster Maker &rarr;':'Next puzzle &rarr;')+'</button></div></div>';
+    $('#sr').onclick=function(){say(isPair?'A pairs with T. C pairs with G.':'A becomes U. T becomes A. C becomes G. G becomes C.');};
+    slotPuzzle($('#pz'),{given:c.dna,givenLabel:'DNA strand:',wantLabel:isPair?'Partner strand:':'mRNA:',want:want,letters:isPair?['A','T','C','G']:['A','U','C','G'],
+      onWrong:function(){var f=$('#fb');f.className='warn';f.textContent='Red boxes need fixing. Look at the rule above.';},
+      onDone:function(first,tries){
+        if(first)S.pts+=10;
+        LOG.push({sec:'7. Code Breaker',q:(isPair?'Partner strand for DNA ':'mRNA for DNA ')+c.dna,tried:tries,answer:want,first:first});
+        var f=$('#fb');f.className='good';f.textContent=(first?'✓ Perfect on the first try! ':'✓ You cracked it! ')+want;
+        $('#next').style.display='';$('#next').onclick=function(){i++;if(i<CODE.length)show();else go(7);};
+      }});
+  }
+  show();
+}
+
+/* ---- monster drawing ---- */
+function monsterSVG(m){
+  var col={green:['#7ed957','#4caf50'],purple:['#b48cff','#7e57c2'],orange:['#ffb35c','#ef8a17']}[m.body]||['#e4e4e4','#bdbdbd'];
+  var s='<svg viewBox="0 0 300 300" class="mon" role="img" aria-label="Your monster">';
+  // arms
+  if(m.arms==='2'||m.arms==='4'){
+    var ys=m.arms==='2'?[160]:[140,190];
+    ys.forEach(function(y){
+      s+='<path d="M80 '+y+' Q45 '+(y-10)+' 30 '+(y-35)+'" stroke="#c62828" stroke-width="14" fill="none" stroke-linecap="round"/><circle cx="28" cy="'+(y-38)+'" r="11" fill="#c62828"/>';
+      s+='<path d="M220 '+y+' Q255 '+(y-10)+' 270 '+(y-35)+'" stroke="#c62828" stroke-width="14" fill="none" stroke-linecap="round"/><circle cx="272" cy="'+(y-38)+'" r="11" fill="#c62828"/>';
+    });
+  }else if(m.arms==='tent'){
+    s+='<path d="M80 160 q-20 20 -35 5 t-30 10" stroke="'+col[1]+'" stroke-width="12" fill="none" stroke-linecap="round"/><path d="M220 160 q20 20 35 5 t30 10" stroke="'+col[1]+'" stroke-width="12" fill="none" stroke-linecap="round"/>';
+    s+='<path d="M85 195 q-25 15 -40 0" stroke="'+col[1]+'" stroke-width="10" fill="none" stroke-linecap="round"/><path d="M215 195 q25 15 40 0" stroke="'+col[1]+'" stroke-width="10" fill="none" stroke-linecap="round"/>';
+  }
+  // feet
+  if(m.feet==='flip'){s+='<ellipse cx="115" cy="262" rx="30" ry="12" fill="#26a69a"/><ellipse cx="185" cy="262" rx="30" ry="12" fill="#26a69a"/><rect x="108" y="235" width="14" height="25" fill="#26a69a"/><rect x="178" y="235" width="14" height="25" fill="#26a69a"/>';}
+  else if(m.feet==='claw'){[100,150,200].forEach(function(x){s+='<rect x="'+(x-7)+'" y="235" width="14" height="25" fill="'+col[1]+'"/><path d="M'+(x-16)+' 268 l6 -10 l5 10 l5 -10 l5 10 l5 -10 l6 10 z" fill="#555"/>';});}
+  else if(m.feet==='none'){s+='<ellipse cx="150" cy="285" rx="55" ry="7" fill="#00000022"/>';}
+  // body
+  s+='<path d="M150 55 C215 55 232 100 228 150 C232 210 205 248 150 248 C95 248 68 210 72 150 C68 100 85 55 150 55 Z" fill="'+col[0]+'" stroke="'+col[1]+'" stroke-width="4"'+(m.body?'':' stroke-dasharray="8 6"')+'/>';
+  if(m.body==='green')s+='<path d="M100 90 l20 130 M140 70 l15 170 M185 75 l10 160" stroke="#4caf5055" stroke-width="10"/>';
+  if(!m.body)s+='<text x="150" y="165" font-size="60" text-anchor="middle" fill="#bdbdbd" font-family="sans-serif">?</text>';
+  // horns
+  if(m.horns==='curved'){s+='<path d="M110 70 Q90 40 105 15 Q112 45 130 62 Z" fill="#78909c" stroke="#455a64" stroke-width="3"/><path d="M190 70 Q210 40 195 15 Q188 45 170 62 Z" fill="#78909c" stroke="#455a64" stroke-width="3"/>';}
+  else if(m.horns==='spiky'){[115,135,150,165,185].forEach(function(x,k){s+='<path d="M'+(x-9)+' '+(k===2?58:64)+' L'+x+' '+(k===2?20:32)+' L'+(x+9)+' '+(k===2?58:64)+' Z" fill="#ffd54f" stroke="#f9a825" stroke-width="2"/>';});}
+  // eyes
+  var eye=function(x,y,r){return '<circle cx="'+x+'" cy="'+y+'" r="'+r+'" fill="#fff" stroke="#333" stroke-width="2"/><circle cx="'+x+'" cy="'+(y+r*0.15)+'" r="'+(r*0.45)+'" fill="#222"/>';};
+  if(m.eyes==='1')s+=eye(150,120,26);
+  else if(m.eyes==='2')s+=eye(125,118,15)+eye(175,118,15);
+  else if(m.eyes==='6')[[120,105],[150,100],[180,105],[120,135],[150,130],[180,135]].forEach(function(p){s+=eye(p[0],p[1],12);});
+  // mouth
+  if(m.mouth==='smile')s+='<path d="M110 170 Q150 215 190 170" stroke="#333" stroke-width="5" fill="#8b1e1e"/>';
+  else if(m.mouth==='fangs')s+='<path d="M110 170 Q150 205 190 170 Z" fill="#5d1010" stroke="#333" stroke-width="4"/><path d="M122 174 l7 16 l7 -14 Z M164 176 l7 14 l7 -16 Z" fill="#fff"/>';
+  else if(m.mouth==='tongue')s+='<path d="M115 172 Q150 200 185 172" stroke="#333" stroke-width="5" fill="none"/><path d="M140 185 Q150 225 165 186 Z" fill="#4fc3f7" stroke="#0288d1" stroke-width="3"/>';
+  return s+'</svg>';
+}
+
+/* ---- 8. monster maker ---- */
+function monster(){
+  var i=0,mon={},picked=[];S.max+=GENES.length*20;
+  function chart(cur){
+    return '<table class="cc"><tr><th>Gene</th><th colspan="3">mRNA codon = trait</th></tr>'+GENES.map(function(g,k){
+      return '<tr class="'+(k===cur?'cur':'')+'"><th>'+g.g+'</th>'+g.opts.map(function(o){return '<td><b>'+o[0]+'</b> '+esc(o[1])+'</td>';}).join('')+'</tr>';}).join('')+'</table>';
+  }
+  function show(){
+    var g=GENES[i],want=g.dna.split('').map(function(x){return TOMRNA[x];}).join(''),right=g.opts.filter(function(o){return o[0]===want;})[0];
+    stage.innerHTML='<div class="card"><h2>8. Monster Maker: decode your monster</h2><p class="muted">Gene '+(i+1)+' of '+GENES.length+': <b>'+g.g+'</b></p>'+bar(i,GENES.length)+
+      '<div class="mm"><div class="monbox">'+monsterSVG(mon)+'</div><div style="flex:1;min-width:260px">'+
+      '<div class="rule"><b>Step 1:</b> Copy the DNA into mRNA. <b>Step 2:</b> Find the codon in the chart. <button class="say" id="sr" aria-label="Read aloud">🔊</button></div>'+
+      '<div id="pz"></div></div></div>'+
+      '<div id="tp" style="display:none"><div class="big" style="margin-top:12px">Find <b class="cd">'+want+'</b> in the <b>'+g.g+'</b> row. What trait does it make?</div><div id="topts"></div></div>'+
+      '<details open style="margin-top:12px"><summary><b>Monster Codon Chart</b></summary>'+chart(i)+'</details>'+
+      '<div id="fb"></div><div class="row"><button class="b green" id="next" style="display:none">'+(i===GENES.length-1?'See my monster &rarr;':'Next gene &rarr;')+'</button></div></div>';
+    $('#sr').onclick=function(){say('Change the D N A into m R N A. A becomes U, T becomes A, C becomes G, and G becomes C. Then find the codon in the '+g.g+' row of the chart.');};
+    slotPuzzle($('#pz'),{given:g.dna,givenLabel:g.g+' gene (DNA):',wantLabel:'mRNA codon:',want:want,letters:['A','U','C','G'],
+      onWrong:function(){var f=$('#fb');f.className='warn';f.textContent='Red boxes need fixing. A→U, T→A, C→G, G→C.';},
+      onDone:function(first,tries){
+        if(first)S.pts+=10;
+        LOG.push({sec:'8. Monster Maker',q:g.g+' gene: mRNA for DNA '+g.dna,tried:tries,answer:want,first:first});
+        var f=$('#fb');f.className='good';f.textContent='✓ The codon is '+want+'. Now find it in the chart.';
+        $('#tp').style.display='';var firstT=true,tried=[];
+        $('#topts').innerHTML=shuffle(g.opts).map(function(o){return '<button class="opt" data-c="'+o[0]+'">'+esc(o[1])+'</button>';}).join('');
+        $('#topts').querySelectorAll('.opt').forEach(function(b){b.onclick=function(){
+          tried.push(b.textContent);
+          if(b.dataset.c===want){
+            if(firstT)S.pts+=10;b.classList.add('right');$('#topts').querySelectorAll('.opt').forEach(function(x){x.disabled=true;});
+            LOG.push({sec:'8. Monster Maker',q:g.g+' trait for codon '+want,tried:tried.slice(),answer:right[1],first:firstT});
+            mon[g.k]=right[2];picked.push(g.g+': '+right[1]);stage.querySelector('.monbox').innerHTML=monsterSVG(mon);
+            f.className='good';f.textContent='✓ '+right[1]+'! Look at your monster.';
+            $('#next').style.display='';$('#next').onclick=function(){i++;if(i<GENES.length)show();else reveal();};
+          }else{firstT=false;b.classList.add('wrong','shake');b.disabled=true;f.className='warn';f.textContent='That trait has a different codon. Look for '+want+' in the '+g.g+' row.';}
+        };});
+      }});
+  }
+  function reveal(){
+    stage.innerHTML='<div class="card"><h2>8. Your monster is done!</h2><div class="mm"><div class="monbox">'+monsterSVG(mon)+'</div><div style="flex:1;min-width:240px">'+
+      '<div class="big">You built the <b>Green Glob</b> from class! 🎉</div><ul>'+picked.map(function(p){return '<li>'+esc(p)+'</li>';}).join('')+'</ul>'+
+      '<div class="rule">Your DNA ➜ mRNA ➜ the ribosome read each codon ➜ tRNA brought the pieces ➜ proteins ➜ <b>traits</b>!</div></div></div>'+
+      '<div class="row" style="margin-top:14px"><button class="b green" id="next">Next: Submit &rarr;</button></div></div>';
+    $('#next').onclick=function(){go(8);};
+  }
+  show();
+}
+
+/* ---- 2. say and spell ---- */
+function lev(a,b){var m=a.length,n=b.length,p=[],j,i;for(j=0;j<=n;j++)p[j]=j;for(i=1;i<=m;i++){var c=[i];for(j=1;j<=n;j++)c[j]=Math.min(p[j]+1,c[j-1]+1,p[j-1]+(a[i-1]===b[j-1]?0:1));p=c;}return p[n];}
+var SRC=window.SpeechRecognition||window.webkitSpeechRecognition;
+function heardOK(heard,word){
+  var h=String(heard).toLowerCase().replace(/[^a-z ]/g,'').replace(/\s+/g,' ').trim(),w=word.toLowerCase().replace(/[^a-z ]/g,'');
+  var hc=h.replace(/ /g,''),wc=w.replace(/ /g,'');
+  if(!hc)return false;
+  return hc.indexOf(wc)>=0||lev(hc,wc)<=Math.max(1,Math.floor(wc.length/4));
+}
+function saySpell(){
+  var pnow=W.practice.list(),isP=function(i){return !!pnow[VOCAB[i][0].toLowerCase()];};
+  var idx=VOCAB.map(function(v,i){return i;});
+  // words she needs to practice come first
+  var order=shuffle(idx.filter(isP)).concat(shuffle(idx.filter(function(i){return !isP(i);}))),n=0;
+  var okFirst=0,okSecond=0,missed=[];
+  S.max+=VOCAB.length*10+(SRC?VOCAB.length*10:0);
+  var recog=null,micBroken=false;
+  function stopRec(){try{if(recog)recog.abort();}catch(e){}recog=null;}
+  function summary(){
+    stopRec();
+    stage.innerHTML='<div class="card"><h2>2. Say and spell: results</h2>'+
+     (SRC&&(okFirst+okSecond+missed.length>0)?'<div class="big">Pronunciation: <b>'+okFirst+'</b> on the first try, <b>'+okSecond+'</b> on the second try, <b>'+missed.length+'</b> to practice.</div>':'<div class="big">Spelling is done!</div>')+
+     (micBroken?'<div class="banner">The microphone was not available on this device, so some words were not tested for pronunciation.<br><small>iPhone: allow the microphone for this site in Safari, and turn on Dictation in Settings, General, Keyboard.</small></div>':'')+
+     (missed.length?'<div class="banner">🔁 <b>Words to practice:</b><br>'+missed.map(esc).join(', ')+'<br>They were added to <b>My Words</b> in the ELA reading app, and they come first next time.</div>':(SRC&&!micBroken?'<div class="good" style="margin-top:10px">No practice words. Great talking!</div>':''))+
+     '<div class="row" style="margin-top:14px"><button class="b green" id="next">Next: Match &rarr;</button>'+(missed.length?'<a class="b alt" href="../ELA/index.html">Open the reading app</a>':'')+'</div></div>';
+    $('#next').onclick=function(){go(2);};
+  }
+  function show(){
+    stopRec();
+    var v=VOCAB[order[n]],word=v[0],target=word.toUpperCase();
+    var head='<div class="card"><h2>2. Say and spell</h2><p class="muted">Word '+(n+1)+' of '+VOCAB.length+'</p>'+bar(n,VOCAB.length);
+    var tries=[],logged=false,listening=false,passed=false,failed=false,inSpell=false;
+    function logSay(extra){
+      if(logged)return;logged=true;
+      var e={sec:'2. Say & Spell',q:'Say the word: '+word,tried:tries.length?tries.slice():['(not tested)'],answer:word+' ('+v[3]+')',first:false};
+      for(var k in extra)e[k]=extra[k];LOG.push(e);
+    }
+    /* ---------- part A: say it (two tries) ---------- */
+    var useMic=SRC&&!micBroken;
+    stage.innerHTML=head+'<div class="muted">Step A: say it'+(pnow[word.toLowerCase()]?' &middot; <span class="badge wait">🔁 practice word</span>':'')+'</div>'+
+     '<div class="big" style="margin:6px 0"><b>'+esc(word)+'</b></div>'+
+     '<div class="rs" style="font-size:22px">say it: '+esc(v[3])+'</div>'+
+     '<div class="row" style="margin:8px 0"><button class="b alt" id="hear">🔊 Hear it</button><button class="b alt" id="hears">💬 In a sentence</button>'+
+     (useMic?'<button class="b" id="mic">🎤 Tap, then say it</button>':'<button class="b green" id="said">Next: spell it &rarr;</button>')+'</div>'+
+     (useMic?'<div id="tryinfo" class="muted">Try 1 of 2</div>':'<div class="muted">'+(micBroken?'The microphone is not available on this device, so pronunciation is not tested.':'This browser cannot listen, so your pronunciation is not tested here.')+'</div>')+
+     '<div class="sent">'+hl(v[2],word)+'</div><div id="fb"></div><div class="row" id="goRow"></div></div>';
+    $('#hear').onclick=function(){say(spoken(word),0.7);};
+    $('#hears').onclick=function(){say(spoken(v[2]));};
+    if(!useMic){
+      $('#said').onclick=function(){logSay({first:false,notTested:true,tried:[micBroken?'(not tested: microphone not available)':'(not tested: this browser cannot listen)']});spell();};
+    }else{
+      $('#mic').onclick=function(){
+        if(listening||passed||failed)return;
+        var f=$('#fb'),btn=$('#mic'),resolved=false,wd=null;
+        try{speechSynthesis.cancel();}catch(e){}              // iPhone: stop talking before listening
+        f.className='warn';f.textContent='Listening… say "'+word+'".';btn.disabled=true;listening=true;
+        function arm(ms){clearTimeout(wd);wd=setTimeout(function(){resolve('empty',[]);},ms);}
+        // Every press ends here exactly once, whatever the phone does (result, error, silence, or nothing at all).
+        function resolve(kind,alts,code){
+          if(resolved)return;resolved=true;clearTimeout(wd);listening=false;stopRec();
+          if(kind==='broken'){
+            micBroken=true;S.max-=10*(VOCAB.length-n);
+            logSay({first:false,notTested:true,tried:tries.concat(['microphone not available ('+(code||'unknown')+')'])});
+            f.className='warn';f.innerHTML='I cannot use the microphone on this device, so pronunciation will not be tested.<br><small>iPhone: allow the microphone for this site in Safari, and turn on Dictation in Settings, General, Keyboard.</small>';
+            btn.style.display='none';$('#tryinfo').textContent='';
+            $('#goRow').innerHTML='<button class="b green" id="goSpell">Next: spell it &rarr;</button>';$('#goSpell').onclick=spell;
+            return;
+          }
+          tries.push('try '+(tries.length+1)+': '+(alts&&alts.length?'heard "'+alts[0]+'"':'nothing heard'));
+          var heard=alts&&alts.length?alts[0]:'';
+          if(alts&&alts.some(function(a){return heardOK(a,word);})){
+            passed=true;var first=tries.length===1;S.pts+=first?10:5;if(first)okFirst++;else okSecond++;
+            W.practice.clear(word);logSay({first:first,pass:true});
+            f.className='good';f.textContent='✓ I heard "'+heard+'". '+(first?'Great!':'Nice job!');
+            btn.style.display='none';
+            setTimeout(spell,1100);
+          }else if(tries.length>=2){
+            failed=true;missed.push(word);
+            W.practice.add(word,{def:v[1],ex:v[2],phonetic:v[3],from:'DNA: The Code of Life'});
+            logSay({first:false,practice:true});
+            f.className='warn';f.innerHTML=(heard?'I heard "'+esc(heard)+'". ':'I did not hear you. ')+'That was your second try, so let’s move on. <b>"'+esc(word)+'" was added to your practice words.</b>';
+            btn.style.display='none';$('#tryinfo').textContent='';
+            $('#goRow').innerHTML='<button class="b green" id="goSpell">Next: spell it &rarr;</button>';$('#goSpell').onclick=spell;
+          }else{
+            f.className='warn';f.textContent=heard?'I heard "'+heard+'". Listen once more, then try again.':'I did not hear you. Tap the mic and say the word.';
+            $('#tryinfo').textContent='Try 2 of 2';btn.disabled=false;
+          }
+        }
+        try{
+          recog=new SRC();recog.lang='en-US';recog.continuous=false;recog.interimResults=false;recog.maxAlternatives=5;
+          recog.onstart=function(){arm(10000);};               // starts counting once the phone is really listening
+          recog.onresult=function(e){
+            var alts=[];try{for(var k=0;k<e.results[0].length;k++)alts.push(e.results[0][k].transcript);}catch(x){}
+            resolve('heard',alts);
+          };
+          recog.onerror=function(e){
+            var er=e&&e.error;
+            if(er==='not-allowed'||er==='service-not-allowed'||er==='audio-capture')resolve('broken',[],er);
+            else resolve('empty',[],er);                        // no-speech, aborted, network, anything else: counts as a try
+          };
+          recog.onend=function(){resolve('empty',[]);};         // ended without a result: counts as a try
+          arm(25000);                                           // backstop if the phone never starts
+          recog.start();
+        }catch(err){resolve('broken',[],'cannot start');}
+      };
+    }
+    /* ---------- part B: spell it ---------- */
+    function spell(){
+      if(inSpell)return;inSpell=true;stopRec();
+      var letters=target.replace(/ /g,'').split('');
+      var pool=shuffle(letters.map(function(c,k){return {c:c,k:k,used:false};}));
+      var slots=[],stries=[],peeked=false,marks=null,solved=false;
+      var blank=v[2].replace(new RegExp(escRe(word),'ig'),'_____');
+      stage.innerHTML=head+'<div class="muted">Step B: spell it</div><div class="big" style="margin:6px 0">Meaning: '+esc(v[1])+'</div>'+
+       '<div class="sent">'+esc(blank)+'</div>'+
+       '<div class="row"><button class="b alt" id="hear2">🔊 Hear the word</button><button class="b alt" id="hear3">💬 Hear the sentence</button></div>'+
+       '<div class="slots" id="slots"></div><div class="tiles" id="tiles"></div>'+
+       '<div class="row"><button class="b green" id="chk" disabled>Check my spelling</button><button class="b alt" id="undo">⌫ Undo</button><button class="b alt" id="clr">Clear</button><button class="b alt" id="peek">👀 Show me the word</button></div>'+
+       '<div id="fb"></div><div class="row"><button class="b green" id="next" style="display:none">'+(n===VOCAB.length-1?'Finish &rarr;':'Next word &rarr;')+'</button></div></div>';
+      $('#hear2').onclick=function(){say(spoken(word),0.7);};$('#hear3').onclick=function(){say(spoken(v[2]));};
+      function draw(){
+        var si=0,out='';
+        for(var c=0;c<target.length;c++){
+          if(target[c]===' '){out+='<span class="gap"></span>';continue;}
+          var t=slots[si],cls=marks?(marks[si]?'ok':'no'):'';
+          out+='<div class="slot '+cls+'">'+(t?esc(t.c):'')+'</div>';si++;
+        }
+        $('#slots').innerHTML=out;
+        $('#tiles').innerHTML=pool.map(function(t,i){return '<button class="tile" data-i="'+i+'"'+(t.used||solved?' disabled':'')+'>'+esc(t.c)+'</button>';}).join('');
+        $('#tiles').querySelectorAll('.tile').forEach(function(b){b.onclick=function(){
+          if(slots.length>=letters.length)return;var t=pool[+b.dataset.i];t.used=true;slots.push(t);marks=null;draw();};});
+        $('#chk').disabled=solved||slots.length!==letters.length;
+      }
+      $('#undo').onclick=function(){if(solved||!slots.length)return;slots.pop().used=false;marks=null;draw();};
+      $('#clr').onclick=function(){if(solved)return;slots.forEach(function(t){t.used=false;});slots=[];marks=null;draw();};
+      $('#peek').onclick=function(){peeked=true;var f=$('#fb');f.className='warn';f.textContent='The word is: '+word+'. Now spell it.';};
+      $('#chk').onclick=function(){
+        var attempt=slots.map(function(t){return t.c;}).join('');stries.push(attempt);
+        if(attempt===letters.join('')){
+          solved=true;marks=letters.map(function(){return true;});
+          var firstTry=stries.length===1&&!peeked;if(firstTry)S.pts+=10;
+          LOG.push({sec:'2. Say & Spell',q:'Spell the word that means: '+v[1],tried:stries.concat(peeked?['(peeked at the word)']:[]),answer:word,first:firstTry});
+          draw();var f=$('#fb');f.className='good';f.textContent=(firstTry?'✓ Perfect spelling! ':'✓ You spelled it! ')+word;
+          $('#next').style.display='';$('#next').onclick=function(){n++;if(n<VOCAB.length)show();else summary();};
+          $('#undo').disabled=$('#clr').disabled=$('#peek').disabled=true;
+        }else{
+          marks=slots.map(function(t,i){return t.c===letters[i];});draw();
+          var f2=$('#fb');f2.className='warn';f2.textContent='Not quite. Red letters are in the wrong place. Tap Undo to fix them.';
+        }
+      };
+      draw();
+    }
+  }
+  show();
+}
+
+/* ---- 3. match ---- */
+function match(){
+  var terms=MATCH.map(function(m,i){return {i:i,t:m[0]};});
+  var defs=shuffle(MATCH.map(function(m,i){return {i:i,t:m[1]};}));
+  var sel=null,left=MATCH.length,firstTry={},misses=0,wrong={};
+  S.max+=MATCH.length*10;
+  stage.innerHTML='<div class="card"><h2>3. Match the word to its meaning</h2><p class="muted">Tap a word, then tap its meaning.</p><div class="mt"><div id="L"></div><div id="R"></div></div><div id="fb"></div><div class="row"><button class="b green hide" id="next" style="display:none">Next &rarr;</button></div></div>';
+  function draw(){
+    $('#L').innerHTML=terms.map(function(x){return '<button class="opt'+(x.done?' done':'')+(sel===x.i?' sel':'')+'" data-t="'+x.i+'"'+(x.done?' disabled':'')+'>'+esc(x.t)+'</button>';}).join('');
+    $('#R').innerHTML=defs.map(function(x){return '<button class="opt'+(x.done?' done':'')+'" data-d="'+x.i+'"'+(x.done?' disabled':'')+'>'+esc(x.t)+'</button>';}).join('');
+    $('#L').querySelectorAll('[data-t]').forEach(function(b){b.onclick=function(){sel=+b.dataset.t;say(spoken(MATCH[sel][0]));draw();};});
+    $('#R').querySelectorAll('[data-d]').forEach(function(b){b.onclick=function(){pick(+b.dataset.d,b);};});
+  }
+  function pick(d,btn){
+    if(sel===null){fb('Tap a word on the left first.','warn');return;}
+    if(d===sel){
+      terms.filter(function(x){return x.i===d;})[0].done=true;defs.filter(function(x){return x.i===d;})[0].done=true;
+      if(!firstTry[d]){firstTry[d]=1;S.pts+=firstTry['m'+d]?0:10;}
+      LOG.push({sec:'3. Match',q:MATCH[d][0],tried:(wrong[d]||[]).concat([MATCH[d][1]]),answer:MATCH[d][1],first:!(wrong[d]&&wrong[d].length)});
+      left--;sel=null;fb('✓ Yes!','good');draw();
+      if(!left){$('#next').style.display='';$('#next').classList.remove('hide');$('#next').onclick=function(){go(3);};fb('All matched! ⭐','good');}
+    }else{
+      firstTry['m'+sel]=1;(wrong[sel]=wrong[sel]||[]).push(btn.textContent);btn.classList.add('wrong','shake');fb('Not that one. Try again.','warn');
+      setTimeout(function(){btn.classList.remove('wrong','shake');},500);
+    }
+  }
+  function fb(m,c){var f=$('#fb');f.textContent=m;f.className=c;}
+  draw();
+}
+
+/* ---- generic one-at-a-time question runner (true/false, quiz, fill in) ---- */
+function runQs(title,intro,items,nextStep,shuffleOpts){
+  var i=0;S.max+=items.length*10;
+  function show(){
+    var it=items[i],first=true,locked=false,tried=[];
+    var order=it.opts.map(function(o,k){return {o:o,k:k};});
+    if(shuffleOpts)order=shuffle(order);
+    stage.innerHTML='<div class="card"><h2>'+esc(title)+'</h2><p class="muted">'+esc(intro)+' ('+(i+1)+' of '+items.length+')</p>'+bar(i,items.length)+
+     '<div class="big">'+esc(it.q)+' <button class="say" id="sq" aria-label="Read aloud">🔊</button></div><div id="opts">'+
+     order.map(function(x){return '<button class="opt" data-k="'+x.k+'">'+esc(x.o)+'</button>';}).join('')+'</div><div id="fb"></div><div class="row"><button class="b green" id="next" style="display:none">'+(i===items.length-1?'Finish &rarr;':'Next &rarr;')+'</button></div></div>';
+    $('#sq').onclick=function(){say(spoken(it.q.replace('____','blank')));};
+    stage.querySelectorAll('.opt').forEach(function(b){b.onclick=function(){
+      if(locked)return;var k=+b.dataset.k;
+      if(k===it.ans){
+        locked=true;b.classList.add('right');if(first)S.pts+=10;
+        tried.push(it.opts[k]);LOG.push({sec:title,q:it.q,tried:tried.slice(),answer:it.opts[it.ans],first:first});
+        stage.querySelectorAll('.opt').forEach(function(x){x.disabled=true;});
+        var f=$('#fb');f.className='good';f.textContent=(first?'✓ Correct! ':'✓ Got it! ')+it.why;
+        $('#next').style.display='';$('#next').onclick=function(){i++;if(i<items.length)show();else go(nextStep);};
+      }else{
+        first=false;tried.push(it.opts[k]);b.classList.add('wrong','shake');b.disabled=true;
+        var f2=$('#fb');f2.className='warn';f2.textContent='Not quite. Try another one.';
+      }
+    };});
+  }
+  show();
+}
+function runTF(){runQs('4. True or False','Tap True or False.',TF,4,false);}
+function runMC(){runQs('5. Quiz','Pick the best answer.',MC,5,true);}
+function runFill(){runQs('6. Fill in the blank','Pick the word that fits.',FILL,6,true);}
+
+/* ---- submit + save ---- */
+function pad(n){return (n<10?'0':'')+n;}
+function stamp(d){return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())+'_'+pad(d.getHours())+pad(d.getMinutes());}
+function buildReport(name,when){
+  var pct=S.max?Math.round(S.pts/S.max*100):0,ok=LOG.filter(function(e){return e.first;}).length;
+  var L=['DNA: THE CODE OF LIFE (MONSTER MAKER) - STUDENT ANSWERS','',
+    'Name: '+(name||'(not entered)'),'Date: '+when.toLocaleString(),
+    'Score: '+S.pts+' of '+S.max+' points ('+pct+'%)','Right on the first try: '+ok+' of '+LOG.length+' questions','',
+    '[OK] = right on the first try     [RETRY] = needed more than one try     [PRACTICE] = could not say it in two tries     [NOT TESTED] = no microphone'];
+  var pw=LOG.filter(function(e){return e.practice;}).map(function(e){return e.q.replace('Say the word: ','');});
+  if(pw.length)L.splice(6,0,'Words to practice: '+pw.join(', '));
+  var sec='';
+  LOG.forEach(function(e){
+    if(e.sec!==sec){sec=e.sec;L.push('');L.push('== '+sec+' ==');}
+    L.push((e.practice?'[PRACTICE] ':(e.notTested?'[NOT TESTED] ':(e.first?'[OK]    ':'[RETRY] ')))+e.q);
+    L.push('        Her answers: '+e.tried.join('  >  '));
+    L.push('        Correct answer: '+e.answer);
+  });
+  return L.join('\n')+'\n';
+}
+function saveFile(text,fname){
+  try{var bl=new Blob([text],{type:'text/plain'});var a=document.createElement('a');a.href=URL.createObjectURL(bl);a.download=fname;
+    document.body.appendChild(a);a.click();setTimeout(function(){try{URL.revokeObjectURL(a.href);}catch(e){}a.remove();},800);return true;}catch(e){return false;}
+}
+function done(){
+  var pct=S.max?Math.round(S.pts/S.max*100):0,cfg=W.gh.cfg(),sending=false;
+  stage.innerHTML='<div class="card"><h2>9. Submit your answers</h2><div class="big">You finished everything! You earned <b>'+S.pts+'</b> of '+S.max+' points ('+pct+'%).</div>'+
+   '<p class="muted">Type your first name, then press Submit. '+(cfg?'Your answers will be saved to GitHub.':'GitHub saving is not set up yet, so a file will be downloaded instead. A parent can set it up on the Home page, under Parent settings.')+'</p>'+
+   '<input type="text" id="nm" placeholder="Your first name" autocomplete="given-name" style="max-width:360px">'+
+   '<div class="row" style="margin-top:14px"><button class="b green" id="sub">✅ Submit my answers</button></div><div id="after"></div></div>';
+  $('#sub').onclick=function(){
+    $('#sub').disabled=true;
+    var when=new Date(),name=($('#nm').value||'').trim();
+    var report=buildReport(name,when);
+    var fname='dna-code-of-life-answers_'+(name?name.replace(/[^A-Za-z0-9]+/g,'-')+'_':'')+stamp(when)+'.txt';
+    var rec={id:when.getTime(),when:when.toISOString(),name:name,pts:S.pts,max:S.max,pct:pct,file:fname,report:report,log:LOG.slice(),ghStatus:cfg?'pending':'none',subject:'Science',exercise:'dna-code-of-life',title:'DNA: The Code of Life',dir:W.dir('Science')};
+    W.subs.add(rec);
+    var prev=lsGet('ex_dna',{best:0})||{best:0},best=prev.best||0,gain=Math.max(0,S.pts-best);
+    if(gain>0){addXP(gain);lsSet('ex_dna',{best:S.pts,when:when.toISOString()});}
+    var starLine=(gain>0?'⭐ <b>+'+gain+'</b> added to your stars. ':'You already earned this many stars before. Try again to beat your best of '+best+'. ');
+    function buttons(retry){
+      return '<div class="row" style="margin-top:14px"><a class="b" href="index.html">&larr; Back to Science</a>'+(retry?'<button class="b" id="retry">↻ Try sending again</button>':'')+
+        '<button class="b alt" id="dl">⬇ Download answers</button><button class="b alt" id="again">Play again</button></div>';
+    }
+    function facts(){return '<h2 style="margin-top:14px">Fun facts</h2><ul style="padding-left:20px">'+FACTS.map(function(f){return '<li style="margin:6px 0">'+esc(f)+'</li>';}).join('')+'</ul>';}
+    function wire(){
+      $('#dl').onclick=function(){saveFile(report,fname);};
+      $('#again').onclick=function(){S={step:0,pts:0,max:0};LOG=[];go(0);};
+      if($('#retry'))$('#retry').onclick=send;
+    }
+    function send(){
+      if(sending)return;sending=true;
+      $('#after').innerHTML='<div id="fb" class="warn" style="display:block;margin-top:14px">Sending your answers to GitHub…</div>';
+      W.gh.saveRecord(rec).then(function(r){
+        sending=false;
+        if(r.ok){
+          W.subs.patch(rec.id,{ghStatus:'sent',ghErr:''});
+          $('#after').innerHTML='<div id="fb" class="good" style="display:block;margin-top:14px">✓ Submitted! Your answers are saved to GitHub.</div><p>'+starLine+'</p>'+facts()+buttons(false);
+        }else{
+          W.subs.patch(rec.id,{ghStatus:'pending',ghErr:W.gh.msg(r)});
+          $('#after').innerHTML='<div id="fb" class="warn" style="display:block;margin-top:14px">Your answers are saved on this device, but they did not reach GitHub yet.</div>'+
+            '<p>'+esc(W.gh.msg(r))+'</p><p class="muted">They will be sent automatically the next time this subject page or the Home page is opened with internet, or press the button.</p><p>'+starLine+'</p>'+buttons(true);
+        }
+        wire();
+      });
+    }
+    if(cfg){send();}
+    else{
+      var okDl=saveFile(report,fname);
+      $('#after').innerHTML='<div id="fb" class="good" style="display:block;margin-top:14px">✓ Submitted!</div><p>'+starLine+'</p>'+
+        '<p class="muted">GitHub saving is not set up, so your answers were saved on this device'+(okDl?' and a file named <b>'+esc(fname)+'</b> was downloaded.':'. Use the download button.')+'</p>'+facts()+buttons(false);
+      wire();
+    }
+  };
+}
+
+if(!VOCAB.length){
+  stage.innerHTML='<div class="card"><h2>One file is missing</h2><div class="banner"><b>The word list file (<code>words.js</code>) was not found.</b> Upload <code>words.js</code> to the <b>Science</b> folder of the repository, then refresh this page.</div><a class="b alt" href="index.html">&larr; Back to Science</a></div>';
+}else go(0);
+})();
+</script>
+</body>
+</html>

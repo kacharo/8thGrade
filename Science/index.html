@@ -20,13 +20,13 @@
   <div class="card" id="saved"></div>
 </main>
 <script src="../shared.js?v=20261108a" data-home="../index.html"></script>
-<script src="words.js?v=20261108a"></script>
+<script src="words.js?v=20261114a"></script>
 <script>
 (function(){
 function banner(h){var m=document.querySelector('main'),d=document.createElement('div');d.className='banner';d.innerHTML=h;m.insertBefore(d,m.firstChild);}
 if(!window.W){banner('<b>The page could not load <code>shared.js</code>.</b> Upload <code>shared.js</code> to the main folder of the repository, then refresh this page.');return;}
 // To add an exercise: put its .html file in this folder and add one line to this list.
-var EXERCISES=[{"id": "mouse", "icon": "🐭", "title": "Mouse Genetics (One Trait)", "unit": "Genetic Variation", "desc": "Alleles, dominant and recessive, Punnett squares.", "href": "mouse-genetics.html"}];
+var EXERCISES=[{"id": "mouse", "icon": "🐭", "title": "Mouse Genetics (One Trait)", "unit": "Genetic Variation", "desc": "Alleles, dominant and recessive, Punnett squares.", "href": "mouse-genetics.html"},{"id": "dna", "icon": "🧬", "title": "DNA: The Code of Life", "unit": "DNA, RNA & Proteins", "desc": "Base pairs, mRNA and tRNA. Decode a monster from its DNA!", "href": "dna-code-of-life.html"}];
 var SUBJECT='Science';
 var $=function(s){return document.querySelector(s);};
 $('#xp').textContent='⭐ '+W.xp.get();

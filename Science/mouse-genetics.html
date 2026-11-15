@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Mouse Genetics Exercise</title>
 <script src="../shared.js?v=20261108a" data-home="../index.html"></script>
-<script src="words.js?v=20261108a"></script>
+<script src="words.js?v=20261114a"></script>
 <style>
 :root{--bg:#f6f4ee;--card:#fff;--ink:#22303c;--muted:#5d6b78;--brand:#2f6fed;--brand2:#e8f0ff;--good:#1f9d63;--goodbg:#dff5ea;--bad:#d64545;--badbg:#fde6e6;--warn:#b86e00;--warnbg:#fff1d6;--line:#e1ddd0}
 *{box-sizing:border-box}
@@ -122,7 +122,7 @@ function say(t,rate){
 function stopSay(){try{if('speechSynthesis' in window)speechSynthesis.cancel();}catch(e){}}
 
 /* ---- content ---- */
-var VOCAB=(window.WORDS||[]).map(function(x){return [x.w,x.def,x.ex,x.say];});   // list lives in words.js
+var VOCAB=(window.WORDS||[]).filter(function(x){return !x.sets||x.sets.indexOf('mouse')>=0;}).map(function(x){return [x.w,x.def,x.ex,x.say];});   // list lives in words.js
 
 var MATCH=[
  ['gene','A piece of DNA that controls a trait'],
