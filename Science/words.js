@@ -1,7 +1,11 @@
 /* Science word list. One entry per word: w = the word, say = how to say it, def = meaning, ex = a sentence that uses it.
    Add a line here and it shows up in the Word list on the Science page and in the exercises.
    sets = which exercises use the word (mouse = Mouse Genetics, dna = DNA: The Code of Life, living = Living Things: Cells & Body Systems, taste = Inheritance: The Bitter-Taste Gene, rocks = Rock Layers & Fossils, worms = Earthworms, Ecosystems & Fair Tests, embryos = Embryos & Common Ancestry, oil = Oil & Natural Resources, moon = Moon Phases, heat = Thermal Energy & Kinetic Energy).
-   A word with no sets is used by every exercise. */
+   A word with no sets is used by every exercise.    parts = the word broken into pieces: [piece, "prefix" | "root" | "suffix" | "abbr" | "word", meaning]. Use " " between two words.
+           Leave parts out for a word with no prefix or suffix. If parts is missing, the page guesses common ones by itself.
+   start = a sentence starter for the "Write it" step. It should use the word.
+   pic   = (optional) an emoji to show when wordpics.js has no picture for the word, e.g. pic:"🎈".
+*/
 window.WORDS=[
  {
   "w": "heredity",
@@ -10,7 +14,20 @@ window.WORDS=[
   "say": "huh-RED-ih-tee",
   "sets": [
    "mouse"
-  ]
+  ],
+  "parts": [
+   [
+    "hered",
+    "root",
+    "heir, passed down"
+   ],
+   [
+    "ity",
+    "suffix",
+    "the state of"
+   ]
+  ],
+  "start": "Because of heredity, I have"
  },
  {
   "w": "trait",
@@ -20,7 +37,8 @@ window.WORDS=[
   "sets": [
    "mouse",
    "dna"
-  ]
+  ],
+  "start": "One trait I got from my family is"
  },
  {
   "w": "DNA",
@@ -30,7 +48,25 @@ window.WORDS=[
   "sets": [
    "mouse",
    "dna"
-  ]
+  ],
+  "parts": [
+   [
+    "D",
+    "abbr",
+    "deoxyribo-"
+   ],
+   [
+    "N",
+    "abbr",
+    "nucleic"
+   ],
+   [
+    "A",
+    "abbr",
+    "acid"
+   ]
+  ],
+  "start": "DNA is important because"
  },
  {
   "w": "gene",
@@ -40,7 +76,15 @@ window.WORDS=[
   "sets": [
    "mouse",
    "dna"
-  ]
+  ],
+  "parts": [
+   [
+    "gene",
+    "root",
+    "birth, family"
+   ]
+  ],
+  "start": "A gene can control"
  },
  {
   "w": "allele",
@@ -50,7 +94,15 @@ window.WORDS=[
   "sets": [
    "mouse",
    "taste"
-  ]
+  ],
+  "parts": [
+   [
+    "allele",
+    "root",
+    "one of another (a version)"
+   ]
+  ],
+  "start": "A mouse can get one allele from"
  },
  {
   "w": "genotype",
@@ -59,7 +111,20 @@ window.WORDS=[
   "say": "JEE-nuh-type",
   "sets": [
    "mouse"
-  ]
+  ],
+  "parts": [
+   [
+    "geno",
+    "root",
+    "gene, birth"
+   ],
+   [
+    "type",
+    "root",
+    "kind"
+   ]
+  ],
+  "start": "The genotype Ff means"
  },
  {
   "w": "phenotype",
@@ -68,7 +133,20 @@ window.WORDS=[
   "say": "FEE-nuh-type",
   "sets": [
    "mouse"
-  ]
+  ],
+  "parts": [
+   [
+    "pheno",
+    "root",
+    "to show"
+   ],
+   [
+    "type",
+    "root",
+    "kind"
+   ]
+  ],
+  "start": "I can see an animal’s phenotype when"
  },
  {
   "w": "dominant allele",
@@ -78,7 +156,26 @@ window.WORDS=[
   "sets": [
    "mouse",
    "taste"
-  ]
+  ],
+  "parts": [
+   [
+    "domin",
+    "root",
+    "ruler, master"
+   ],
+   [
+    "ant",
+    "suffix",
+    "one that is"
+   ],
+   " ",
+   [
+    "allele",
+    "word",
+    "version of a gene"
+   ]
+  ],
+  "start": "A dominant allele always"
  },
  {
   "w": "recessive allele",
@@ -88,7 +185,31 @@ window.WORDS=[
   "sets": [
    "mouse",
    "taste"
-  ]
+  ],
+  "parts": [
+   [
+    "re",
+    "prefix",
+    "back"
+   ],
+   [
+    "cess",
+    "root",
+    "go"
+   ],
+   [
+    "ive",
+    "suffix",
+    "tends to"
+   ],
+   " ",
+   [
+    "allele",
+    "word",
+    "version of a gene"
+   ]
+  ],
+  "start": "A recessive allele only shows when"
  },
  {
   "w": "homozygous",
@@ -98,7 +219,25 @@ window.WORDS=[
   "sets": [
    "mouse",
    "taste"
-  ]
+  ],
+  "parts": [
+   [
+    "homo",
+    "prefix",
+    "same"
+   ],
+   [
+    "zyg",
+    "root",
+    "joined pair"
+   ],
+   [
+    "ous",
+    "suffix",
+    "having"
+   ]
+  ],
+  "start": "A mouse is homozygous when"
  },
  {
   "w": "heterozygous",
@@ -108,7 +247,25 @@ window.WORDS=[
   "sets": [
    "mouse",
    "taste"
-  ]
+  ],
+  "parts": [
+   [
+    "hetero",
+    "prefix",
+    "different"
+   ],
+   [
+    "zyg",
+    "root",
+    "joined pair"
+   ],
+   [
+    "ous",
+    "suffix",
+    "having"
+   ]
+  ],
+  "start": "A mouse is heterozygous when"
  },
  {
   "w": "hybrid",
@@ -117,7 +274,15 @@ window.WORDS=[
   "say": "HY-brid",
   "sets": [
    "mouse"
-  ]
+  ],
+  "parts": [
+   [
+    "hybrid",
+    "root",
+    "mixed"
+   ]
+  ],
+  "start": "A hybrid pup has parents that"
  },
  {
   "w": "inheritance",
@@ -126,7 +291,25 @@ window.WORDS=[
   "say": "in-HAIR-ih-tunce",
   "sets": [
    "mouse"
-  ]
+  ],
+  "parts": [
+   [
+    "in",
+    "prefix",
+    "into"
+   ],
+   [
+    "herit",
+    "root",
+    "receive, heir"
+   ],
+   [
+    "ance",
+    "suffix",
+    "the act of"
+   ]
+  ],
+  "start": "Through inheritance, a baby gets"
  },
  {
   "w": "Punnett square",
@@ -136,7 +319,21 @@ window.WORDS=[
   "sets": [
    "mouse",
    "taste"
-  ]
+  ],
+  "parts": [
+   [
+    "Punnett",
+    "word",
+    "named after scientist R. Punnett"
+   ],
+   " ",
+   [
+    "square",
+    "word",
+    "a box shape"
+   ]
+  ],
+  "start": "I can use a Punnett square to"
  },
  {
   "w": "cell",
@@ -146,7 +343,15 @@ window.WORDS=[
   "sets": [
    "dna",
    "living"
-  ]
+  ],
+  "parts": [
+   [
+    "cell",
+    "root",
+    "small room"
+   ]
+  ],
+  "start": "My body is made of cells that"
  },
  {
   "w": "nucleus",
@@ -155,7 +360,20 @@ window.WORDS=[
   "say": "NOO-klee-us",
   "sets": [
    "dna"
-  ]
+  ],
+  "parts": [
+   [
+    "nucle",
+    "root",
+    "nut, center"
+   ],
+   [
+    "us",
+    "suffix",
+    "a thing"
+   ]
+  ],
+  "start": "The nucleus is like the boss of the cell because"
  },
  {
   "w": "chromosome",
@@ -164,7 +382,20 @@ window.WORDS=[
   "say": "KROH-muh-sohm",
   "sets": [
    "dna"
-  ]
+  ],
+  "parts": [
+   [
+    "chromo",
+    "root",
+    "color"
+   ],
+   [
+    "some",
+    "root",
+    "body"
+   ]
+  ],
+  "start": "A chromosome is like a chapter because"
  },
  {
   "w": "base",
@@ -173,7 +404,8 @@ window.WORDS=[
   "say": "BAYS",
   "sets": [
    "dna"
-  ]
+  ],
+  "start": "In DNA, the base A always"
  },
  {
   "w": "double helix",
@@ -182,7 +414,21 @@ window.WORDS=[
   "say": "DUB-ul HEE-liks",
   "sets": [
    "dna"
-  ]
+  ],
+  "parts": [
+   [
+    "double",
+    "word",
+    "two"
+   ],
+   " ",
+   [
+    "helix",
+    "root",
+    "spiral, twist"
+   ]
+  ],
+  "start": "DNA looks like a double helix because"
  },
  {
   "w": "protein",
@@ -192,7 +438,20 @@ window.WORDS=[
   "sets": [
    "dna",
    "taste"
-  ]
+  ],
+  "parts": [
+   [
+    "prote",
+    "root",
+    "first, most important"
+   ],
+   [
+    "in",
+    "suffix",
+    "a substance"
+   ]
+  ],
+  "start": "A protein is made when"
  },
  {
   "w": "RNA",
@@ -201,7 +460,25 @@ window.WORDS=[
   "say": "ar-en-AY",
   "sets": [
    "dna"
-  ]
+  ],
+  "parts": [
+   [
+    "R",
+    "abbr",
+    "ribo-"
+   ],
+   [
+    "N",
+    "abbr",
+    "nucleic"
+   ],
+   [
+    "A",
+    "abbr",
+    "acid"
+   ]
+  ],
+  "start": "RNA is different from DNA because"
  },
  {
   "w": "mRNA",
@@ -210,7 +487,20 @@ window.WORDS=[
   "say": "em-ar-en-AY",
   "sets": [
    "dna"
-  ]
+  ],
+  "parts": [
+   [
+    "m",
+    "abbr",
+    "messenger"
+   ],
+   [
+    "RNA",
+    "abbr",
+    "ribonucleic acid"
+   ]
+  ],
+  "start": "The mRNA carries"
  },
  {
   "w": "tRNA",
@@ -219,7 +509,20 @@ window.WORDS=[
   "say": "tee-ar-en-AY",
   "sets": [
    "dna"
-  ]
+  ],
+  "parts": [
+   [
+    "t",
+    "abbr",
+    "transfer"
+   ],
+   [
+    "RNA",
+    "abbr",
+    "ribonucleic acid"
+   ]
+  ],
+  "start": "The tRNA brings"
  },
  {
   "w": "ribosome",
@@ -228,7 +531,20 @@ window.WORDS=[
   "say": "RY-buh-sohm",
   "sets": [
    "dna"
-  ]
+  ],
+  "parts": [
+   [
+    "ribo",
+    "root",
+    "from RNA"
+   ],
+   [
+    "some",
+    "root",
+    "body"
+   ]
+  ],
+  "start": "The ribosome builds"
  },
  {
   "w": "codon",
@@ -237,7 +553,20 @@ window.WORDS=[
   "say": "KOH-don",
   "sets": [
    "dna"
-  ]
+  ],
+  "parts": [
+   [
+    "cod",
+    "root",
+    "code"
+   ],
+   [
+    "on",
+    "suffix",
+    "a unit"
+   ]
+  ],
+  "start": "A codon is three letters that"
  },
  {
   "w": "multicellular",
@@ -246,7 +575,25 @@ window.WORDS=[
   "ex": "A worm is multicellular, but bacteria have only one cell.",
   "sets": [
    "living"
-  ]
+  ],
+  "parts": [
+   [
+    "multi",
+    "prefix",
+    "many"
+   ],
+   [
+    "cell",
+    "root",
+    "small room"
+   ],
+   [
+    "ular",
+    "suffix",
+    "having to do with"
+   ]
+  ],
+  "start": "A dog is multicellular because"
  },
  {
   "w": "tissue",
@@ -255,7 +602,15 @@ window.WORDS=[
   "ex": "Muscle tissue contracts to move the body.",
   "sets": [
    "living"
-  ]
+  ],
+  "parts": [
+   [
+    "tissue",
+    "root",
+    "woven cloth"
+   ]
+  ],
+  "start": "Muscle tissue helps me"
  },
  {
   "w": "organ",
@@ -264,7 +619,15 @@ window.WORDS=[
   "ex": "The heart is an organ that pumps blood.",
   "sets": [
    "living"
-  ]
+  ],
+  "parts": [
+   [
+    "organ",
+    "root",
+    "tool"
+   ]
+  ],
+  "start": "My heart is an organ that"
  },
  {
   "w": "organism",
@@ -273,7 +636,20 @@ window.WORDS=[
   "ex": "An onion is an organism because it is made of cells.",
   "sets": [
    "living"
-  ]
+  ],
+  "parts": [
+   [
+    "organ",
+    "root",
+    "tool, body part"
+   ],
+   [
+    "ism",
+    "suffix",
+    "a whole thing"
+   ]
+  ],
+  "start": "A tree is an organism because"
  },
  {
   "w": "neuron",
@@ -282,7 +658,20 @@ window.WORDS=[
   "ex": "A neuron sends a message from the brain to a muscle.",
   "sets": [
    "living"
-  ]
+  ],
+  "parts": [
+   [
+    "neur",
+    "root",
+    "nerve"
+   ],
+   [
+    "on",
+    "suffix",
+    "a unit"
+   ]
+  ],
+  "start": "A neuron sends a message when"
  },
  {
   "w": "stimulus",
@@ -291,7 +680,20 @@ window.WORDS=[
   "ex": "Bright light is a stimulus that makes your eyes squint.",
   "sets": [
    "living"
-  ]
+  ],
+  "parts": [
+   [
+    "stimul",
+    "root",
+    "poke"
+   ],
+   [
+    "us",
+    "suffix",
+    "a thing"
+   ]
+  ],
+  "start": "A loud noise is a stimulus that makes me"
  },
  {
   "w": "probability",
@@ -300,7 +702,25 @@ window.WORDS=[
   "ex": "The probability of a taster child is 3 out of 4.",
   "sets": [
    "taste"
-  ]
+  ],
+  "parts": [
+   [
+    "prob",
+    "root",
+    "test, prove"
+   ],
+   [
+    "abil",
+    "suffix",
+    "able"
+   ],
+   [
+    "ity",
+    "suffix",
+    "the state of"
+   ]
+  ],
+  "start": "The probability of flipping heads is"
  },
  {
   "w": "fossil",
@@ -309,7 +729,20 @@ window.WORDS=[
   "ex": "We found a fish fossil in the rock.",
   "sets": [
    "rocks"
-  ]
+  ],
+  "parts": [
+   [
+    "foss",
+    "root",
+    "dug up"
+   ],
+   [
+    "il",
+    "suffix",
+    "a thing"
+   ]
+  ],
+  "start": "A fossil can show us"
  },
  {
   "w": "sediment",
@@ -318,7 +751,20 @@ window.WORDS=[
   "ex": "Sediment piled up at the bottom of the sea.",
   "sets": [
    "rocks"
-  ]
+  ],
+  "parts": [
+   [
+    "sedi",
+    "root",
+    "settle, sit"
+   ],
+   [
+    "ment",
+    "suffix",
+    "a thing, a result"
+   ]
+  ],
+  "start": "Sediment settles in layers when"
  },
  {
   "w": "outcropping",
@@ -327,7 +773,25 @@ window.WORDS=[
   "ex": "The outcropping by the road shows seven rock layers.",
   "sets": [
    "rocks"
-  ]
+  ],
+  "parts": [
+   [
+    "out",
+    "prefix",
+    "outside"
+   ],
+   [
+    "cropp",
+    "root",
+    "stick up (crop)"
+   ],
+   [
+    "ing",
+    "suffix",
+    "a thing that"
+   ]
+  ],
+  "start": "At the outcropping, we could see"
  },
  {
   "w": "superposition",
@@ -336,7 +800,25 @@ window.WORDS=[
   "ex": "By superposition, layer G is the oldest.",
   "sets": [
    "rocks"
-  ]
+  ],
+  "parts": [
+   [
+    "super",
+    "prefix",
+    "above, on top"
+   ],
+   [
+    "posit",
+    "root",
+    "place"
+   ],
+   [
+    "ion",
+    "suffix",
+    "the act of"
+   ]
+  ],
+  "start": "Superposition tells us that"
  },
  {
   "w": "index fossil",
@@ -345,7 +827,26 @@ window.WORDS=[
   "ex": "The trilobite is an index fossil that matched the two layers.",
   "sets": [
    "rocks"
-  ]
+  ],
+  "parts": [
+   [
+    "index",
+    "word",
+    "a pointer, a guide"
+   ],
+   " ",
+   [
+    "foss",
+    "root",
+    "dug up"
+   ],
+   [
+    "il",
+    "suffix",
+    "a thing"
+   ]
+  ],
+  "start": "An index fossil helps scientists"
  },
  {
   "w": "extinct",
@@ -354,7 +855,20 @@ window.WORDS=[
   "ex": "Trilobites are extinct, so we only see them as fossils.",
   "sets": [
    "rocks"
-  ]
+  ],
+  "parts": [
+   [
+    "ex",
+    "prefix",
+    "out"
+   ],
+   [
+    "tinct",
+    "root",
+    "put out (like a fire)"
+   ]
+  ],
+  "start": "Dinosaurs are extinct, so"
  },
  {
   "w": "ecosystem",
@@ -363,7 +877,20 @@ window.WORDS=[
   "ex": "The pot with soil, worms and a plant is a tiny ecosystem.",
   "sets": [
    "worms"
-  ]
+  ],
+  "parts": [
+   [
+    "eco",
+    "prefix",
+    "home, environment"
+   ],
+   [
+    "system",
+    "root",
+    "parts working together"
+   ]
+  ],
+  "start": "A pond is an ecosystem because"
  },
  {
   "w": "decomposer",
@@ -372,7 +899,25 @@ window.WORDS=[
   "ex": "The earthworm is a decomposer that eats dead leaves.",
   "sets": [
    "worms"
-  ]
+  ],
+  "parts": [
+   [
+    "de",
+    "prefix",
+    "apart, undo"
+   ],
+   [
+    "compos",
+    "root",
+    "put together"
+   ],
+   [
+    "er",
+    "suffix",
+    "one who"
+   ]
+  ],
+  "start": "A decomposer helps the soil by"
  },
  {
   "w": "producer",
@@ -381,7 +926,25 @@ window.WORDS=[
   "ex": "A plant is a producer.",
   "sets": [
    "worms"
-  ]
+  ],
+  "parts": [
+   [
+    "pro",
+    "prefix",
+    "forward"
+   ],
+   [
+    "duc",
+    "root",
+    "lead, make"
+   ],
+   [
+    "er",
+    "suffix",
+    "one who"
+   ]
+  ],
+  "start": "A plant is a producer because"
  },
  {
   "w": "consumer",
@@ -390,7 +953,25 @@ window.WORDS=[
   "ex": "A rabbit is a consumer because it eats plants.",
   "sets": [
    "worms"
-  ]
+  ],
+  "parts": [
+   [
+    "con",
+    "prefix",
+    "completely"
+   ],
+   [
+    "sum",
+    "root",
+    "take, use up"
+   ],
+   [
+    "er",
+    "suffix",
+    "one who"
+   ]
+  ],
+  "start": "I am a consumer because"
  },
  {
   "w": "nutrient",
@@ -399,7 +980,20 @@ window.WORDS=[
   "ex": "Worms put nutrients back into the soil.",
   "sets": [
    "worms"
-  ]
+  ],
+  "parts": [
+   [
+    "nutri",
+    "root",
+    "feed"
+   ],
+   [
+    "ent",
+    "suffix",
+    "a thing that"
+   ]
+  ],
+  "start": "Plants need nutrients to"
  },
  {
   "w": "variable",
@@ -408,7 +1002,20 @@ window.WORDS=[
   "ex": "The only variable was adding earthworms.",
   "sets": [
    "worms"
-  ]
+  ],
+  "parts": [
+   [
+    "vari",
+    "root",
+    "change"
+   ],
+   [
+    "able",
+    "suffix",
+    "can be"
+   ]
+  ],
+  "start": "In my experiment, the variable was"
  },
  {
   "w": "control",
@@ -417,7 +1024,8 @@ window.WORDS=[
   "ex": "Water and light were controls in the plant test.",
   "sets": [
    "worms"
-  ]
+  ],
+  "start": "To make a fair test, the control"
  },
  {
   "w": "embryo",
@@ -426,7 +1034,20 @@ window.WORDS=[
   "ex": "A chicken embryo grows inside the egg.",
   "sets": [
    "embryos"
-  ]
+  ],
+  "parts": [
+   [
+    "em",
+    "prefix",
+    "in, inside"
+   ],
+   [
+    "bryo",
+    "root",
+    "swell, grow"
+   ]
+  ],
+  "start": "A chicken embryo grows"
  },
  {
   "w": "vertebrate",
@@ -435,7 +1056,20 @@ window.WORDS=[
   "ex": "Fish, birds and rabbits are all vertebrates.",
   "sets": [
    "embryos"
-  ]
+  ],
+  "parts": [
+   [
+    "vertebr",
+    "root",
+    "joint of the spine"
+   ],
+   [
+    "ate",
+    "suffix",
+    "having"
+   ]
+  ],
+  "start": "A fish is a vertebrate because"
  },
  {
   "w": "ancestor",
@@ -444,7 +1078,25 @@ window.WORDS=[
   "ex": "Chickens and tortoises share an ancestor from long ago.",
   "sets": [
    "embryos"
-  ]
+  ],
+  "parts": [
+   [
+    "an",
+    "prefix",
+    "before"
+   ],
+   [
+    "cest",
+    "root",
+    "go"
+   ],
+   [
+    "or",
+    "suffix",
+    "one who"
+   ]
+  ],
+  "start": "My ancestors were"
  },
  {
   "w": "evolution",
@@ -453,7 +1105,25 @@ window.WORDS=[
   "ex": "Similar embryos are evidence of evolution.",
   "sets": [
    "embryos"
-  ]
+  ],
+  "parts": [
+   [
+    "e",
+    "prefix",
+    "out"
+   ],
+   [
+    "volut",
+    "root",
+    "roll, turn"
+   ],
+   [
+    "ion",
+    "suffix",
+    "the act of"
+   ]
+  ],
+  "start": "Evolution happens when"
  },
  {
   "w": "develop",
@@ -462,7 +1132,20 @@ window.WORDS=[
   "ex": "A tadpole develops into a frog.",
   "sets": [
    "embryos"
-  ]
+  ],
+  "parts": [
+   [
+    "de",
+    "prefix",
+    "undo"
+   ],
+   [
+    "velop",
+    "root",
+    "wrap"
+   ]
+  ],
+  "start": "A tadpole develops into"
  },
  {
   "w": "similarity",
@@ -471,7 +1154,25 @@ window.WORDS=[
   "ex": "The tail is one similarity between the early embryos.",
   "sets": [
    "embryos"
-  ]
+  ],
+  "parts": [
+   [
+    "simil",
+    "root",
+    "alike"
+   ],
+   [
+    "ar",
+    "suffix",
+    "like"
+   ],
+   [
+    "ity",
+    "suffix",
+    "the state of"
+   ]
+  ],
+  "start": "One similarity between a cat and a dog is"
  },
  {
   "w": "natural resource",
@@ -480,7 +1181,31 @@ window.WORDS=[
   "ex": "Water is a natural resource we use every day.",
   "sets": [
    "oil"
-  ]
+  ],
+  "parts": [
+   [
+    "natur",
+    "root",
+    "nature, born"
+   ],
+   [
+    "al",
+    "suffix",
+    "having to do with"
+   ],
+   " ",
+   [
+    "re",
+    "prefix",
+    "again"
+   ],
+   [
+    "source",
+    "root",
+    "spring up"
+   ]
+  ],
+  "start": "One natural resource I use every day is"
  },
  {
   "w": "renewable",
@@ -489,7 +1214,25 @@ window.WORDS=[
   "ex": "Wind is renewable because it never runs out.",
   "sets": [
    "oil"
-  ]
+  ],
+  "parts": [
+   [
+    "re",
+    "prefix",
+    "again"
+   ],
+   [
+    "new",
+    "root",
+    "new"
+   ],
+   [
+    "able",
+    "suffix",
+    "can be"
+   ]
+  ],
+  "start": "Solar power is renewable because"
  },
  {
   "w": "nonrenewable",
@@ -498,7 +1241,30 @@ window.WORDS=[
   "ex": "Oil is nonrenewable because it takes millions of years to form.",
   "sets": [
    "oil"
-  ]
+  ],
+  "parts": [
+   [
+    "non",
+    "prefix",
+    "not"
+   ],
+   [
+    "re",
+    "prefix",
+    "again"
+   ],
+   [
+    "new",
+    "root",
+    "new"
+   ],
+   [
+    "able",
+    "suffix",
+    "can be"
+   ]
+  ],
+  "start": "Coal is nonrenewable because"
  },
  {
   "w": "fossil fuel",
@@ -507,7 +1273,26 @@ window.WORDS=[
   "ex": "Gasoline is made from a fossil fuel.",
   "sets": [
    "oil"
-  ]
+  ],
+  "parts": [
+   [
+    "foss",
+    "root",
+    "dug up"
+   ],
+   [
+    "il",
+    "suffix",
+    "a thing"
+   ],
+   " ",
+   [
+    "fuel",
+    "word",
+    "something burned for energy"
+   ]
+  ],
+  "start": "A car burns a fossil fuel called"
  },
  {
   "w": "consumption",
@@ -516,7 +1301,25 @@ window.WORDS=[
   "ex": "Oil consumption keeps going up every year.",
   "sets": [
    "oil"
-  ]
+  ],
+  "parts": [
+   [
+    "con",
+    "prefix",
+    "completely"
+   ],
+   [
+    "sump",
+    "root",
+    "take, use up"
+   ],
+   [
+    "tion",
+    "suffix",
+    "the act of"
+   ]
+  ],
+  "start": "We can lower our water consumption by"
  },
  {
   "w": "reserve",
@@ -525,7 +1328,20 @@ window.WORDS=[
   "ex": "Oil reserves are oil found underground that we can still use.",
   "sets": [
    "oil"
-  ]
+  ],
+  "parts": [
+   [
+    "re",
+    "prefix",
+    "back"
+   ],
+   [
+    "serve",
+    "root",
+    "keep, save"
+   ]
+  ],
+  "start": "We keep a reserve of snacks so"
  },
  {
   "w": "conserve",
@@ -534,7 +1350,20 @@ window.WORDS=[
   "ex": "We conserve oil when we ride the bus.",
   "sets": [
    "oil"
-  ]
+  ],
+  "parts": [
+   [
+    "con",
+    "prefix",
+    "fully"
+   ],
+   [
+    "serve",
+    "root",
+    "keep, save"
+   ]
+  ],
+  "start": "I can conserve electricity by"
  },
  {
   "w": "orbit",
@@ -543,7 +1372,15 @@ window.WORDS=[
   "ex": "The Moon’s orbit around Earth takes about a month.",
   "sets": [
    "moon"
-  ]
+  ],
+  "parts": [
+   [
+    "orbit",
+    "root",
+    "wheel track, circle path"
+   ]
+  ],
+  "start": "The Moon’s orbit around Earth"
  },
  {
   "w": "rotation",
@@ -552,7 +1389,20 @@ window.WORDS=[
   "ex": "Earth’s rotation gives us day and night.",
   "sets": [
    "moon"
-  ]
+  ],
+  "parts": [
+   [
+    "rot",
+    "root",
+    "wheel, turn"
+   ],
+   [
+    "ation",
+    "suffix",
+    "the act of"
+   ]
+  ],
+  "start": "Earth’s rotation causes"
  },
  {
   "w": "phase",
@@ -561,7 +1411,15 @@ window.WORDS=[
   "ex": "Tonight the Moon is in its full phase.",
   "sets": [
    "moon"
-  ]
+  ],
+  "parts": [
+   [
+    "phase",
+    "root",
+    "how it appears"
+   ]
+  ],
+  "start": "The Moon’s phase changes because"
  },
  {
   "w": "waxing",
@@ -570,7 +1428,20 @@ window.WORDS=[
   "ex": "The waxing Moon looks bigger each night.",
   "sets": [
    "moon"
-  ]
+  ],
+  "parts": [
+   [
+    "wax",
+    "root",
+    "grow"
+   ],
+   [
+    "ing",
+    "suffix",
+    "happening now"
+   ]
+  ],
+  "start": "When the Moon is waxing,"
  },
  {
   "w": "waning",
@@ -579,7 +1450,20 @@ window.WORDS=[
   "ex": "After the full moon, the Moon is waning.",
   "sets": [
    "moon"
-  ]
+  ],
+  "parts": [
+   [
+    "wan",
+    "root",
+    "shrink"
+   ],
+   [
+    "ing",
+    "suffix",
+    "happening now"
+   ]
+  ],
+  "start": "When the Moon is waning,"
  },
  {
   "w": "crescent",
@@ -588,7 +1472,20 @@ window.WORDS=[
   "ex": "We saw a thin crescent moon after sunset.",
   "sets": [
    "moon"
-  ]
+  ],
+  "parts": [
+   [
+    "cresc",
+    "root",
+    "grow"
+   ],
+   [
+    "ent",
+    "suffix",
+    "doing"
+   ]
+  ],
+  "start": "A crescent moon looks like"
  },
  {
   "w": "gibbous",
@@ -597,7 +1494,20 @@ window.WORDS=[
   "ex": "A gibbous moon looks like a lopsided circle.",
   "sets": [
    "moon"
-  ]
+  ],
+  "parts": [
+   [
+    "gibb",
+    "root",
+    "hump"
+   ],
+   [
+    "ous",
+    "suffix",
+    "having"
+   ]
+  ],
+  "start": "A gibbous moon is"
  },
  {
   "w": "kinetic energy",
@@ -606,7 +1516,36 @@ window.WORDS=[
   "ex": "Fast particles have more kinetic energy.",
   "sets": [
    "heat"
-  ]
+  ],
+  "parts": [
+   [
+    "kinet",
+    "root",
+    "move"
+   ],
+   [
+    "ic",
+    "suffix",
+    "having to do with"
+   ],
+   " ",
+   [
+    "en",
+    "prefix",
+    "in"
+   ],
+   [
+    "erg",
+    "root",
+    "work"
+   ],
+   [
+    "y",
+    "suffix",
+    "the state of"
+   ]
+  ],
+  "start": "A rolling ball has kinetic energy because"
  },
  {
   "w": "thermal energy",
@@ -615,7 +1554,36 @@ window.WORDS=[
   "ex": "The hot soup has a lot of thermal energy.",
   "sets": [
    "heat"
-  ]
+  ],
+  "parts": [
+   [
+    "therm",
+    "root",
+    "heat"
+   ],
+   [
+    "al",
+    "suffix",
+    "having to do with"
+   ],
+   " ",
+   [
+    "en",
+    "prefix",
+    "in"
+   ],
+   [
+    "erg",
+    "root",
+    "work"
+   ],
+   [
+    "y",
+    "suffix",
+    "the state of"
+   ]
+  ],
+  "start": "Hot cocoa has thermal energy, so"
  },
  {
   "w": "temperature",
@@ -624,7 +1592,20 @@ window.WORDS=[
   "ex": "The water’s temperature rose to 35 °C.",
   "sets": [
    "heat"
-  ]
+  ],
+  "parts": [
+   [
+    "temper",
+    "root",
+    "mix, balance"
+   ],
+   [
+    "ature",
+    "suffix",
+    "the state of"
+   ]
+  ],
+  "start": "When the temperature goes up,"
  },
  {
   "w": "particle",
@@ -633,7 +1614,20 @@ window.WORDS=[
   "ex": "Every particle in the cup is always moving.",
   "sets": [
    "heat"
-  ]
+  ],
+  "parts": [
+   [
+    "parti",
+    "root",
+    "part"
+   ],
+   [
+    "cle",
+    "suffix",
+    "small"
+   ]
+  ],
+  "start": "Every particle in hot water"
  },
  {
   "w": "transfer",
@@ -642,7 +1636,20 @@ window.WORDS=[
   "ex": "Energy transfers from the hot marbles to the cool water.",
   "sets": [
    "heat"
-  ]
+  ],
+  "parts": [
+   [
+    "trans",
+    "prefix",
+    "across"
+   ],
+   [
+    "fer",
+    "root",
+    "carry"
+   ]
+  ],
+  "start": "Heat can transfer from"
  },
  {
   "w": "equilibrium",
@@ -651,6 +1658,24 @@ window.WORDS=[
   "ex": "The water and the marbles reached equilibrium at 35 °C.",
   "sets": [
    "heat"
-  ]
+  ],
+  "parts": [
+   [
+    "equi",
+    "prefix",
+    "equal"
+   ],
+   [
+    "libr",
+    "root",
+    "balance scale"
+   ],
+   [
+    "ium",
+    "suffix",
+    "a thing"
+   ]
+  ],
+  "start": "The hot and cold water reached equilibrium when"
  }
 ];
