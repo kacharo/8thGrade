@@ -1,12 +1,17 @@
 /* Math word list. One entry per word: w = the word, say = how to say it, def = meaning, ex = a sentence that uses it.
-   Add a line here and it shows up in the Word list on the Math page and in the exercises. */
+   Add a line here and it shows up in the Word list on the Math page and in the exercises.
+   parts = the word broken into pieces: [piece, "prefix" | "root" | "suffix" | "abbr" | "word", meaning]. Use " " between two words.
+           Leave parts out for a word with no prefix or suffix. If parts is missing, the page guesses common ones by itself.
+   start = a sentence starter for the "Write it" step. It should use the word.
+   pic   = (optional) an emoji to show when wordpics.js has no picture for the word, e.g. pic:"🎈".
+*/
 window.WORDS=[
- {w:'similar', say:'SIM-uh-ler', def:'Same shape, but maybe a different size.', ex:'A small photo and a big poster of it are similar.'},
- {w:'congruent', say:'kun-GROO-ent', def:'Exactly the same size. Congruent angles have the same measure.', ex:'Both angles are 40 degrees, so they are congruent.'},
- {w:'corresponding', say:'kor-uh-SPON-ding', def:'In the matching spot on the other shape.', ex:'Angle A and angle D are corresponding angles.'},
- {w:'vertex', say:'VUR-teks', def:'A corner point where two sides meet.', ex:'A triangle has three corners, and each one is a vertex.'},
- {w:'obtuse', say:'ob-TOOS', def:'An angle that is bigger than 90 degrees.', ex:'A 115 degree angle is an obtuse angle.'},
- {w:'quadrilateral', say:'kwad-ruh-LAT-er-ul', def:'A shape with 4 sides and 4 angles.', ex:'A square is a quadrilateral.'},
- {w:'sufficient', say:'suh-FISH-ent', def:'Enough. As much as you need.', ex:'Two pairs of matching angles is sufficient to show triangles are similar.'},
- {w:'justify', say:'JUS-tuh-fy', def:'Give a reason that proves your answer.', ex:'Use the 180 degree rule to justify your answer.'}
+ {"w": "similar", "say": "SIM-uh-ler", "def": "Same shape, but maybe a different size.", "ex": "A small photo and a big poster of it are similar.", "parts": [["simil", "root", "alike"], ["ar", "suffix", "like"]], "start": "Two shapes are similar when"},
+ {"w": "congruent", "say": "kun-GROO-ent", "def": "Exactly the same size. Congruent angles have the same measure.", "ex": "Both angles are 40 degrees, so they are congruent.", "parts": [["con", "prefix", "together"], ["gru", "root", "agree, fit"], ["ent", "suffix", "being"]], "start": "Two angles are congruent when"},
+ {"w": "corresponding", "say": "kor-uh-SPON-ding", "def": "In the matching spot on the other shape.", "ex": "Angle A and angle D are corresponding angles.", "parts": [["cor", "prefix", "together, with"], ["respond", "root", "answer"], ["ing", "suffix", "doing"]], "start": "Corresponding angles are"},
+ {"w": "vertex", "say": "VUR-teks", "def": "A corner point where two sides meet.", "ex": "A triangle has three corners, and each one is a vertex.", "parts": [["vert", "root", "turn"], ["ex", "suffix", "a thing"]], "start": "Each vertex of a triangle"},
+ {"w": "obtuse", "say": "ob-TOOS", "def": "An angle that is bigger than 90 degrees.", "ex": "A 115 degree angle is an obtuse angle.", "parts": [["ob", "prefix", "against"], ["tuse", "root", "beaten dull"]], "start": "An obtuse angle is"},
+ {"w": "quadrilateral", "say": "kwad-ruh-LAT-er-ul", "def": "A shape with 4 sides and 4 angles.", "ex": "A square is a quadrilateral.", "parts": [["quadri", "prefix", "four"], ["later", "root", "side"], ["al", "suffix", "having to do with"]], "start": "A quadrilateral has"},
+ {"w": "sufficient", "say": "suh-FISH-ent", "def": "Enough. As much as you need.", "ex": "Two pairs of matching angles is sufficient to show triangles are similar.", "parts": [["suf", "prefix", "up to"], ["fic", "root", "make, do"], ["ient", "suffix", "being"]], "start": "Two matching angles are sufficient to"},
+ {"w": "justify", "say": "JUS-tuh-fy", "def": "Give a reason that proves your answer.", "ex": "Use the 180 degree rule to justify your answer.", "parts": [["just", "root", "right, fair"], ["ify", "suffix", "to make"]], "start": "I can justify my answer by"}
 ];

@@ -5,7 +5,9 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Similar Triangles Exercise</title>
 <script src="../shared.js?v=20261108a" data-home="../index.html"></script>
-<script src="words.js?v=20261108a"></script>
+<script src="../wordpics.js?v=20261120a"></script>
+<script src="../wordviz.js?v=20261120a"></script>
+<script src="words.js?v=20261120a"></script>
 <style>
 :root{--bg:#f6f4ee;--card:#fff;--ink:#22303c;--muted:#5d6b78;--brand:#2f6fed;--brand2:#e8f0ff;--good:#1f9d63;--goodbg:#dff5ea;--bad:#d64545;--badbg:#fde6e6;--warn:#b86e00;--warnbg:#fff1d6;--line:#e1ddd0}
 *{box-sizing:border-box}
@@ -185,6 +187,17 @@ function nestedSVG(){
 
 /* ---- content ---- */
 var VOCAB=(window.WORDS||[]).map(function(x){return [x.w,x.def,x.ex,x.say];});   // list lives in words.js
+/* ---- pictures and word parts come from ../wordviz.js ---- */
+function vPic(w,sz){return W.viz?W.viz.pic(w,sz):'';}
+function vParts(w){return W.viz?W.viz.parts(w):'';}
+function vKey(){return W.viz?W.viz.key():'';}
+/* ---- 2b. write it: her own sentence with 3 of the words ---- */
+function writeIt(){
+  if(!W.viz||!W.viz.writeStep){go(2);return;}
+  stopSay();window.scrollTo(0,0);
+  W.viz.writeStep({stage:stage,vocab:VOCAB,num:'2b.',say:say,spoken:(typeof spoken==='function'?spoken:function(t){return t;}),
+    add:function(p,m){S.pts+=p;S.max+=m;},log:function(e){LOG.push(e);},next:function(){go(2);}});
+}
 
 var MATCH=[
  ['similar','Same shape, maybe a different size'],
@@ -255,7 +268,7 @@ var FACTS=[
  'Every triangle’s angles add to 180°, no matter how big or tiny the triangle is.',
  'Maps and model cars are similar to the real thing: same shape, smaller size.'
 ];
-var NAMES=['Learn','Say & Spell','Match','True / False','Quiz','Fill in','Sort','Detective','Submit'];
+var NAMES=['Learn','Say, Spell & Write','Match','True / False','Quiz','Fill in','Sort','Detective','Submit'];
 
 /* ---- state ---- */
 var S={step:0,pts:0,max:0};
@@ -280,9 +293,9 @@ function learn(){
      '<div class="rule"><span class="n">3</span><div><b>Not enough information.</b> If you only know <b>1 angle</b> in each triangle, you cannot tell.</div></div>'+
      '<div class="rule"><span class="n">4</span><div><b>Quadrilaterals are different.</b> Matching angles are <b>not sufficient</b>. A square and a long rectangle both have four 90° angles, but they are not similar.</div></div>'+
    '</div>'+
-   '<h2 style="margin-top:16px">Words for today</h2><p class="muted">Tap 🔊 to hear the word. Tap 💬 to hear it in a sentence.</p>'+
-   '<div class="grid">'+VOCAB.map(function(v,i){return '<div class="wc"><h3><span>'+esc(v[0])+(W.practice.list()[v[0].toLowerCase()]?' <span class="badge wait">🔁 practice</span>':'')+'</span><span class="row" style="gap:6px;flex-wrap:nowrap"><button class="say" data-w="'+i+'" aria-label="Hear '+esc(v[0])+'">🔊</button><button class="say" data-s="'+i+'" aria-label="Hear it in a sentence">💬</button></span></h3>'+
-     '<div class="rs">say it: '+esc(v[3])+'</div><div>'+esc(v[1])+'</div><div class="ex">In a sentence: '+hl(v[2],v[0])+'</div></div>';}).join('')+'</div>'+
+   '<h2 style="margin-top:16px">Words for today</h2><p class="muted">Tap 🔊 to hear the word. Tap 💬 to hear it in a sentence. Look at the picture and the word parts.</p>'+vKey()+
+   '<div class="grid">'+VOCAB.map(function(v,i){return '<div class="wc">'+vPic(v[0])+'<h3><span>'+esc(v[0])+(W.practice.list()[v[0].toLowerCase()]?' <span class="badge wait">🔁 practice</span>':'')+'</span><span class="row" style="gap:6px;flex-wrap:nowrap"><button class="say" data-w="'+i+'" aria-label="Hear '+esc(v[0])+'">🔊</button><button class="say" data-s="'+i+'" aria-label="Hear it in a sentence">💬</button></span></h3>'+
+     '<div class="rs">say it: '+esc(v[3])+'</div>'+vParts(v[0])+'<div>'+esc(v[1])+'</div><div class="ex">In a sentence: '+hl(v[2],v[0])+'</div></div>';}).join('')+'</div>'+
    '<div class="row" style="margin-top:16px"><button class="b green" id="next">I’m ready &rarr;</button></div></div>';
   $('#sayIntro').onclick=function(){say('Similar shapes have the same shape, but they can be a different size. The angles of a triangle always add up to 180 degrees. If two pairs of matching angles are the same, the triangles are similar.');};
   stage.querySelectorAll('.say[data-w]').forEach(function(b){b.onclick=function(){var v=VOCAB[+b.dataset.w];say(v[0],0.7);};});
@@ -314,8 +327,8 @@ function saySpell(){
      (SRC&&(okFirst+okSecond+missed.length>0)?'<div class="big">Pronunciation: <b>'+okFirst+'</b> on the first try, <b>'+okSecond+'</b> on the second try, <b>'+missed.length+'</b> to practice.</div>':'<div class="big">Spelling is done!</div>')+
      (micBroken?'<div class="banner">The microphone was not available on this device, so some words were not tested for pronunciation.<br><small>iPhone: allow the microphone for this site in Safari, and turn on Dictation in Settings, General, Keyboard.</small></div>':'')+
      (missed.length?'<div class="banner">🔁 <b>Words to practice:</b><br>'+missed.map(esc).join(', ')+'<br>They were added to <b>My Words</b> in the ELA reading app, and they come first next time.</div>':(SRC&&!micBroken?'<div class="good" style="margin-top:10px">No practice words. Great talking!</div>':''))+
-     '<div class="row" style="margin-top:14px"><button class="b green" id="next">Next: Match &rarr;</button>'+(missed.length?'<a class="b alt" href="../ELA/index.html">Open the reading app</a>':'')+'</div></div>';
-    $('#next').onclick=function(){go(2);};
+     '<div class="row" style="margin-top:14px"><button class="b green" id="next">Next: Write it &rarr;</button>'+(missed.length?'<a class="b alt" href="../ELA/index.html">Open the reading app</a>':'')+'</div></div>';
+    $('#next').onclick=function(){writeIt();};
   }
   function show(){
     stopRec();
@@ -330,7 +343,7 @@ function saySpell(){
     /* ---------- part A: say it (two tries) ---------- */
     var useMic=SRC&&!micBroken;
     stage.innerHTML=head+'<div class="muted">Step A: say it'+(pnow[word.toLowerCase()]?' &middot; <span class="badge wait">🔁 practice word</span>':'')+'</div>'+
-     '<div class="big" style="margin:6px 0"><b>'+esc(word)+'</b></div>'+
+     '<div class="big" style="margin:6px 0"><b>'+esc(word)+'</b></div>'+vPic(word)+vParts(word)+
      '<div class="rs" style="font-size:22px">say it: '+esc(v[3])+'</div>'+
      '<div class="row" style="margin:8px 0"><button class="b alt" id="hear">🔊 Hear it</button><button class="b alt" id="hears">💬 In a sentence</button>'+
      (useMic?'<button class="b" id="mic">🎤 Tap, then say it</button>':'<button class="b green" id="said">Next: spell it &rarr;</button>')+'</div>'+
@@ -404,7 +417,7 @@ function saySpell(){
       var slots=[],stries=[],peeked=false,marks=null,solved=false;
       var blank=v[2].replace(new RegExp(escRe(word),'ig'),'_____');
       stage.innerHTML=head+'<div class="muted">Step B: spell it</div><div class="big" style="margin:6px 0">Meaning: '+esc(v[1])+'</div>'+
-       '<div class="sent">'+esc(blank)+'</div>'+
+       vPic(word,'small')+'<div class="sent">'+esc(blank)+'</div>'+
        '<div class="row"><button class="b alt" id="hear2">🔊 Hear the word</button><button class="b alt" id="hear3">💬 Hear the sentence</button></div>'+
        '<div class="slots" id="slots"></div><div class="tiles" id="tiles"></div>'+
        '<div class="row"><button class="b green" id="chk" disabled>Check my spelling</button><button class="b alt" id="undo">⌫ Undo</button><button class="b alt" id="clr">Clear</button><button class="b alt" id="peek">👀 Show me the word</button></div>'+
