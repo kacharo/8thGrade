@@ -99,6 +99,9 @@ a.b{font:inherit;font-weight:700;border:0;border-radius:14px;padding:12px 18px;c
 .badge.wait{background:var(--warnbg);color:var(--warn)}
 </style>
 <script src="../shared.js?v=20261108a" data-home="../index.html"></script>
+<script src="words.js?v=20261120a"></script>
+<script src="../wordpics.js?v=20261120a"></script>
+<script src="../wordviz.js?v=20261120a"></script>
 </head>
 <body>
 <header>
@@ -670,8 +673,9 @@ function renderWords(){
       <div class="row"><input type="text" id="skipNew" placeholder="Words to ignore, e.g. then, very" style="max-width:320px"><button class="b" id="skipAdd">➕ Ignore</button><button class="b alt" id="skipReset">Reset list</button></div>
     </details>
     <div class="grid">${list.map(v=>`
-      <div class="wc"><h3>${esc(v.w)} <button class="b alt" data-hear="${esc(v.w)}" style="padding:4px 10px">🔊</button></h3>
+      <div class="wc">${W.viz?W.viz.pic(v.w,'small'):''}<h3>${esc(v.w)} <button class="b alt" data-hear="${esc(v.w)}" style="padding:4px 10px">🔊</button></h3>
       <div class="muted">${esc(v.phonetic||'')} <span class="pos">${esc(v.pos||'')}</span></div>
+      ${W.viz?W.viz.parts(v.w):''}
       <p><b>Meaning:</b> ${v.def?esc(v.def):(v.fail?'Not found. Try 🔄 Refresh meanings.':'Looking it up…')}</p>
       ${v.ex?'<p><b>Example:</b> “'+esc(v.ex)+'”</p>':''}
       ${v.ctx?'<p class="muted"><b>From your reading:</b> “'+esc(v.ctx)+'”</p>':''}

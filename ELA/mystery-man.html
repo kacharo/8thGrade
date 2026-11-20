@@ -5,7 +5,9 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>A Mystery Man - ELA Exercise</title>
 <script src="../shared.js?v=20261108a" data-home="../index.html"></script>
-<script src="words.js?v=20261108a"></script>
+<script src="../wordpics.js?v=20261120a"></script>
+<script src="../wordviz.js?v=20261120a"></script>
+<script src="words.js?v=20261120a"></script>
 <style>
 :root{--bg:#f6f4ee;--card:#fff;--ink:#22303c;--muted:#5d6b78;--brand:#2f6fed;--brand2:#e8f0ff;--good:#1f9d63;--goodbg:#dff5ea;--bad:#d64545;--badbg:#fde6e6;--warn:#b86e00;--warnbg:#fff1d6;--line:#e1ddd0}
 *{box-sizing:border-box}
@@ -124,6 +126,17 @@ function stopSay(){try{if('speechSynthesis' in window)speechSynthesis.cancel();}
 
 /* ---- content ---- */
 var VOCAB=(window.WORDS||[]).map(function(x){return [x.w,x.def,x.ex,x.say];});   // list lives in words.js
+/* ---- pictures and word parts come from ../wordviz.js ---- */
+function vPic(w,sz){return W.viz?W.viz.pic(w,sz):'';}
+function vParts(w){return W.viz?W.viz.parts(w):'';}
+function vKey(){return W.viz?W.viz.key():'';}
+/* ---- 2b. write it: her own sentence with 3 of the words ---- */
+function writeIt(){
+  if(!W.viz||!W.viz.writeStep){go(2);return;}
+  stopSay();window.scrollTo(0,0);
+  W.viz.writeStep({stage:stage,vocab:VOCAB,num:'2b.',say:say,spoken:(typeof spoken==='function'?spoken:function(t){return t;}),
+    add:function(p,m){S.pts+=p;S.max+=m;},log:function(e){LOG.push(e);},next:function(){go(2);}});
+}
 
 var STORY=[
  {icon:'🎵',t:'It is Sunday night, the night before a summer trip. Six-year-old Veronica bounces on her bed and sings a song about John Henry, a mighty man who built railroad tracks.'},
@@ -200,7 +213,7 @@ var FACTS=[
  'Workers called “steel drivers” swung heavy hammers to pound steel spikes into rock, making holes for blasting tunnels.',
  'Some historians think John Henry was a real person, not just a character in a song.'
 ];
-var NAMES=['Learn','Say & Spell','Match','True / False','Quiz','Fill in','Story order','Think','Submit'];
+var NAMES=['Learn','Say, Spell & Write','Match','True / False','Quiz','Fill in','Story order','Think','Submit'];
 
 
 /* ---- state ---- */
@@ -227,9 +240,9 @@ function learn(){
    '<div class="tl">'+STORY.map(function(p,i){return '<div class="rule"><span class="n">'+(i+1)+'</span><div class="pi">'+p.icon+'</div><div style="flex:1">'+hlAll(p.t)+'</div><button class="say" data-p="'+i+'" aria-label="Read aloud">🔊</button></div>';}).join('')+'</div>'+
    '<h2 style="margin-top:16px">Who is in the story?</h2><div class="grid">'+PEOPLE.map(function(p){return '<div class="wc"><h3 style="font-size:20px">'+esc(p[0])+'</h3><div>'+esc(p[1])+'</div></div>';}).join('')+'</div>'+
    '<div class="card" style="background:var(--warnbg);border-color:#f1d9a8;margin-top:14px"><b>📌 Reading skill: making an inference.</b> An <b>inference</b> is a smart guess you make from clues. <br>Clue: the man wears overalls and boots and holds a hammer. <br>Inference: he probably does hard work with his hands.</div>'+
-   '<h2 style="margin-top:16px">Words for today</h2><p class="muted">Tap 🔊 to hear the word. Tap 💬 to hear it in a sentence.</p>'+
-   '<div class="grid">'+VOCAB.map(function(v,i){return '<div class="wc"><h3><span>'+esc(v[0])+(W.practice.list()[v[0].toLowerCase()]?' <span class="badge wait">🔁 practice</span>':'')+'</span><span class="row" style="gap:6px;flex-wrap:nowrap"><button class="say" data-w="'+i+'" aria-label="Hear '+esc(v[0])+'">🔊</button><button class="say" data-s="'+i+'" aria-label="Hear it in a sentence">💬</button></span></h3>'+
-     '<div class="rs">say it: '+esc(v[3])+'</div><div>'+esc(v[1])+'</div><div class="ex">In a sentence: '+hl(v[2],v[0])+'</div></div>';}).join('')+'</div>'+
+   '<h2 style="margin-top:16px">Words for today</h2><p class="muted">Tap 🔊 to hear the word. Tap 💬 to hear it in a sentence. Look at the picture and the word parts.</p>'+vKey()+
+   '<div class="grid">'+VOCAB.map(function(v,i){return '<div class="wc">'+vPic(v[0])+'<h3><span>'+esc(v[0])+(W.practice.list()[v[0].toLowerCase()]?' <span class="badge wait">🔁 practice</span>':'')+'</span><span class="row" style="gap:6px;flex-wrap:nowrap"><button class="say" data-w="'+i+'" aria-label="Hear '+esc(v[0])+'">🔊</button><button class="say" data-s="'+i+'" aria-label="Hear it in a sentence">💬</button></span></h3>'+
+     '<div class="rs">say it: '+esc(v[3])+'</div>'+vParts(v[0])+'<div>'+esc(v[1])+'</div><div class="ex">In a sentence: '+hl(v[2],v[0])+'</div></div>';}).join('')+'</div>'+
    '<div class="row" style="margin-top:16px"><button class="b green" id="next">I’m ready &rarr;</button></div></div>';
   stage.querySelectorAll('.say[data-p]').forEach(function(b){b.onclick=function(){say(STORY[+b.dataset.p].t,0.9);};});
   $('#sayAll').onclick=function(){say(STORY.map(function(p){return p.t;}).join(' '),0.9);};
@@ -264,8 +277,8 @@ function saySpell(){
      (SRC&&(okFirst+okSecond+missed.length>0)?'<div class="big">Pronunciation: <b>'+okFirst+'</b> on the first try, <b>'+okSecond+'</b> on the second try, <b>'+missed.length+'</b> to practice.</div>':'<div class="big">Spelling is done!</div>')+
      (micBroken?'<div class="banner">The microphone was not available on this device, so some words were not tested for pronunciation.<br><small>iPhone: allow the microphone for this site in Safari, and turn on Dictation in Settings, General, Keyboard.</small></div>':'')+
      (missed.length?'<div class="banner">🔁 <b>Words to practice:</b><br>'+missed.map(esc).join(', ')+'<br>They were added to <b>My Words</b> in the ELA reading app, and they come first next time.</div>':(SRC&&!micBroken?'<div class="good" style="margin-top:10px">No practice words. Great talking!</div>':''))+
-     '<div class="row" style="margin-top:14px"><button class="b green" id="next">Next: Match &rarr;</button>'+(missed.length?'<a class="b alt" href="index.html">Open the reading app</a>':'')+'</div></div>';
-    $('#next').onclick=function(){go(2);};
+     '<div class="row" style="margin-top:14px"><button class="b green" id="next">Next: Write it &rarr;</button>'+(missed.length?'<a class="b alt" href="index.html">Open the reading app</a>':'')+'</div></div>';
+    $('#next').onclick=function(){writeIt();};
   }
   function show(){
     stopRec();
@@ -280,7 +293,7 @@ function saySpell(){
     /* ---------- part A: say it (two tries) ---------- */
     var useMic=SRC&&!micBroken;
     stage.innerHTML=head+'<div class="muted">Step A: say it'+(pnow[word.toLowerCase()]?' &middot; <span class="badge wait">🔁 practice word</span>':'')+'</div>'+
-     '<div class="big" style="margin:6px 0"><b>'+esc(word)+'</b></div>'+
+     '<div class="big" style="margin:6px 0"><b>'+esc(word)+'</b></div>'+vPic(word)+vParts(word)+
      '<div class="rs" style="font-size:22px">say it: '+esc(v[3])+'</div>'+
      '<div class="row" style="margin:8px 0"><button class="b alt" id="hear">🔊 Hear it</button><button class="b alt" id="hears">💬 In a sentence</button>'+
      (useMic?'<button class="b" id="mic">🎤 Tap, then say it</button>':'<button class="b green" id="said">Next: spell it &rarr;</button>')+'</div>'+
@@ -354,7 +367,7 @@ function saySpell(){
       var slots=[],stries=[],peeked=false,marks=null,solved=false;
       var blank=v[2].replace(new RegExp(escRe(word),'ig'),'_____');
       stage.innerHTML=head+'<div class="muted">Step B: spell it</div><div class="big" style="margin:6px 0">Meaning: '+esc(v[1])+'</div>'+
-       '<div class="sent">'+esc(blank)+'</div>'+
+       vPic(word,'small')+'<div class="sent">'+esc(blank)+'</div>'+
        '<div class="row"><button class="b alt" id="hear2">🔊 Hear the word</button><button class="b alt" id="hear3">💬 Hear the sentence</button></div>'+
        '<div class="slots" id="slots"></div><div class="tiles" id="tiles"></div>'+
        '<div class="row"><button class="b green" id="chk" disabled>Check my spelling</button><button class="b alt" id="undo">⌫ Undo</button><button class="b alt" id="clr">Clear</button><button class="b alt" id="peek">👀 Show me the word</button></div>'+
