@@ -1,0 +1,601 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Inheritance: The Bitter-Taste Gene</title>
+<script src="../shared.js?v=20261108a" data-home="../index.html"></script>
+<script src="words.js?v=20261119a"></script>
+<style>
+:root{--bg:#f6f4ee;--card:#fff;--ink:#22303c;--muted:#5d6b78;--brand:#2f6fed;--brand2:#e8f0ff;--good:#1f9d63;--goodbg:#dff5ea;--bad:#d64545;--badbg:#fde6e6;--warn:#b86e00;--warnbg:#fff1d6;--line:#e1ddd0}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Atkinson Hyperlegible","Trebuchet MS",Verdana,system-ui,sans-serif;font-size:18px;-webkit-tap-highlight-color:transparent;touch-action:manipulation;padding-bottom:env(safe-area-inset-bottom)}
+header{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:10px 18px;background:#fff;border-bottom:2px solid var(--line);position:sticky;top:0;z-index:5}
+header h1{font-size:22px;margin:0;flex:1}
+#xp{font-weight:700;background:var(--warnbg);color:var(--warn);padding:6px 12px;border-radius:99px}
+main{max-width:860px;margin:0 auto;padding:18px}
+.card{background:var(--card);border:2px solid var(--line);border-radius:18px;padding:18px;margin-bottom:16px}
+h2{margin:0 0 10px;font-size:22px}
+a.b,button.b{display:inline-block;text-decoration:none;font:inherit;font-weight:700;border:0;border-radius:14px;padding:12px 18px;cursor:pointer;background:var(--brand);color:#fff;min-height:44px}
+.b.alt{background:var(--brand2);color:var(--brand)}
+.b.green{background:var(--good)}
+.b:disabled{opacity:.4;cursor:not-allowed}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.muted{color:var(--muted)}
+.steps{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.steps span{flex:1 1 auto;text-align:center;padding:6px 8px;border-radius:99px;background:#ece8dc;color:var(--muted);font-size:14px;font-weight:700;white-space:nowrap}
+.steps span.on{background:var(--brand);color:#fff}
+.steps span.done{background:var(--goodbg);color:var(--good)}
+.bar{height:12px;background:#ece8dc;border-radius:99px;overflow:hidden;margin:8px 0 14px}
+.bar>i{display:block;height:100%;background:var(--good);width:0;transition:width .3s}
+.big{font-size:24px;line-height:1.5}
+.opt{display:block;width:100%;text-align:left;font:inherit;font-size:20px;padding:14px 16px;margin:8px 0;border:2px solid var(--line);border-radius:14px;background:#fff;cursor:pointer;color:var(--ink)}
+.opt:hover:not(:disabled){border-color:var(--brand)}
+.opt.right{background:var(--goodbg);border-color:var(--good)}
+.opt.wrong{background:var(--badbg);border-color:var(--bad)}
+.opt.sel{border-color:var(--brand);background:var(--brand2)}
+.opt:disabled{cursor:default;color:var(--ink)}
+#fb{font-size:20px;font-weight:700;padding:12px 14px;border-radius:14px;margin:10px 0;display:none}
+#fb.good{display:block;background:var(--goodbg);color:var(--good)}
+#fb.warn{display:block;background:var(--warnbg);color:var(--warn)}
+.wc{border:2px solid var(--line);border-radius:16px;padding:12px 14px;background:#fff}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
+.wc h3{margin:0 0 4px;font-size:22px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.say{border:0;background:var(--brand2);color:var(--brand);border-radius:99px;width:40px;height:40px;font-size:18px;cursor:pointer;flex:none}
+.ex{font-style:italic;color:var(--muted);margin-top:4px}
+.mt{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.mt .opt{margin:6px 0;font-size:18px}
+.mt .opt.done{background:var(--goodbg);border-color:var(--good);opacity:.75}
+@keyframes shake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.shake{animation:shake .3s}
+.pz{display:flex;gap:22px;flex-wrap:wrap;align-items:center}
+.ps{border-collapse:collapse}
+.ps td,.ps th{border:2px solid var(--brand);width:84px;height:62px;text-align:center;font-size:26px;font-weight:800}
+.ps th{background:#dce6f5}
+.ps th.side{background:#fbe3c6}
+.ps td button{width:100%;height:100%;border:0;background:#fff;font:inherit;font-weight:800;color:var(--ink);cursor:pointer}
+.ps td button.q{color:#b8b8b8}
+.ps td button.ok{background:var(--goodbg);color:var(--good)}
+.ps td button.no{background:var(--badbg);color:var(--bad)}
+.pct{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0}
+.pct .opt{width:auto;margin:0;padding:10px 16px}
+.badge{display:inline-block;padding:4px 12px;border-radius:99px;font-weight:700;background:var(--brand2);color:var(--brand);margin:0 6px 6px 0}
+.rs{color:var(--brand);font-weight:700;margin:2px 0 4px}
+.ex b{color:var(--ink)}
+.slots{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0}
+.slot{width:46px;height:54px;border:2px solid var(--brand);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:800;background:#fff}
+.slot.ok{background:var(--goodbg);border-color:var(--good);color:var(--good)}
+.slot.no{background:var(--badbg);border-color:var(--bad);color:var(--bad)}
+.gap{width:22px}
+.tiles{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.tile{width:50px;height:54px;border:2px solid var(--line);border-radius:12px;background:#fff;font:inherit;font-size:24px;font-weight:800;color:var(--ink);cursor:pointer}
+.tile:hover:not(:disabled){border-color:var(--brand)}
+.tile:disabled{opacity:.25;cursor:default}
+.sent{background:#eef3fb;border-radius:12px;padding:10px 12px;margin:10px 0}
+@media (max-width:640px){
+  .slot{width:36px;height:46px;font-size:21px}.tile{width:42px;height:48px;font-size:20px}
+  body{font-size:16px}
+  header{padding:8px 10px}header h1{font-size:18px}
+  main{padding:10px}.card{padding:12px;border-radius:14px}
+  .opt{font-size:17px;padding:12px}.big{font-size:20px}
+  .mt{grid-template-columns:1fr}
+  .ps td,.ps th{width:70px;height:56px;font-size:22px}
+  .steps span{font-size:12px;padding:5px 6px}
+}
+.banner{background:var(--warnbg);color:var(--warn);border-radius:12px;padding:10px 12px;margin:10px 0}
+.good{color:var(--good);font-weight:700}
+.wait{background:var(--warnbg)!important;color:var(--warn)!important}
+.fig{background:#fff;border:2px solid var(--line);border-radius:14px;padding:8px;margin:10px 0;text-align:center;overflow-x:auto}
+.fig svg{max-width:100%;height:auto;max-height:420px}
+.fig .cap{font-weight:700;color:var(--muted);font-size:15px;margin-top:4px}
+.flow{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.fs{color:#fff;border-radius:12px;padding:8px 10px;text-align:center;min-width:98px;flex:1 1 98px}
+.fs b{display:block;font-size:19px}.fs small{font-size:13px;line-height:1.2;display:block}
+.arr{color:var(--muted);font-size:22px}
+.an{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}
+.an div{background:#eef3fb;border-radius:12px;padding:8px 10px;display:flex;flex-direction:column}
+.an b{font-size:20px}
+.rule{background:#f1e8fa;border-radius:12px;padding:10px 12px;margin:8px 0 12px;line-height:1.6}
+.ctx{background:#fffdf5;border:2px dashed var(--line);border-radius:12px;padding:10px 12px;margin:10px 0;font-size:17px;line-height:1.5}
+.tip{color:var(--brand);font-weight:700;margin:6px 0 4px}
+.srow{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:8px 10px;border:2px solid var(--line);border-radius:12px;margin:8px 0;background:#fff}
+.srow .t{flex:1 1 220px;font-size:18px}
+.srow.ok{border-color:var(--good);background:var(--goodbg)}
+.srow.no{border-color:var(--bad);background:var(--badbg)}
+.pick{font:inherit;font-size:16px;font-weight:700;border:2px solid var(--line);background:#fff;color:var(--ink);border-radius:10px;padding:8px 12px;cursor:pointer;min-height:42px}
+.pick.sel{border-color:var(--brand);background:var(--brand);color:#fff}
+.pick:disabled{cursor:default}
+.olist{counter-reset:o;margin:8px 0}
+.oslot{display:flex;align-items:center;gap:10px;min-height:52px;border:2px dashed var(--brand);border-radius:12px;margin:6px 0;padding:6px 10px;background:#fff;font-size:18px;cursor:pointer}
+.oslot .n{font-weight:800;color:var(--brand);width:24px}
+.oslot.full{border-style:solid}
+.oslot.ok{border-color:var(--good);background:var(--goodbg)}
+.oslot.no{border-color:var(--bad);background:var(--badbg)}
+.oend{font-weight:700;color:var(--muted);font-size:15px}
+.otiles{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.otiles .pick{background:var(--brand2);color:var(--brand);border-color:var(--brand2)}
+.otiles .pick:disabled{opacity:.25}
+.lt{display:inline-block;min-width:26px;font-weight:800;color:var(--brand)}
+.ps2{border-collapse:collapse;margin:6px auto}
+.ps2 td,.ps2 th{border:2px solid var(--brand);width:70px;height:54px;text-align:center;font-size:24px;font-weight:800}
+.ps2 th{background:#dce6f5}.ps2 th.side{background:#fbe3c6}
+.ps2 td.y{background:var(--goodbg);color:var(--good)}.ps2 td.n{background:#f3f3f3;color:#888}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:640px){.two{grid-template-columns:1fr}.srow .t{font-size:16px}.oslot{font-size:16px}.ps2 td,.ps2 th{width:56px;height:46px;font-size:20px}}
+</style>
+</head>
+<body>
+<header>
+  <a class="b alt" href="index.html" id="back">&larr; Science</a>
+  <h1>👅 Inheritance: The Bitter-Taste Gene</h1>
+  <div id="xp">⭐ 0</div>
+</header>
+<main>
+  <div class="steps" id="steps"></div>
+  <div id="stage"></div>
+</main>
+
+<script>
+(function(){
+'use strict';
+var $=function(s){return document.querySelector(s);};
+var esc=function(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});};
+var escRe=function(s){return s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');};
+var shuffle=function(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}return a;};
+
+/* ---- storage and stars come from ../shared.js (same keys as the rest of the hub) ---- */
+function lsGet(k,d){return W.store.get(k,d);}
+function lsSet(k,v){W.store.set(k,v);}
+function totalXP(){return W.xp.get();}
+function addXP(n){W.xp.add(n);showXP();}
+function showXP(){$('#xp').textContent='⭐ '+totalXP();}
+showXP();
+
+/* ---- read aloud ---- */
+function say(t,rate){
+  if(!('speechSynthesis' in window))return;
+  try{speechSynthesis.cancel();var u=new SpeechSynthesisUtterance(t);u.rate=rate||0.85;u.lang='en-US';
+    var vs=speechSynthesis.getVoices();var v=vs.filter(function(x){return /en[-_]US/i.test(x.lang);})[0]||vs.filter(function(x){return /^en/i.test(x.lang);})[0];
+    if(v)u.voice=v;speechSynthesis.speak(u);}catch(e){}
+}
+function stopSay(){try{if('speechSynthesis' in window)speechSynthesis.cancel();}catch(e){}}
+
+/* ---- content for this exercise (questions, pictures, fun facts) ---- */
+var C={"id": "taste", "file": "inheritance-bitter-taste", "title": "Inheritance: The Bitter-Taste Gene", "learn": [{"bg": "#f1e8fa", "read": "Some people can taste a bitter chemical and some cannot. Every person has two alleles for this gene, one from each parent. Big T is the dominant taster allele. Little t is the recessive non-taster allele.", "html": "<div class=\"big\">You get <b>two alleles<\/b> for every gene: one from Mom and one from Dad.<br><b><i>T<\/i><\/b> = taster (<b>dominant<\/b>) &nbsp; <b><i>t<\/i><\/b> = non-taster (<b>recessive<\/b>)<\/div><div class=\"an\" style=\"margin-top:10px\"><div><span class=\"muted\">TT · homozygous<\/span><b>Taster<\/b><\/div><div><span class=\"muted\">Tt · heterozygous<\/span><b>Taster<\/b><\/div><div><span class=\"muted\">tt · homozygous<\/span><b>Non-taster<\/b><\/div><\/div>"}, {"h": "🧬 Alleles make proteins", "bg": "#fff", "read": "Each allele is a recipe for a form of a protein. The T allele makes the protein that lets you taste the bitter chemical. A person with T T or t t makes only one form of the protein. A person with T t makes two forms.", "html": "<div class=\"rule\">Each allele is a recipe for a <b>protein<\/b>.<br>• <b><i>T<\/i><\/b> makes the protein that <b>tastes<\/b> bitter.<br>• <b><i>t<\/i><\/b> makes a protein that does <b>not<\/b> taste it.<br>• <i>TT<\/i> or <i>tt<\/i> → makes <b>one<\/b> form of the protein. <i>Tt<\/i> → makes <b>two<\/b> forms.<\/div>"}, {"h": "🔲 Punnett square: Tt × Tt", "bg": "#fff", "read": "To find the chances, put one parent on top and one on the side. Fill each box with one allele from each. For T t times T t, three out of four boxes have a big T. So the chance of being a taster is 75 percent.", "html": "<div class=\"two\"><div><table class=\"ps2\"><tr><th><\/th><th>T<\/th><th>t<\/th><\/tr><tr><th class=\"side\">T<\/th><td class=\"y\">TT<\/td><td class=\"y\">Tt<\/td><\/tr><tr><th class=\"side\">t<\/th><td class=\"y\">Tt<\/td><td class=\"n\">tt<\/td><\/tr><\/table><\/div><div class=\"big\">Green boxes have a <b><i>T<\/i><\/b>.<br><b>3 out of 4<\/b> = <b>75%<\/b> taster<br><b>1 out of 4<\/b> = <b>25%<\/b> non-taster<\/div><\/div><div class=\"muted\">Each box = 25%.<\/div>"}], "match": [["allele", "One version of a gene"], ["dominant", "Shows up with just one copy"], ["recessive", "Needs two copies to show up"], ["heterozygous", "Two different alleles, like Tt"], ["homozygous", "Two of the same allele, like tt"], ["probability", "How likely something is"], ["protein", "Made from the allele’s recipe"]], "tf": [["Every person has two alleles for each gene.", true, "One from each parent."], ["A Tt person cannot taste the bitter chemical.", false, "T is dominant, so Tt is a taster."], ["A tt person is homozygous.", true, "Both alleles are the same."], ["Each box in a 2×2 Punnett square is 25%.", true, "4 boxes × 25% = 100%."], ["The t allele makes the protein that tastes the bitter chemical.", false, "The T allele makes the tasting protein."], ["A heterozygous person makes two forms of the protein.", true, "Two different alleles → two forms of the protein."]], "mc": [["Which genotype is heterozygous?", ["Tt", "TT", "tt", "T"], "Hetero means different."], ["Which person CANNOT taste the bitter chemical?", ["tt", "TT", "Tt", "All of them can"], "Only tt is a non-taster."], ["Parents TT × tt. What will every child be?", ["Tt", "TT", "tt", "Some TT, some tt"], "Every child gets T from one parent and t from the other."], ["Parents Tt × Tt. What is the chance of a taster child?", ["75%", "25%", "50%", "100%"], "3 out of 4 boxes have T."], ["Parents Tt × tt. What is the chance of a taster child?", ["50%", "25%", "75%", "0%"], "2 out of 4 boxes have T."]], "fill": [["One version of a gene is an ____.", ["allele", "organ", "orbit", "embryo"], "An allele."], ["T is ____, so it shows up with only one copy.", ["dominant", "recessive", "homozygous", "extinct"], "Dominant."], ["Tt is ____ because the two alleles are different.", ["heterozygous", "homozygous", "recessive", "renewable"], "Heterozygous."], ["A ____ shows all the possible allele pairs for children.", ["Punnett square", "microscope", "food web", "graph of oil"], "A Punnett square."], ["3 out of 4 is the same as ____.", ["75%", "25%", "50%", "34%"], "3 ÷ 4 = 0.75 = 75%."]], "test": [{"type": "mc", "fig": "<svg viewBox=\"0 0 420 330\" role=\"img\" aria-label=\"Bitter taste alleles in one family\"><rect x=\"53\" y=\"10\" width=\"14\" height=\"70\" rx=\"7\" fill=\"#e9e3f6\" stroke=\"#5b2c83\" stroke-width=\"2\"/><rect x=\"53\" y=\"40\" width=\"14\" height=\"8\" fill=\"#e53935\"/><text x=\"60\" y=\"102\" text-anchor=\"middle\" font-size=\"22\" font-weight=\"700\" font-family=\"serif\" font-style=\"italic\" fill=\"#22303c\">T<\/text><rect x=\"79\" y=\"10\" width=\"14\" height=\"70\" rx=\"7\" fill=\"#e9e3f6\" stroke=\"#5b2c83\" stroke-width=\"2\"/><rect x=\"79\" y=\"40\" width=\"14\" height=\"8\" fill=\"#e53935\"/><text x=\"86\" y=\"102\" text-anchor=\"middle\" font-size=\"22\" font-weight=\"700\" font-family=\"serif\" font-style=\"italic\" fill=\"#22303c\">T<\/text><text x=\"73\" y=\"128\" text-anchor=\"middle\" font-size=\"15\" font-family=\"sans-serif\" fill=\"#22303c\">Person A<\/text><rect x=\"293\" y=\"10\" width=\"14\" height=\"70\" rx=\"7\" fill=\"#e9e3f6\" stroke=\"#5b2c83\" stroke-width=\"2\"/><rect x=\"293\" y=\"40\" width=\"14\" height=\"8\" fill=\"#9e9e9e\"/><text x=\"300\" y=\"102\" text-anchor=\"middle\" font-size=\"22\" font-weight=\"700\" font-family=\"serif\" font-style=\"italic\" fill=\"#22303c\">t<\/text><rect x=\"319\" y=\"10\" width=\"14\" height=\"70\" rx=\"7\" fill=\"#e9e3f6\" stroke=\"#5b2c83\" stroke-width=\"2\"/><rect x=\"319\" y=\"40\" width=\"14\" height=\"8\" fill=\"#9e9e9e\"/><text x=\"326\" y=\"102\" text-anchor=\"middle\" font-size=\"22\" font-weight=\"700\" font-family=\"serif\" font-style=\"italic\" fill=\"#22303c\">t<\/text><text x=\"313\" y=\"128\" text-anchor=\"middle\" font-size=\"15\" font-family=\"sans-serif\" fill=\"#22303c\">Person B<\/text><text x=\"200\" y=\"55\" text-anchor=\"middle\" font-size=\"24\" font-family=\"sans-serif\">×<\/text><line x1=\"200\" y1=\"70\" x2=\"200\" y2=\"125\" stroke=\"#333\" stroke-width=\"2\" marker-end=\"url(#ah)\"/><defs><marker id=\"ah\" markerWidth=\"10\" markerHeight=\"10\" refX=\"5\" refY=\"5\" orient=\"auto\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"#333\"/><\/marker><\/defs><text x=\"214\" y=\"160\" font-size=\"26\" font-family=\"sans-serif\" font-weight=\"700\">?<\/text><text x=\"200\" y=\"182\" text-anchor=\"middle\" font-size=\"15\" font-family=\"sans-serif\">Person D<\/text><rect x=\"33\" y=\"175\" width=\"14\" height=\"70\" rx=\"7\" fill=\"#e9e3f6\" stroke=\"#5b2c83\" stroke-width=\"2\"/><rect x=\"33\" y=\"205\" width=\"14\" height=\"8\" fill=\"#e53935\"/><text x=\"40\" y=\"267\" text-anchor=\"middle\" font-size=\"22\" font-weight=\"700\" font-family=\"serif\" font-style=\"italic\" fill=\"#22303c\">T<\/text><rect x=\"59\" y=\"175\" width=\"14\" height=\"70\" rx=\"7\" fill=\"#e9e3f6\" stroke=\"#5b2c83\" stroke-width=\"2\"/><rect x=\"59\" y=\"205\" width=\"14\" height=\"8\" fill=\"#9e9e9e\"/><text x=\"66\" y=\"267\" text-anchor=\"middle\" font-size=\"22\" font-weight=\"700\" font-family=\"serif\" font-style=\"italic\" fill=\"#22303c\">t<\/text><text x=\"53\" y=\"293\" text-anchor=\"middle\" font-size=\"15\" font-family=\"sans-serif\" fill=\"#22303c\">Person C<\/text><text x=\"130\" y=\"215\" font-size=\"24\" font-family=\"sans-serif\">×<\/text><line x1=\"160\" y1=\"245\" x2=\"160\" y2=\"272\" stroke=\"#333\" stroke-width=\"2\" marker-end=\"url(#ah)\"/><text x=\"153\" y=\"310\" font-size=\"26\" font-family=\"sans-serif\" font-weight=\"700\">?<\/text><text x=\"200\" y=\"312\" font-size=\"15\" font-family=\"sans-serif\">Person E<\/text><rect x=\"290\" y=\"200\" width=\"120\" height=\"70\" fill=\"#fff\" stroke=\"#333\"/><text x=\"350\" y=\"220\" text-anchor=\"middle\" font-size=\"14\" font-weight=\"700\" font-family=\"sans-serif\">KEY<\/text><text x=\"300\" y=\"242\" font-size=\"14\" font-family=\"sans-serif\"><tspan font-style=\"italic\" font-weight=\"700\">T<\/tspan> = taster<\/text><text x=\"300\" y=\"262\" font-size=\"14\" font-family=\"sans-serif\"><tspan font-style=\"italic\" font-weight=\"700\">t<\/tspan> = non-taster<\/text><\/svg><div class=\"cap\">Bitter-taste alleles in one family. A and B are the parents of D. C and D are the parents of E.<\/div>", "q": "Person A (TT) and Person B (tt) have a child, Person D. What are Person D’s alleles?", "opts": ["TT", "Tt", "tt", "It could be any of these"], "ans": 1, "why": "A can only give T, and B can only give t. So D is Tt."}, {"type": "mc", "fig": "<svg viewBox=\"0 0 420 330\" role=\"img\" aria-label=\"Bitter taste alleles in one family\"><rect x=\"53\" y=\"10\" width=\"14\" height=\"70\" rx=\"7\" fill=\"#e9e3f6\" stroke=\"#5b2c83\" stroke-width=\"2\"/><rect x=\"53\" y=\"40\" width=\"14\" height=\"8\" fill=\"#e53935\"/><text x=\"60\" y=\"102\" text-anchor=\"middle\" font-size=\"22\" font-weight=\"700\" font-family=\"serif\" font-style=\"italic\" fill=\"#22303c\">T<\/text><rect x=\"79\" y=\"10\" width=\"14\" height=\"70\" rx=\"7\" fill=\"#e9e3f6\" stroke=\"#5b2c83\" stroke-width=\"2\"/><rect x=\"79\" y=\"40\" width=\"14\" height=\"8\" fill=\"#e53935\"/><text x=\"86\" y=\"102\" text-anchor=\"middle\" font-size=\"22\" font-weight=\"700\" font-family=\"serif\" font-style=\"italic\" fill=\"#22303c\">T<\/text><text x=\"73\" y=\"128\" text-anchor=\"middle\" font-size=\"15\" font-family=\"sans-serif\" fill=\"#22303c\">Person A<\/text><rect x=\"293\" y=\"10\" width=\"14\" height=\"70\" rx=\"7\" fill=\"#e9e3f6\" stroke=\"#5b2c83\" stroke-width=\"2\"/><rect x=\"293\" y=\"40\" width=\"14\" height=\"8\" fill=\"#9e9e9e\"/><text x=\"300\" y=\"102\" text-anchor=\"middle\" font-size=\"22\" font-weight=\"700\" font-family=\"serif\" font-style=\"italic\" fill=\"#22303c\">t<\/text><rect x=\"319\" y=\"10\" width=\"14\" height=\"70\" rx=\"7\" fill=\"#e9e3f6\" stroke=\"#5b2c83\" stroke-width=\"2\"/><rect x=\"319\" y=\"40\" width=\"14\" height=\"8\" fill=\"#9e9e9e\"/><text x=\"326\" y=\"102\" text-anchor=\"middle\" font-size=\"22\" font-weight=\"700\" font-family=\"serif\" font-style=\"italic\" fill=\"#22303c\">t<\/text><text x=\"313\" y=\"128\" text-anchor=\"middle\" font-size=\"15\" font-family=\"sans-serif\" fill=\"#22303c\">Person B<\/text><text x=\"200\" y=\"55\" text-anchor=\"middle\" font-size=\"24\" font-family=\"sans-serif\">×<\/text><line x1=\"200\" y1=\"70\" x2=\"200\" y2=\"125\" stroke=\"#333\" stroke-width=\"2\" marker-end=\"url(#ah)\"/><defs><marker id=\"ah\" markerWidth=\"10\" markerHeight=\"10\" refX=\"5\" refY=\"5\" orient=\"auto\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"#333\"/><\/marker><\/defs><text x=\"214\" y=\"160\" font-size=\"26\" font-family=\"sans-serif\" font-weight=\"700\">?<\/text><text x=\"200\" y=\"182\" text-anchor=\"middle\" font-size=\"15\" font-family=\"sans-serif\">Person D<\/text><rect x=\"33\" y=\"175\" width=\"14\" height=\"70\" rx=\"7\" fill=\"#e9e3f6\" stroke=\"#5b2c83\" stroke-width=\"2\"/><rect x=\"33\" y=\"205\" width=\"14\" height=\"8\" fill=\"#e53935\"/><text x=\"40\" y=\"267\" text-anchor=\"middle\" font-size=\"22\" font-weight=\"700\" font-family=\"serif\" font-style=\"italic\" fill=\"#22303c\">T<\/text><rect x=\"59\" y=\"175\" width=\"14\" height=\"70\" rx=\"7\" fill=\"#e9e3f6\" stroke=\"#5b2c83\" stroke-width=\"2\"/><rect x=\"59\" y=\"205\" width=\"14\" height=\"8\" fill=\"#9e9e9e\"/><text x=\"66\" y=\"267\" text-anchor=\"middle\" font-size=\"22\" font-weight=\"700\" font-family=\"serif\" font-style=\"italic\" fill=\"#22303c\">t<\/text><text x=\"53\" y=\"293\" text-anchor=\"middle\" font-size=\"15\" font-family=\"sans-serif\" fill=\"#22303c\">Person C<\/text><text x=\"130\" y=\"215\" font-size=\"24\" font-family=\"sans-serif\">×<\/text><line x1=\"160\" y1=\"245\" x2=\"160\" y2=\"272\" stroke=\"#333\" stroke-width=\"2\" marker-end=\"url(#ah)\"/><text x=\"153\" y=\"310\" font-size=\"26\" font-family=\"sans-serif\" font-weight=\"700\">?<\/text><text x=\"200\" y=\"312\" font-size=\"15\" font-family=\"sans-serif\">Person E<\/text><rect x=\"290\" y=\"200\" width=\"120\" height=\"70\" fill=\"#fff\" stroke=\"#333\"/><text x=\"350\" y=\"220\" text-anchor=\"middle\" font-size=\"14\" font-weight=\"700\" font-family=\"sans-serif\">KEY<\/text><text x=\"300\" y=\"242\" font-size=\"14\" font-family=\"sans-serif\"><tspan font-style=\"italic\" font-weight=\"700\">T<\/tspan> = taster<\/text><text x=\"300\" y=\"262\" font-size=\"14\" font-family=\"sans-serif\"><tspan font-style=\"italic\" font-weight=\"700\">t<\/tspan> = non-taster<\/text><\/svg><div class=\"cap\">Bitter-taste alleles in one family. A and B are the parents of D. C and D are the parents of E.<\/div><table class=\"ps2\"><tr><th><\/th><th>T<\/th><th>t<\/th><\/tr><tr><th class=\"side\">T<\/th><td class=\"y\">TT<\/td><td class=\"y\">Tt<\/td><\/tr><tr><th class=\"side\">t<\/th><td class=\"y\">Tt<\/td><td class=\"n\">tt<\/td><\/tr><\/table>", "q": "Person C (Tt) and Person D (Tt) have a child, Person E. What is the probability that Person E can taste the bitter chemical?", "opts": ["25%", "50%", "75%", "100%"], "ans": 2, "why": "3 of the 4 boxes have a T, so 75%."}, {"type": "mc", "q": "A Tt parent and a tt parent have a child. What is the probability the child is a NON-taster?", "opts": ["0%", "25%", "50%", "75%"], "ans": 2, "why": "Tt × tt gives Tt, Tt, tt, tt. 2 of 4 are tt = 50%."}, {"type": "multi", "fig": "<svg viewBox=\"0 0 420 330\" role=\"img\" aria-label=\"Bitter taste alleles in one family\"><rect x=\"53\" y=\"10\" width=\"14\" height=\"70\" rx=\"7\" fill=\"#e9e3f6\" stroke=\"#5b2c83\" stroke-width=\"2\"/><rect x=\"53\" y=\"40\" width=\"14\" height=\"8\" fill=\"#e53935\"/><text x=\"60\" y=\"102\" text-anchor=\"middle\" font-size=\"22\" font-weight=\"700\" font-family=\"serif\" font-style=\"italic\" fill=\"#22303c\">T<\/text><rect x=\"79\" y=\"10\" width=\"14\" height=\"70\" rx=\"7\" fill=\"#e9e3f6\" stroke=\"#5b2c83\" stroke-width=\"2\"/><rect x=\"79\" y=\"40\" width=\"14\" height=\"8\" fill=\"#e53935\"/><text x=\"86\" y=\"102\" text-anchor=\"middle\" font-size=\"22\" font-weight=\"700\" font-family=\"serif\" font-style=\"italic\" fill=\"#22303c\">T<\/text><text x=\"73\" y=\"128\" text-anchor=\"middle\" font-size=\"15\" font-family=\"sans-serif\" fill=\"#22303c\">Person A<\/text><rect x=\"293\" y=\"10\" width=\"14\" height=\"70\" rx=\"7\" fill=\"#e9e3f6\" stroke=\"#5b2c83\" stroke-width=\"2\"/><rect x=\"293\" y=\"40\" width=\"14\" height=\"8\" fill=\"#9e9e9e\"/><text x=\"300\" y=\"102\" text-anchor=\"middle\" font-size=\"22\" font-weight=\"700\" font-family=\"serif\" font-style=\"italic\" fill=\"#22303c\">t<\/text><rect x=\"319\" y=\"10\" width=\"14\" height=\"70\" rx=\"7\" fill=\"#e9e3f6\" stroke=\"#5b2c83\" stroke-width=\"2\"/><rect x=\"319\" y=\"40\" width=\"14\" height=\"8\" fill=\"#9e9e9e\"/><text x=\"326\" y=\"102\" text-anchor=\"middle\" font-size=\"22\" font-weight=\"700\" font-family=\"serif\" font-style=\"italic\" fill=\"#22303c\">t<\/text><text x=\"313\" y=\"128\" text-anchor=\"middle\" font-size=\"15\" font-family=\"sans-serif\" fill=\"#22303c\">Person B<\/text><text x=\"200\" y=\"55\" text-anchor=\"middle\" font-size=\"24\" font-family=\"sans-serif\">×<\/text><line x1=\"200\" y1=\"70\" x2=\"200\" y2=\"125\" stroke=\"#333\" stroke-width=\"2\" marker-end=\"url(#ah)\"/><defs><marker id=\"ah\" markerWidth=\"10\" markerHeight=\"10\" refX=\"5\" refY=\"5\" orient=\"auto\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"#333\"/><\/marker><\/defs><text x=\"214\" y=\"160\" font-size=\"26\" font-family=\"sans-serif\" font-weight=\"700\">?<\/text><text x=\"200\" y=\"182\" text-anchor=\"middle\" font-size=\"15\" font-family=\"sans-serif\">Person D<\/text><rect x=\"33\" y=\"175\" width=\"14\" height=\"70\" rx=\"7\" fill=\"#e9e3f6\" stroke=\"#5b2c83\" stroke-width=\"2\"/><rect x=\"33\" y=\"205\" width=\"14\" height=\"8\" fill=\"#e53935\"/><text x=\"40\" y=\"267\" text-anchor=\"middle\" font-size=\"22\" font-weight=\"700\" font-family=\"serif\" font-style=\"italic\" fill=\"#22303c\">T<\/text><rect x=\"59\" y=\"175\" width=\"14\" height=\"70\" rx=\"7\" fill=\"#e9e3f6\" stroke=\"#5b2c83\" stroke-width=\"2\"/><rect x=\"59\" y=\"205\" width=\"14\" height=\"8\" fill=\"#9e9e9e\"/><text x=\"66\" y=\"267\" text-anchor=\"middle\" font-size=\"22\" font-weight=\"700\" font-family=\"serif\" font-style=\"italic\" fill=\"#22303c\">t<\/text><text x=\"53\" y=\"293\" text-anchor=\"middle\" font-size=\"15\" font-family=\"sans-serif\" fill=\"#22303c\">Person C<\/text><text x=\"130\" y=\"215\" font-size=\"24\" font-family=\"sans-serif\">×<\/text><line x1=\"160\" y1=\"245\" x2=\"160\" y2=\"272\" stroke=\"#333\" stroke-width=\"2\" marker-end=\"url(#ah)\"/><text x=\"153\" y=\"310\" font-size=\"26\" font-family=\"sans-serif\" font-weight=\"700\">?<\/text><text x=\"200\" y=\"312\" font-size=\"15\" font-family=\"sans-serif\">Person E<\/text><rect x=\"290\" y=\"200\" width=\"120\" height=\"70\" fill=\"#fff\" stroke=\"#333\"/><text x=\"350\" y=\"220\" text-anchor=\"middle\" font-size=\"14\" font-weight=\"700\" font-family=\"sans-serif\">KEY<\/text><text x=\"300\" y=\"242\" font-size=\"14\" font-family=\"sans-serif\"><tspan font-style=\"italic\" font-weight=\"700\">T<\/tspan> = taster<\/text><text x=\"300\" y=\"262\" font-size=\"14\" font-family=\"sans-serif\"><tspan font-style=\"italic\" font-weight=\"700\">t<\/tspan> = non-taster<\/text><\/svg><div class=\"cap\">Bitter-taste alleles in one family. A and B are the parents of D. C and D are the parents of E.<\/div>", "ctx": "A student writes about the alleles and proteins in this family, but makes two mistakes.", "q": "Which TWO statements are mistakes?", "opts": ["Person A and Person B each have only one copy of the bitter-taste gene.", "Person A and Person B each make only one form of the protein.", "Because A and B make different forms of the protein, one tastes the chemical and one does not.", "Person C has a different allele on each chromosome.", "This makes Person C’s body make two forms of the protein.", "The protein made from the t allele is what lets Person C taste the chemical."], "ans": [0, 5], "why": "Everyone has TWO copies of the gene. And it is the T allele’s protein that tastes the chemical, not t."}, {"type": "sort", "q": "Homozygous or heterozygous?", "bins": ["Homozygous", "Heterozygous"], "items": [["TT", 0], ["Tt", 1], ["tt", 0], ["Bb", 1], ["bb", 0]], "why": "Same letters = homozygous. Different letters = heterozygous."}, {"type": "sort", "q": "Taster or non-taster?", "bins": ["Taster", "Non-taster"], "items": [["TT", 0], ["Tt", 0], ["tt", 1]], "why": "One T is enough to taste."}], "facts": ["The bitter chemical in this test is called PTC. About 3 out of 4 people can taste it.", "Kids who can taste bitter chemicals often dislike broccoli and Brussels sprouts.", "Gregor Mendel discovered dominant and recessive traits using pea plants in the 1860s.", "You have about 20,000 genes, and two alleles for almost every one of them."], "speak": [["TT", "big T, big T"], ["Tt", "big T, little t"], ["tt", "little t, little t"]]};
+var VOCAB=(window.WORDS||[]).filter(function(x){return !x.sets||x.sets.indexOf(C.id)>=0;}).map(function(x){return [x.w,x.def,x.ex,x.say];});   // list lives in words.js
+var MATCH=C.match;
+var TF=C.tf.map(function(t){return {q:t[0],opts:['True','False'],ans:t[1]?0:1,why:t[2]};});
+var MC=C.mc.map(function(t){return {q:t[0],opts:t[1],ans:0,why:t[2]};});
+var FILL=C.fill.map(function(t){return {q:t[0],opts:t[1],ans:0,why:t[2]};});
+var FACTS=C.facts;
+var NAMES=['Learn','Say & Spell','Match','True / False','Quiz','Fill in','Test Practice','Submit'];
+
+// how the reader should say short forms
+function spoken(t){
+  t=String(t);
+  (C.speak||[]).forEach(function(p){t=t.replace(new RegExp('\\b'+escRe(p[0])+'\\b','g'),p[1]);});
+  return t.replace(/°C/g,' degrees Celsius').replace(/\bmL\b/g,'milliliters').replace(/%/g,' percent').replace(/____/g,'blank');
+}
+
+/* ---- state ---- */
+var S={step:0,pts:0,max:0};
+var LOG=[];   // every answer she gives, for the saved answer file
+var stage=$('#stage');
+function renderSteps(){
+  $('#steps').innerHTML=NAMES.map(function(n,i){return '<span class="'+(i===S.step?'on':(i<S.step?'done':''))+'">'+(i<S.step?'✓ ':'')+esc(n)+'</span>';}).join('');
+}
+function go(n){stopSay();S.step=n;renderSteps();window.scrollTo(0,0);[learn,saySpell,match,runTF,runMC,runFill,testPractice,done][n]();}
+function bar(i,n){return '<div class="bar"><i style="width:'+Math.round(i/n*100)+'%"></i></div>';}
+
+/* ---- 1. learn ---- */
+function hl(sentence,word){return esc(sentence).replace(new RegExp('('+escRe(word)+')','ig'),'<b>$1</b>');}
+function learn(){
+  stage.innerHTML='<div class="card"><h2>1. Learn: '+esc(C.title)+'</h2>'+
+   C.learn.map(function(b,i){
+     var btn='<button class="say" data-r="'+i+'" aria-label="Read aloud">🔊</button>';
+     return '<div class="card" style="background:'+(b.bg||'#fff')+'">'+(b.h?'<h3 style="margin:0 0 8px">'+b.h+' '+btn+'</h3>':'')+b.html+(b.h?'':'<div style="margin-top:8px">'+btn+'</div>')+'</div>';}).join('')+
+   '<h3>Words to know</h3><p class="muted">Tap 🔊 to hear the word. Tap 💬 to hear it in a sentence.</p>'+
+   '<div class="grid">'+VOCAB.map(function(v,i){return '<div class="wc"><h3><span>'+esc(v[0])+(W.practice.list()[v[0].toLowerCase()]?' <span class="badge wait">🔁 practice</span>':'')+'</span><span class="row" style="gap:6px;flex-wrap:nowrap"><button class="say" data-w="'+i+'" aria-label="Hear '+esc(v[0])+'">🔊</button><button class="say" data-s="'+i+'" aria-label="Hear it in a sentence">💬</button></span></h3>'+
+     '<div class="rs">say it: '+esc(v[3])+'</div><div>'+esc(v[1])+'</div><div class="ex">In a sentence: '+hl(v[2],v[0])+'</div></div>';}).join('')+'</div>'+
+   '<div class="row" style="margin-top:16px"><button class="b green" id="next">I’m ready &rarr;</button></div></div>';
+  stage.querySelectorAll('.say[data-r]').forEach(function(b){b.onclick=function(){say(spoken(C.learn[+b.dataset.r].read));};});
+  stage.querySelectorAll('.say[data-w]').forEach(function(b){b.onclick=function(){say(spoken(VOCAB[+b.dataset.w][0]),0.7);};});
+  stage.querySelectorAll('.say[data-s]').forEach(function(b){b.onclick=function(){say(spoken(VOCAB[+b.dataset.s][2]));};});
+  $('#next').onclick=function(){go(1);};
+}
+
+function lev(a,b){var m=a.length,n=b.length,p=[],j,i;for(j=0;j<=n;j++)p[j]=j;for(i=1;i<=m;i++){var c=[i];for(j=1;j<=n;j++)c[j]=Math.min(p[j]+1,c[j-1]+1,p[j-1]+(a[i-1]===b[j-1]?0:1));p=c;}return p[n];}
+var SRC=window.SpeechRecognition||window.webkitSpeechRecognition;
+function heardOK(heard,word){
+  var h=String(heard).toLowerCase().replace(/[^a-z ]/g,'').replace(/\s+/g,' ').trim(),w=word.toLowerCase().replace(/[^a-z ]/g,'');
+  var hc=h.replace(/ /g,''),wc=w.replace(/ /g,'');
+  if(!hc)return false;
+  return hc.indexOf(wc)>=0||lev(hc,wc)<=Math.max(1,Math.floor(wc.length/4));
+}
+function saySpell(){
+  var pnow=W.practice.list(),isP=function(i){return !!pnow[VOCAB[i][0].toLowerCase()];};
+  var idx=VOCAB.map(function(v,i){return i;});
+  // words she needs to practice come first
+  var order=shuffle(idx.filter(isP)).concat(shuffle(idx.filter(function(i){return !isP(i);}))),n=0;
+  var okFirst=0,okSecond=0,missed=[];
+  S.max+=VOCAB.length*10+(SRC?VOCAB.length*10:0);
+  var recog=null,micBroken=false;
+  function stopRec(){try{if(recog)recog.abort();}catch(e){}recog=null;}
+  function summary(){
+    stopRec();
+    stage.innerHTML='<div class="card"><h2>2. Say and spell: results</h2>'+
+     (SRC&&(okFirst+okSecond+missed.length>0)?'<div class="big">Pronunciation: <b>'+okFirst+'</b> on the first try, <b>'+okSecond+'</b> on the second try, <b>'+missed.length+'</b> to practice.</div>':'<div class="big">Spelling is done!</div>')+
+     (micBroken?'<div class="banner">The microphone was not available on this device, so some words were not tested for pronunciation.<br><small>iPhone: allow the microphone for this site in Safari, and turn on Dictation in Settings, General, Keyboard.</small></div>':'')+
+     (missed.length?'<div class="banner">🔁 <b>Words to practice:</b><br>'+missed.map(esc).join(', ')+'<br>They were added to <b>My Words</b> in the ELA reading app, and they come first next time.</div>':(SRC&&!micBroken?'<div class="good" style="margin-top:10px">No practice words. Great talking!</div>':''))+
+     '<div class="row" style="margin-top:14px"><button class="b green" id="next">Next: Match &rarr;</button>'+(missed.length?'<a class="b alt" href="../ELA/index.html">Open the reading app</a>':'')+'</div></div>';
+    $('#next').onclick=function(){go(2);};
+  }
+  function show(){
+    stopRec();
+    var v=VOCAB[order[n]],word=v[0],target=word.toUpperCase();
+    var head='<div class="card"><h2>2. Say and spell</h2><p class="muted">Word '+(n+1)+' of '+VOCAB.length+'</p>'+bar(n,VOCAB.length);
+    var tries=[],logged=false,listening=false,passed=false,failed=false,inSpell=false;
+    function logSay(extra){
+      if(logged)return;logged=true;
+      var e={sec:'2. Say & Spell',q:'Say the word: '+word,tried:tries.length?tries.slice():['(not tested)'],answer:word+' ('+v[3]+')',first:false};
+      for(var k in extra)e[k]=extra[k];LOG.push(e);
+    }
+    /* ---------- part A: say it (two tries) ---------- */
+    var useMic=SRC&&!micBroken;
+    stage.innerHTML=head+'<div class="muted">Step A: say it'+(pnow[word.toLowerCase()]?' &middot; <span class="badge wait">🔁 practice word</span>':'')+'</div>'+
+     '<div class="big" style="margin:6px 0"><b>'+esc(word)+'</b></div>'+
+     '<div class="rs" style="font-size:22px">say it: '+esc(v[3])+'</div>'+
+     '<div class="row" style="margin:8px 0"><button class="b alt" id="hear">🔊 Hear it</button><button class="b alt" id="hears">💬 In a sentence</button>'+
+     (useMic?'<button class="b" id="mic">🎤 Tap, then say it</button>':'<button class="b green" id="said">Next: spell it &rarr;</button>')+'</div>'+
+     (useMic?'<div id="tryinfo" class="muted">Try 1 of 2</div>':'<div class="muted">'+(micBroken?'The microphone is not available on this device, so pronunciation is not tested.':'This browser cannot listen, so your pronunciation is not tested here.')+'</div>')+
+     '<div class="sent">'+hl(v[2],word)+'</div><div id="fb"></div><div class="row" id="goRow"></div></div>';
+    $('#hear').onclick=function(){say(spoken(word),0.7);};
+    $('#hears').onclick=function(){say(spoken(v[2]));};
+    if(!useMic){
+      $('#said').onclick=function(){logSay({first:false,notTested:true,tried:[micBroken?'(not tested: microphone not available)':'(not tested: this browser cannot listen)']});spell();};
+    }else{
+      $('#mic').onclick=function(){
+        if(listening||passed||failed)return;
+        var f=$('#fb'),btn=$('#mic'),resolved=false,wd=null;
+        try{speechSynthesis.cancel();}catch(e){}              // iPhone: stop talking before listening
+        f.className='warn';f.textContent='Listening… say "'+word+'".';btn.disabled=true;listening=true;
+        function arm(ms){clearTimeout(wd);wd=setTimeout(function(){resolve('empty',[]);},ms);}
+        // Every press ends here exactly once, whatever the phone does (result, error, silence, or nothing at all).
+        function resolve(kind,alts,code){
+          if(resolved)return;resolved=true;clearTimeout(wd);listening=false;stopRec();
+          if(kind==='broken'){
+            micBroken=true;S.max-=10*(VOCAB.length-n);
+            logSay({first:false,notTested:true,tried:tries.concat(['microphone not available ('+(code||'unknown')+')'])});
+            f.className='warn';f.innerHTML='I cannot use the microphone on this device, so pronunciation will not be tested.<br><small>iPhone: allow the microphone for this site in Safari, and turn on Dictation in Settings, General, Keyboard.</small>';
+            btn.style.display='none';$('#tryinfo').textContent='';
+            $('#goRow').innerHTML='<button class="b green" id="goSpell">Next: spell it &rarr;</button>';$('#goSpell').onclick=spell;
+            return;
+          }
+          tries.push('try '+(tries.length+1)+': '+(alts&&alts.length?'heard "'+alts[0]+'"':'nothing heard'));
+          var heard=alts&&alts.length?alts[0]:'';
+          if(alts&&alts.some(function(a){return heardOK(a,word);})){
+            passed=true;var first=tries.length===1;S.pts+=first?10:5;if(first)okFirst++;else okSecond++;
+            W.practice.clear(word);logSay({first:first,pass:true});
+            f.className='good';f.textContent='✓ I heard "'+heard+'". '+(first?'Great!':'Nice job!');
+            btn.style.display='none';
+            setTimeout(spell,1100);
+          }else if(tries.length>=2){
+            failed=true;missed.push(word);
+            W.practice.add(word,{def:v[1],ex:v[2],phonetic:v[3],from:C.title});
+            logSay({first:false,practice:true});
+            f.className='warn';f.innerHTML=(heard?'I heard "'+esc(heard)+'". ':'I did not hear you. ')+'That was your second try, so let’s move on. <b>"'+esc(word)+'" was added to your practice words.</b>';
+            btn.style.display='none';$('#tryinfo').textContent='';
+            $('#goRow').innerHTML='<button class="b green" id="goSpell">Next: spell it &rarr;</button>';$('#goSpell').onclick=spell;
+          }else{
+            f.className='warn';f.textContent=heard?'I heard "'+heard+'". Listen once more, then try again.':'I did not hear you. Tap the mic and say the word.';
+            $('#tryinfo').textContent='Try 2 of 2';btn.disabled=false;
+          }
+        }
+        try{
+          recog=new SRC();recog.lang='en-US';recog.continuous=false;recog.interimResults=false;recog.maxAlternatives=5;
+          recog.onstart=function(){arm(10000);};               // starts counting once the phone is really listening
+          recog.onresult=function(e){
+            var alts=[];try{for(var k=0;k<e.results[0].length;k++)alts.push(e.results[0][k].transcript);}catch(x){}
+            resolve('heard',alts);
+          };
+          recog.onerror=function(e){
+            var er=e&&e.error;
+            if(er==='not-allowed'||er==='service-not-allowed'||er==='audio-capture')resolve('broken',[],er);
+            else resolve('empty',[],er);                        // no-speech, aborted, network, anything else: counts as a try
+          };
+          recog.onend=function(){resolve('empty',[]);};         // ended without a result: counts as a try
+          arm(25000);                                           // backstop if the phone never starts
+          recog.start();
+        }catch(err){resolve('broken',[],'cannot start');}
+      };
+    }
+    /* ---------- part B: spell it ---------- */
+    function spell(){
+      if(inSpell)return;inSpell=true;stopRec();
+      var letters=target.replace(/ /g,'').split('');
+      var pool=shuffle(letters.map(function(c,k){return {c:c,k:k,used:false};}));
+      var slots=[],stries=[],peeked=false,marks=null,solved=false;
+      var blank=v[2].replace(new RegExp(escRe(word),'ig'),'_____');
+      stage.innerHTML=head+'<div class="muted">Step B: spell it</div><div class="big" style="margin:6px 0">Meaning: '+esc(v[1])+'</div>'+
+       '<div class="sent">'+esc(blank)+'</div>'+
+       '<div class="row"><button class="b alt" id="hear2">🔊 Hear the word</button><button class="b alt" id="hear3">💬 Hear the sentence</button></div>'+
+       '<div class="slots" id="slots"></div><div class="tiles" id="tiles"></div>'+
+       '<div class="row"><button class="b green" id="chk" disabled>Check my spelling</button><button class="b alt" id="undo">⌫ Undo</button><button class="b alt" id="clr">Clear</button><button class="b alt" id="peek">👀 Show me the word</button></div>'+
+       '<div id="fb"></div><div class="row"><button class="b green" id="next" style="display:none">'+(n===VOCAB.length-1?'Finish &rarr;':'Next word &rarr;')+'</button></div></div>';
+      $('#hear2').onclick=function(){say(spoken(word),0.7);};$('#hear3').onclick=function(){say(spoken(v[2]));};
+      function draw(){
+        var si=0,out='';
+        for(var c=0;c<target.length;c++){
+          if(target[c]===' '){out+='<span class="gap"></span>';continue;}
+          var t=slots[si],cls=marks?(marks[si]?'ok':'no'):'';
+          out+='<div class="slot '+cls+'">'+(t?esc(t.c):'')+'</div>';si++;
+        }
+        $('#slots').innerHTML=out;
+        $('#tiles').innerHTML=pool.map(function(t,i){return '<button class="tile" data-i="'+i+'"'+(t.used||solved?' disabled':'')+'>'+esc(t.c)+'</button>';}).join('');
+        $('#tiles').querySelectorAll('.tile').forEach(function(b){b.onclick=function(){
+          if(slots.length>=letters.length)return;var t=pool[+b.dataset.i];t.used=true;slots.push(t);marks=null;draw();};});
+        $('#chk').disabled=solved||slots.length!==letters.length;
+      }
+      $('#undo').onclick=function(){if(solved||!slots.length)return;slots.pop().used=false;marks=null;draw();};
+      $('#clr').onclick=function(){if(solved)return;slots.forEach(function(t){t.used=false;});slots=[];marks=null;draw();};
+      $('#peek').onclick=function(){peeked=true;var f=$('#fb');f.className='warn';f.textContent='The word is: '+word+'. Now spell it.';};
+      $('#chk').onclick=function(){
+        var attempt=slots.map(function(t){return t.c;}).join('');stries.push(attempt);
+        if(attempt===letters.join('')){
+          solved=true;marks=letters.map(function(){return true;});
+          var firstTry=stries.length===1&&!peeked;if(firstTry)S.pts+=10;
+          LOG.push({sec:'2. Say & Spell',q:'Spell the word that means: '+v[1],tried:stries.concat(peeked?['(peeked at the word)']:[]),answer:word,first:firstTry});
+          draw();var f=$('#fb');f.className='good';f.textContent=(firstTry?'✓ Perfect spelling! ':'✓ You spelled it! ')+word;
+          $('#next').style.display='';$('#next').onclick=function(){n++;if(n<VOCAB.length)show();else summary();};
+          $('#undo').disabled=$('#clr').disabled=$('#peek').disabled=true;
+        }else{
+          marks=slots.map(function(t,i){return t.c===letters[i];});draw();
+          var f2=$('#fb');f2.className='warn';f2.textContent='Not quite. Red letters are in the wrong place. Tap Undo to fix them.';
+        }
+      };
+      draw();
+    }
+  }
+  show();
+}
+
+function match(){
+  var terms=MATCH.map(function(m,i){return {i:i,t:m[0]};});
+  var defs=shuffle(MATCH.map(function(m,i){return {i:i,t:m[1]};}));
+  var sel=null,left=MATCH.length,firstTry={},misses=0,wrong={};
+  S.max+=MATCH.length*10;
+  stage.innerHTML='<div class="card"><h2>3. Match the word to its meaning</h2><p class="muted">Tap a word, then tap its meaning.</p><div class="mt"><div id="L"></div><div id="R"></div></div><div id="fb"></div><div class="row"><button class="b green hide" id="next" style="display:none">Next &rarr;</button></div></div>';
+  function draw(){
+    $('#L').innerHTML=terms.map(function(x){return '<button class="opt'+(x.done?' done':'')+(sel===x.i?' sel':'')+'" data-t="'+x.i+'"'+(x.done?' disabled':'')+'>'+esc(x.t)+'</button>';}).join('');
+    $('#R').innerHTML=defs.map(function(x){return '<button class="opt'+(x.done?' done':'')+'" data-d="'+x.i+'"'+(x.done?' disabled':'')+'>'+esc(x.t)+'</button>';}).join('');
+    $('#L').querySelectorAll('[data-t]').forEach(function(b){b.onclick=function(){sel=+b.dataset.t;say(spoken(MATCH[sel][0]));draw();};});
+    $('#R').querySelectorAll('[data-d]').forEach(function(b){b.onclick=function(){pick(+b.dataset.d,b);};});
+  }
+  function pick(d,btn){
+    if(sel===null){fb('Tap a word on the left first.','warn');return;}
+    if(d===sel){
+      terms.filter(function(x){return x.i===d;})[0].done=true;defs.filter(function(x){return x.i===d;})[0].done=true;
+      if(!firstTry[d]){firstTry[d]=1;S.pts+=firstTry['m'+d]?0:10;}
+      LOG.push({sec:'3. Match',q:MATCH[d][0],tried:(wrong[d]||[]).concat([MATCH[d][1]]),answer:MATCH[d][1],first:!(wrong[d]&&wrong[d].length)});
+      left--;sel=null;fb('✓ Yes!','good');draw();
+      if(!left){$('#next').style.display='';$('#next').classList.remove('hide');$('#next').onclick=function(){go(3);};fb('All matched! ⭐','good');}
+    }else{
+      firstTry['m'+sel]=1;(wrong[sel]=wrong[sel]||[]).push(btn.textContent);btn.classList.add('wrong','shake');fb('Not that one. Try again.','warn');
+      setTimeout(function(){btn.classList.remove('wrong','shake');},500);
+    }
+  }
+  function fb(m,c){var f=$('#fb');f.textContent=m;f.className=c;}
+  draw();
+}
+
+function runQs(title,intro,items,nextStep,shuffleOpts){
+  var i=0;S.max+=items.length*10;
+  function show(){
+    var it=items[i],first=true,locked=false,tried=[];
+    var order=it.opts.map(function(o,k){return {o:o,k:k};});
+    if(shuffleOpts)order=shuffle(order);
+    stage.innerHTML='<div class="card"><h2>'+esc(title)+'</h2><p class="muted">'+esc(intro)+' ('+(i+1)+' of '+items.length+')</p>'+bar(i,items.length)+
+     '<div class="big">'+esc(it.q)+' <button class="say" id="sq" aria-label="Read aloud">🔊</button></div><div id="opts">'+
+     order.map(function(x){return '<button class="opt" data-k="'+x.k+'">'+esc(x.o)+'</button>';}).join('')+'</div><div id="fb"></div><div class="row"><button class="b green" id="next" style="display:none">'+(i===items.length-1?'Finish &rarr;':'Next &rarr;')+'</button></div></div>';
+    $('#sq').onclick=function(){say(spoken(it.q.replace('____','blank')));};
+    stage.querySelectorAll('.opt').forEach(function(b){b.onclick=function(){
+      if(locked)return;var k=+b.dataset.k;
+      if(k===it.ans){
+        locked=true;b.classList.add('right');if(first)S.pts+=10;
+        tried.push(it.opts[k]);LOG.push({sec:title,q:it.q,tried:tried.slice(),answer:it.opts[it.ans],first:first});
+        stage.querySelectorAll('.opt').forEach(function(x){x.disabled=true;});
+        var f=$('#fb');f.className='good';f.textContent=(first?'✓ Correct! ':'✓ Got it! ')+it.why;
+        $('#next').style.display='';$('#next').onclick=function(){i++;if(i<items.length)show();else go(nextStep);};
+      }else{
+        first=false;tried.push(it.opts[k]);b.classList.add('wrong','shake');b.disabled=true;
+        var f2=$('#fb');f2.className='warn';f2.textContent='Not quite. Try another one.';
+      }
+    };});
+  }
+  show();
+}
+function runTF(){runQs('4. True or False','Tap True or False.',TF,4,false);}
+function runMC(){runQs('5. Quiz','Pick the best answer.',MC,5,true);}
+function runFill(){runQs('6. Fill in the blank','Pick the word that fits.',FILL,6,true);}
+
+/* ---- 7. test practice: questions built like the NJSLA test ---- */
+var LET='ABCDEFGH';
+function testPractice(){
+  var items=C.test,i=0;S.max+=items.length*10;
+  function show(){
+    var it=items[i],first=true,tried=[],solved=false;
+    var tip={mc:'Pick the best answer.',multi:'Pick '+(it.ans?it.ans.length:2)+' answers, then press Check.',order:'Tap them in order. Put '+esc(it.firstLabel||'the first one')+' at the top.',sort:'Pick a box for each one, then press Check.'}[it.type];
+    stage.innerHTML='<div class="card"><h2>7. Test practice</h2><p class="muted">Just like the real test. Question '+(i+1)+' of '+items.length+'</p>'+bar(i,items.length)+
+      (it.ctx?'<div class="ctx">'+it.ctx+'</div>':'')+(it.fig?'<div class="fig">'+it.fig+'</div>':'')+
+      '<div class="big">'+esc(it.q)+' <button class="say" id="sq" aria-label="Read aloud">🔊</button></div><div class="tip">'+tip+'</div>'+
+      '<div id="area"></div><div id="fb"></div><div class="row"><button class="b green" id="next" style="display:none">'+(i===items.length-1?'Finish &rarr;':'Next &rarr;')+'</button></div></div>';
+    $('#sq').onclick=function(){say(spoken(it.q));};
+    var area=$('#area');
+    function fb(m,c){var f=$('#fb');f.textContent=m;f.className=c;}
+    function win(answerText){
+      solved=true;if(first)S.pts+=10;
+      LOG.push({sec:'7. Test Practice',q:it.q,tried:tried.slice(),answer:answerText,first:first});
+      fb((first?'✓ Correct! ':'✓ Got it! ')+(it.why||''),'good');
+      $('#next').style.display='';$('#next').onclick=function(){i++;if(i<items.length)show();else go(7);};
+    }
+    if(it.type==='mc'){
+      area.innerHTML=it.opts.map(function(o,k){return '<button class="opt" data-k="'+k+'"><span class="lt">'+LET[k]+'.</span> '+esc(o)+'</button>';}).join('');
+      area.querySelectorAll('.opt').forEach(function(b){b.onclick=function(){
+        if(solved)return;var k=+b.dataset.k;tried.push(LET[k]+'. '+it.opts[k]);
+        if(k===it.ans){b.classList.add('right');area.querySelectorAll('.opt').forEach(function(x){x.disabled=true;});win(LET[k]+'. '+it.opts[k]);}
+        else{first=false;b.classList.add('wrong','shake');b.disabled=true;fb('Not quite. Look at the picture or the passage again, then try another one.','warn');}
+      };});
+    }else if(it.type==='multi'){
+      var sel={},n=it.ans.length;
+      area.innerHTML=it.opts.map(function(o,k){return '<button class="opt" data-k="'+k+'"><span class="lt">'+LET[k]+'.</span> '+esc(o)+'</button>';}).join('')+
+        '<div class="row"><button class="b green" id="chk" disabled>Check</button></div>';
+      var cnt=function(){return Object.keys(sel).length;};
+      area.querySelectorAll('.opt').forEach(function(b){b.onclick=function(){
+        if(solved)return;var k=+b.dataset.k;
+        if(sel[k]){delete sel[k];b.classList.remove('sel');}else if(cnt()<n){sel[k]=1;b.classList.add('sel');}
+        $('#chk').disabled=cnt()!==n;
+      };});
+      $('#chk').onclick=function(){
+        var picks=Object.keys(sel).map(Number).sort();tried.push(picks.map(function(k){return LET[k];}).join(' + '));
+        var bad=picks.filter(function(k){return it.ans.indexOf(k)<0;});
+        if(!bad.length){
+          picks.forEach(function(k){var b=area.querySelector('[data-k="'+k+'"]');b.classList.remove('sel');b.classList.add('right');});
+          area.querySelectorAll('.opt').forEach(function(x){x.disabled=true;});$('#chk').disabled=true;
+          win(it.ans.map(function(k){return LET[k]+'. '+it.opts[k];}).join(' + '));
+        }else{
+          first=false;bad.forEach(function(k){var b=area.querySelector('[data-k="'+k+'"]');delete sel[k];b.classList.remove('sel');b.classList.add('wrong');b.disabled=true;});
+          $('#chk').disabled=true;
+          fb((picks.length-bad.length)+' of your picks '+(picks.length-bad.length===1?'is':'are')+' right. The red one is not. Pick again.','warn');
+        }
+      };
+    }else if(it.type==='order'){
+      var pool=shuffle(it.items.map(function(t,k){return {t:t,k:k,used:false};})),slots=[],marks=null;
+      function draw(){
+        var h='<div class="oend">⬆ '+esc(it.firstLabel)+'</div>';
+        for(var s=0;s<it.items.length;s++){
+          var x=slots[s],m=marks?(marks[s]?' ok':' no'):'';
+          h+='<div class="oslot'+(x?' full':'')+m+'" data-s="'+s+'"><span class="n">'+(s+1)+'</span><span>'+(x?esc(x.t):'<span class="muted">tap a card below</span>')+'</span></div>';
+        }
+        h+='<div class="oend">⬇ '+esc(it.lastLabel)+'</div><div class="otiles">'+pool.map(function(x,k){return '<button class="pick" data-p="'+k+'"'+(x.used||solved?' disabled':'')+'>'+esc(x.t)+'</button>';}).join('')+'</div>'+
+          '<div class="row"><button class="b green" id="chk"'+(solved||slots.length!==it.items.length?' disabled':'')+'>Check</button><button class="b alt" id="undo"'+(solved?' disabled':'')+'>⌫ Undo</button><button class="b alt" id="clr"'+(solved?' disabled':'')+'>Clear</button></div>'+
+          (solved?'':'<div class="muted" style="margin-top:6px">Tap a filled box to take that card back.</div>');
+        area.innerHTML=h;
+        area.querySelectorAll('[data-p]').forEach(function(b){b.onclick=function(){if(solved)return;var x=pool[+b.dataset.p];if(x.used)return;x.used=true;slots.push(x);marks=null;draw();};});
+        area.querySelectorAll('[data-s]').forEach(function(b){b.onclick=function(){if(solved)return;var s=+b.dataset.s;if(!slots[s])return;slots.splice(s).forEach(function(x){x.used=false;});marks=null;draw();};});
+        $('#undo').onclick=function(){if(solved||!slots.length)return;slots.pop().used=false;marks=null;draw();};
+        $('#clr').onclick=function(){if(solved)return;slots.forEach(function(x){x.used=false;});slots=[];marks=null;draw();};
+        $('#chk').onclick=function(){
+          tried.push(slots.map(function(x){return x.t;}).join(' > '));
+          marks=slots.map(function(x,s){return x.k===s;});
+          if(marks.every(Boolean)){win(it.items.join(' > '));draw();}
+          else{first=false;draw();fb('Red boxes are in the wrong spot. Tap a red box to take those cards back and try again.','warn');}
+        };
+      }
+      draw();
+    }else if(it.type==='sort'){
+      var ch=it.items.map(function(){return -1;}),marks2=null;
+      function draw2(){
+        area.innerHTML=it.items.map(function(x,r){
+          var m=marks2?(marks2[r]===true?' ok':(marks2[r]===false?' no':'')):'';
+          return '<div class="srow'+m+'"><div class="t">'+esc(x[0])+'</div><div class="row" style="gap:6px">'+it.bins.map(function(b,k){
+            return '<button class="pick'+(ch[r]===k?' sel':'')+'" data-r="'+r+'" data-b="'+k+'"'+(solved||(marks2&&marks2[r]===true)?' disabled':'')+'>'+esc(b)+'</button>';}).join('')+'</div></div>';}).join('')+
+          '<div class="row"><button class="b green" id="chk"'+(solved||ch.indexOf(-1)>=0?' disabled':'')+'>Check</button></div>';
+        area.querySelectorAll('[data-r]').forEach(function(b){b.onclick=function(){
+          if(solved)return;var r=+b.dataset.r;ch[r]=+b.dataset.b;if(marks2)marks2[r]=null;draw2();};});
+        $('#chk').onclick=function(){
+          tried.push(it.items.map(function(x,r){return x[0]+' = '+it.bins[ch[r]];}).join('; '));
+          marks2=it.items.map(function(x,r){return ch[r]===x[1];});
+          if(marks2.every(Boolean)){win(it.items.map(function(x){return x[0]+' = '+it.bins[x[1]];}).join('; '));draw2();}
+          else{first=false;marks2.forEach(function(ok,r){if(!ok)ch[r]=-1;});draw2();fb('The red rows are not right yet. Pick again for those.','warn');}
+        };
+      }
+      draw2();
+    }
+  }
+  show();
+}
+
+/* ---- submit + save ---- */
+function pad(n){return (n<10?'0':'')+n;}
+function stamp(d){return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())+'_'+pad(d.getHours())+pad(d.getMinutes());}
+function buildReport(name,when){
+  var pct=S.max?Math.round(S.pts/S.max*100):0,ok=LOG.filter(function(e){return e.first;}).length;
+  var L=[C.title.toUpperCase()+' - STUDENT ANSWERS','',
+    'Name: '+(name||'(not entered)'),'Date: '+when.toLocaleString(),
+    'Score: '+S.pts+' of '+S.max+' points ('+pct+'%)','Right on the first try: '+ok+' of '+LOG.length+' questions','',
+    '[OK] = right on the first try     [RETRY] = needed more than one try     [PRACTICE] = could not say it in two tries     [NOT TESTED] = no microphone'];
+  var pw=LOG.filter(function(e){return e.practice;}).map(function(e){return e.q.replace('Say the word: ','');});
+  if(pw.length)L.splice(6,0,'Words to practice: '+pw.join(', '));
+  var sec='';
+  LOG.forEach(function(e){
+    if(e.sec!==sec){sec=e.sec;L.push('');L.push('== '+sec+' ==');}
+    L.push((e.practice?'[PRACTICE] ':(e.notTested?'[NOT TESTED] ':(e.first?'[OK]    ':'[RETRY] ')))+e.q);
+    L.push('        Her answers: '+e.tried.join('  >  '));
+    L.push('        Correct answer: '+e.answer);
+  });
+  return L.join('\n')+'\n';
+}
+function saveFile(text,fname){
+  try{var bl=new Blob([text],{type:'text/plain'});var a=document.createElement('a');a.href=URL.createObjectURL(bl);a.download=fname;
+    document.body.appendChild(a);a.click();setTimeout(function(){try{URL.revokeObjectURL(a.href);}catch(e){}a.remove();},800);return true;}catch(e){return false;}
+}
+function done(){
+  var pct=S.max?Math.round(S.pts/S.max*100):0,cfg=W.gh.cfg(),sending=false;
+  stage.innerHTML='<div class="card"><h2>8. Submit your answers</h2><div class="big">You finished everything! You earned <b>'+S.pts+'</b> of '+S.max+' points ('+pct+'%).</div>'+
+   '<p class="muted">Type your first name, then press Submit. '+(cfg?'Your answers will be saved to GitHub.':'GitHub saving is not set up yet, so a file will be downloaded instead. A parent can set it up on the Home page, under Parent settings.')+'</p>'+
+   '<input type="text" id="nm" placeholder="Your first name" autocomplete="given-name" style="max-width:360px">'+
+   '<div class="row" style="margin-top:14px"><button class="b green" id="sub">✅ Submit my answers</button></div><div id="after"></div></div>';
+  $('#sub').onclick=function(){
+    $('#sub').disabled=true;
+    var when=new Date(),name=($('#nm').value||'').trim();
+    var report=buildReport(name,when);
+    var fname=C.file+'-answers_'+(name?name.replace(/[^A-Za-z0-9]+/g,'-')+'_':'')+stamp(when)+'.txt';
+    var rec={id:when.getTime(),when:when.toISOString(),name:name,pts:S.pts,max:S.max,pct:pct,file:fname,report:report,log:LOG.slice(),ghStatus:cfg?'pending':'none',subject:'Science',exercise:C.file,title:C.title,dir:W.dir('Science')};
+    W.subs.add(rec);
+    var prev=lsGet('ex_'+C.id,{best:0})||{best:0},best=prev.best||0,gain=Math.max(0,S.pts-best);
+    if(gain>0){addXP(gain);lsSet('ex_'+C.id,{best:S.pts,when:when.toISOString()});}
+    var starLine=(gain>0?'⭐ <b>+'+gain+'</b> added to your stars. ':'You already earned this many stars before. Try again to beat your best of '+best+'. ');
+    function buttons(retry){
+      return '<div class="row" style="margin-top:14px"><a class="b" href="index.html">&larr; Back to Science</a>'+(retry?'<button class="b" id="retry">↻ Try sending again</button>':'')+
+        '<button class="b alt" id="dl">⬇ Download answers</button><button class="b alt" id="again">Play again</button></div>';
+    }
+    function facts(){return '<h2 style="margin-top:14px">Fun facts</h2><ul style="padding-left:20px">'+FACTS.map(function(f){return '<li style="margin:6px 0">'+esc(f)+'</li>';}).join('')+'</ul>';}
+    function wire(){
+      $('#dl').onclick=function(){saveFile(report,fname);};
+      $('#again').onclick=function(){S={step:0,pts:0,max:0};LOG=[];go(0);};
+      if($('#retry'))$('#retry').onclick=send;
+    }
+    function send(){
+      if(sending)return;sending=true;
+      $('#after').innerHTML='<div id="fb" class="warn" style="display:block;margin-top:14px">Sending your answers to GitHub…</div>';
+      W.gh.saveRecord(rec).then(function(r){
+        sending=false;
+        if(r.ok){
+          W.subs.patch(rec.id,{ghStatus:'sent',ghErr:''});
+          $('#after').innerHTML='<div id="fb" class="good" style="display:block;margin-top:14px">✓ Submitted! Your answers are saved to GitHub.</div><p>'+starLine+'</p>'+facts()+buttons(false);
+        }else{
+          W.subs.patch(rec.id,{ghStatus:'pending',ghErr:W.gh.msg(r)});
+          $('#after').innerHTML='<div id="fb" class="warn" style="display:block;margin-top:14px">Your answers are saved on this device, but they did not reach GitHub yet.</div>'+
+            '<p>'+esc(W.gh.msg(r))+'</p><p class="muted">They will be sent automatically the next time this subject page or the Home page is opened with internet, or press the button.</p><p>'+starLine+'</p>'+buttons(true);
+        }
+        wire();
+      });
+    }
+    if(cfg){send();}
+    else{
+      var okDl=saveFile(report,fname);
+      $('#after').innerHTML='<div id="fb" class="good" style="display:block;margin-top:14px">✓ Submitted!</div><p>'+starLine+'</p>'+
+        '<p class="muted">GitHub saving is not set up, so your answers were saved on this device'+(okDl?' and a file named <b>'+esc(fname)+'</b> was downloaded.':'. Use the download button.')+'</p>'+facts()+buttons(false);
+      wire();
+    }
+  };
+}
+
+if(!VOCAB.length){
+  stage.innerHTML='<div class="card"><h2>One file is missing</h2><div class="banner"><b>The word list file (<code>words.js</code>) was not found, or it is an older copy.</b> Upload the newest <code>words.js</code> to the <b>Science</b> folder of the repository, then refresh this page.</div><a class="b alt" href="index.html">&larr; Back to Science</a></div>';
+}else go(0);
+})();
+</script>
+</body>
+</html>
