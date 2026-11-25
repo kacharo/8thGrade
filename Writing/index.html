@@ -1,0 +1,253 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Writing - 8th Grade Learning Hub</title>
+<link rel="stylesheet" href="../shared.css?v=20261124a">
+<style>
+.scene{background:#fbfaf6;border:2px solid var(--line);border-radius:16px;padding:6px;margin:6px 0 10px}
+.scene svg{width:100%;height:auto;display:block;max-height:340px}
+.scene.small svg{max-height:150px}
+.look{font-weight:700;color:var(--brand);margin:4px 0 0}
+.w-top{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:16px;align-items:start}
+.cluebox{background:#fffbea;border:2px dashed #e0b84a;border-radius:14px;padding:8px 10px;margin:10px 0}
+.cluebox .t{font-size:15px;color:#8a6d00;font-weight:700;margin-bottom:4px}
+.clue{display:inline-block;border:2px solid #e0b84a;background:#fff;border-radius:99px;padding:6px 14px;margin:4px;font:inherit;font-size:17px;font-weight:700;cursor:pointer;color:var(--ink)}
+.clue.used{background:#fff1b8}
+.tipmic{font-size:15px;color:var(--muted);margin:6px 0}
+.bar{height:10px;background:#ece8dc;border-radius:99px;overflow:hidden;margin:8px 0 14px}.bar i{display:block;height:100%;background:var(--good)}
+.exbox{background:var(--brand2);border-radius:12px;padding:8px 12px;margin:8px 0;font-style:italic}
+#clock{font-weight:700;background:#e8f1fb;color:#1565c0;padding:4px 10px;border-radius:99px;font-size:15px;font-variant-numeric:tabular-nums}
+.wtoday{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 14px}
+.wtoday span{background:var(--brand2);color:var(--brand);font-weight:800;border-radius:99px;padding:6px 14px}
+@media (max-width:640px){.w-top{grid-template-columns:1fr}.clue{font-size:16px;padding:5px 12px}}
+</style>
+</head>
+<body>
+<div id="toast"></div>
+<header>
+  <a class="b alt" href="../index.html" id="home">🏠 Home</a>
+  <h1>✍️ Writing</h1>
+  <div style="display:flex;gap:6px;align-items:center;flex:none"><div id="clock" style="display:none">⏱ 0:00</div><div id="xp">⭐ 0</div></div>
+</header>
+<main id="main">
+  <div id="stage"></div>
+  <div class="card" id="words"></div>
+  <div class="card" id="saved"></div>
+</main>
+<script src="../shared.js?v=20261124a" data-home="../index.html"></script>
+<script src="../wordpics.js?v=20261120a"></script>
+<script src="../wordviz.js?v=20261120a"></script>
+<script src="words.js?v=20261124a"></script>
+<script>
+(function(){
+'use strict';
+var $=function(s){return document.querySelector(s);};
+function banner(h){var m=$('main'),d=document.createElement('div');d.className='banner';d.innerHTML=h;m.insertBefore(d,m.firstChild);}
+if(!window.W){banner('<b>The page could not load <code>shared.js</code>.</b> Upload <code>shared.js</code> to the main folder of the repository, then refresh this page.');return;}
+if(!(W.ui&&W.subs&&W.gh&&W.timer&&W.VERSION==='20261124a'))banner('<b>Some site files are out of date.</b> Upload the newest <code>shared.js</code> (main folder), then refresh this page.');
+var SUBJECT='Writing',esc=W.esc,WORDS=window.WORDS||[];
+var stage=$('#stage');
+$('#xp').textContent='⭐ '+W.xp.get();
+
+/* ---- read aloud ---- */
+function say(t,rate){
+  if(!('speechSynthesis' in window))return;
+  try{speechSynthesis.cancel();var u=new SpeechSynthesisUtterance(t);u.rate=rate||0.85;u.lang='en-US';
+    var vs=speechSynthesis.getVoices();var v=vs.filter(function(x){return /en[-_]US/i.test(x.lang);})[0]||vs.filter(function(x){return /^en/i.test(x.lang);})[0];
+    if(v)u.voice=v;speechSynthesis.speak(u);}catch(e){}
+}
+function stopSay(){try{speechSynthesis.cancel();}catch(e){}}
+
+/* ---- what she has written before (kept on this device) ---- */
+var hist=W.store.get('wr_hist',{})||{};   // word -> {n: times written, last: her last sentence}
+function saveHist(){W.store.set('wr_hist',hist);}
+function find(w){w=String(w).toLowerCase();return WORDS.filter(function(x){return x.w.toLowerCase()===w;})[0];}
+function todays(){
+  var t=(window.WRITING_TODAY||[]).map(find).filter(Boolean);
+  if(t.length)return t;
+  return WORDS.slice().sort(function(a,b){return ((hist[a.w]||{}).n||0)-((hist[b.w]||{}).n||0)||Math.random()-0.5;}).slice(0,5);
+}
+
+/* ---- sentence checks ---- */
+function tokens(t){return String(t).toLowerCase().replace(/[’']/g,'').split(/[^a-z0-9]+/).filter(Boolean);}
+function countWords(t){return tokens(t).length;}
+function uses(t,w){return W.viz&&W.viz.usesWord?W.viz.usesWord(t,w):tokens(t).join(' ').indexOf(w.toLowerCase())>=0;}
+function cluesUsed(t,v){return (v.clues||[]).filter(function(c){return uses(t,c);});}
+
+/* ================= start screen ================= */
+function home(){
+  stopSay();$('#clock').style.display='none';$('#words').style.display='';$('#saved').style.display='';
+  var T=todays();
+  stage.innerHTML='<div class="card"><h2>📝 Picture sentences</h2>'+
+    '<p>Look at the clue picture. Think about what is happening. Then write <b>one sentence</b> that uses the word.</p>'+
+    (T.length?'<div class="muted">Today’s words:</div><div class="wtoday">'+T.map(function(v){return '<span>'+esc(v.w)+'</span>';}).join('')+'</div>'+
+      '<div class="row"><button class="b green" id="go">✍️ Start writing ('+T.length+' sentence'+(T.length>1?'s':'')+')</button></div>'
+     :'<div class="banner">No writing words yet. Ask a parent to add some.</div>')+'</div>';
+  if(T.length)$('#go').onclick=function(){start(T);};
+  drawWords();
+  try{W.ui.saved($('#saved'),SUBJECT);}catch(e){}
+}
+function drawWords(){
+  var el=$('#words');
+  if(!WORDS.length){el.innerHTML='<h2>📚 My writing words</h2><p class="muted">No words yet.</p>';return;}
+  el.innerHTML='<h2>📚 My writing words ('+WORDS.length+')</h2>'+(W.viz?W.viz.key():'')+'<div class="grid">'+WORDS.map(function(v,i){
+    var h=hist[v.w]||{};
+    return '<div class="wc"><div class="scene small">'+(v.scene||'')+'</div>'+
+      '<h3 style="display:flex;justify-content:space-between;align-items:center;gap:8px"><span>'+esc(v.w)+'</span><button class="say" data-w="'+i+'" aria-label="Hear the word">🔊</button></h3>'+
+      '<div class="rs">say it: '+esc(v.say||'')+'</div>'+(W.viz?W.viz.parts(v.w):'')+'<div>'+esc(v.def)+'</div>'+
+      (h.n?'<div class="muted" style="margin-top:6px">✓ Written '+h.n+' time'+(h.n>1?'s':'')+'</div><div class="ex">My last sentence: '+esc(h.last||'')+'</div>':'<div class="muted" style="margin-top:6px">Not written yet</div>')+
+      '</div>';}).join('')+'</div>';
+  el.querySelectorAll('[data-w]').forEach(function(b){b.onclick=function(){say(WORDS[+b.dataset.w].w,0.7);};});
+}
+
+/* ================= writing session ================= */
+var S,LOG,TIMER=null;
+function start(list){
+  S={list:list,n:0,pts:0,max:list.length*10,done:[]};LOG=[];
+  $('#words').style.display='none';$('#saved').style.display='none';
+  $('#clock').style.display='';
+  if(!TIMER)TIMER=W.timer.make($('#clock'));else TIMER.reset();
+  TIMER.lap('Writing');
+  show();
+}
+function show(){
+  stopSay();window.scrollTo(0,0);
+  var v=S.list[S.n],N=S.list.length,usedStart=false,sawEx=false,st=v.start||'';
+  stage.innerHTML='<div class="card"><h2>✍️ Write a sentence</h2><p class="muted">Word '+(S.n+1)+' of '+N+'</p>'+
+    '<div class="bar"><i style="width:'+Math.round(S.n/N*100)+'%"></i></div>'+
+    '<div class="w-top"><div><div class="scene">'+(v.scene||'')+'</div><div class="look">🔍 Look at the picture. What is happening?</div></div><div>'+
+      '<div class="wr-word" style="font-size:34px;font-weight:800">'+esc(v.w)+' <button class="say" id="hw" aria-label="Hear the word">🔊</button></div>'+
+      '<div class="rs">say it: '+esc(v.say||'')+'</div>'+(W.viz?W.viz.parts(v.w):'')+
+      '<div class="def"><b>Meaning:</b> '+esc(v.def)+' <button class="say" id="hd" aria-label="Hear the meaning">🔊</button></div>'+
+      '<div class="cluebox"><div class="t">🧩 Picture clues: tap one to hear it and put it in your sentence</div>'+
+        (v.clues||[]).map(function(c,i){return '<button class="clue" data-c="'+i+'">'+esc(c)+'</button>';}).join('')+'</div>'+
+    '</div></div>'+
+    '<div class="row" style="margin-top:4px">'+(st?'<button class="b alt" id="hs">✏️ Help me start</button>':'')+'<button class="b alt" id="hx">👀 Show me an example</button></div>'+
+    '<div id="exb"></div>'+
+    '<textarea class="wr-box" id="box" rows="3" spellcheck="true" autocapitalize="sentences" placeholder="Type your sentence here…" style="width:100%;min-height:110px;font:inherit;font-size:22px;line-height:1.5;padding:12px;border:3px solid var(--brand);border-radius:14px;margin-top:10px"></textarea>'+
+    '<div class="tipmic">🎤 Don’t feel like typing? Tap the microphone on your keyboard and <b>say</b> your sentence.</div>'+
+    '<ul class="wr-checks" id="chk"></ul>'+
+    '<div class="row"><button class="b green" id="ok" disabled>✓ Done</button><button class="b alt" id="rd">🔊 Read my sentence</button><button class="b alt" id="skip" style="margin-left:auto">Skip</button></div>'+
+    '<div id="fb"></div></div>';
+  var box=$('#box');
+  $('#hw').onclick=function(){say(v.w,0.7);};
+  $('#hd').onclick=function(){say(v.w+'. '+v.def);};
+  $('#rd').onclick=function(){var t=box.value.trim();say(t||'Type your sentence first.');};
+  stage.querySelectorAll('[data-c]').forEach(function(b){b.onclick=function(){
+    var c=v.clues[+b.dataset.c];say(c);b.classList.add('used');
+    var s=box.selectionStart==null?box.value.length:box.selectionStart,a=box.value.slice(0,s),z=box.value.slice(s);
+    var ins=(a&&!/\s$/.test(a)?' ':'')+c+(/^\s/.test(z)?'':' ');
+    box.value=a+ins+z;var pos=(a+ins).length;box.focus();try{box.setSelectionRange(pos,pos);}catch(e){}check();
+  };});
+  if(st)$('#hs').onclick=function(){
+    usedStart=true;if(box.value.trim().toLowerCase().indexOf(st.toLowerCase())!==0)box.value=st+' '+box.value.trim();
+    box.value=box.value.replace(/\s*$/,' ');box.focus();try{box.setSelectionRange(box.value.length,box.value.length);}catch(e){}check();
+  };
+  $('#hx').onclick=function(){sawEx=true;$('#exb').innerHTML='<div class="exbox">Example: '+esc(v.ex)+' <button class="say" id="hex" aria-label="Hear it">🔊</button><br><small>Now write your <b>own</b> sentence about the picture.</small></div>';
+    $('#hex').onclick=function(){say(v.ex);};};
+  function checks(){
+    var t=box.value.trim(),cu=cluesUsed(t,v),own=countWords(t)-(usedStart&&t.toLowerCase().indexOf(st.toLowerCase())===0?countWords(st):0);
+    var L=[
+      {ok:uses(t,v.w),txt:'I used the word <b>'+esc(v.w)+'</b>',pts:4,need:true},
+      {ok:countWords(t)>=6,txt:'At least 6 words ('+countWords(t)+' so far)',pts:2,need:true},
+      {ok:cu.length>0,txt:'I wrote about the picture'+(cu.length?' ('+esc(cu.join(', '))+')':' (use a picture clue)'),pts:2},
+      {ok:/^[A-Z]/.test(t),txt:'Starts with a capital letter',pts:1},
+      {ok:/[.!?]["”’)]?$/.test(t),txt:'Ends with . ! or ?',pts:1}];
+    if(usedStart)L.push({ok:own>=3,txt:'I added at least 3 words of my own',pts:0,need:true});
+    return L;
+  }
+  function check(){
+    var L=checks();
+    $('#chk').innerHTML=L.map(function(x){return '<li class="'+(x.ok?'ok':'')+'"><span class="ic">'+(x.ok?'✓':'')+'</span><span>'+x.txt+'</span></li>';}).join('');
+    $('#ok').disabled=!L.every(function(x){return x.ok||!x.need;});
+  }
+  box.oninput=check;check();
+  $('#ok').onclick=function(){
+    var L=checks(),t=box.value.trim(),pts=L.reduce(function(s,x){return s+(x.ok?x.pts:0);},0),all=L.every(function(x){return x.ok;});
+    S.pts+=pts;
+    var help=[];if(usedStart)help.push('used the starter "'+st+'"');if(sawEx)help.push('looked at the example');
+    LOG.push({sec:'Picture sentences',q:'Write a sentence with the word: '+v.w+(help.length?' ('+help.join('; ')+')':''),tried:[t],
+      answer:'Her own sentence. Checks: '+L.map(function(x){return (x.ok?'[x] ':'[ ] ')+x.txt.replace(/<[^>]+>/g,'');}).join(', '),first:all,pts:pts});
+    S.done.push({w:v.w,t:t,pts:pts});
+    hist[v.w]={n:((hist[v.w]||{}).n||0)+1,last:t};saveHist();
+    var f=$('#fb');f.className='good';f.style.marginTop='10px';f.innerHTML=(all?'⭐ Great sentence! ':'✓ Nice! ')+'+'+pts+' points';
+    $('#ok').disabled=$('#skip').disabled=true;box.readOnly=true;
+    setTimeout(next,all?1200:1700);
+  };
+  $('#skip').onclick=function(){
+    LOG.push({sec:'Picture sentences',q:'Write a sentence with the word: '+v.w,tried:[box.value.trim()||'(skipped)'],answer:'(skipped)',first:false,pts:0});
+    S.done.push({w:v.w,t:'',skip:true,pts:0});next();
+  };
+}
+function next(){S.n++;if(S.n<S.list.length)show();else finish();}
+
+/* ================= submit ================= */
+function pad(n){return (n<10?'0':'')+n;}
+function stamp(d){return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())+'_'+pad(d.getHours())+pad(d.getMinutes());}
+function buildReport(name,when){
+  var pct=S.max?Math.round(S.pts/S.max*100):0,secs=TIMER.secs(),lv=TIMER.leaves(),away=lv.reduce(function(a,x){return a+x.seconds;},0);
+  var mine=S.done.filter(function(d){return !d.skip;}).length;
+  var L=['WRITING: PICTURE SENTENCES - STUDENT ANSWERS','',
+    'Name: '+(name||'(not entered)'),'Date: '+when.toLocaleString(),
+    'Score: '+S.pts+' of '+S.max+' points ('+pct+'%)','Sentences written: '+mine+' of '+S.list.length,
+    'Time spent: '+W.fmtTime(secs)+' (active time only)',
+    'Left the page: '+(lv.length?lv.length+' time'+(lv.length>1?'s':'')+' (away '+W.fmtTime(away)+' in total)':'never'),'',
+    'Points per sentence: used the word 4, at least 6 words 2, wrote about the picture 2, capital letter 1, end mark 1.'];
+  LOG.forEach(function(e,k){
+    L.push('');L.push((k+1)+'. '+e.q);
+    L.push('   Her sentence: '+e.tried[0]);
+    L.push('   '+(e.answer==='(skipped)'?'Skipped':e.answer.replace('Her own sentence. ',''))+'  ('+e.pts+' points)');
+  });
+  if(lv.length){L.push('');L.push('== Times she left the page ==');lv.forEach(function(x,k){L.push('  '+(k+1)+'. away '+W.fmtTime(x.seconds));});}
+  return L.join('\n')+'\n';
+}
+function finish(){
+  TIMER.stop();stopSay();window.scrollTo(0,0);
+  var mine=S.done.filter(function(d){return !d.skip;}),pct=S.max?Math.round(S.pts/S.max*100):0,cfg=W.gh.cfg(),sending=false;
+  stage.innerHTML='<div class="card"><h2>🎉 Your sentences</h2>'+
+    (mine.length?mine.map(function(d){
+      var re=new RegExp('('+d.w.replace(/e$/,'').replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'[a-z]*)','i');
+      return '<div class="wr-mine">'+esc(d.t).replace(re,'<b>$1</b>')+'</div>';}).join('')+'<button class="b alt" id="all">🔊 Hear my sentences</button>'
+     :'<p class="muted">You skipped all of them this time.</p>')+
+    '<div class="big" style="margin-top:12px;font-size:20px">You earned <b>'+S.pts+'</b> of '+S.max+' points ('+pct+'%). ⏱ You worked for <b>'+W.fmtTime(TIMER.secs())+'</b>.</div>'+
+    '<p class="muted">Type your first name, then press Submit. '+(cfg?'Your sentences will be saved to GitHub.':'GitHub saving is not set up yet, so a file will be downloaded instead.')+'</p>'+
+    '<input type="text" id="nm" placeholder="Your first name" autocomplete="given-name" style="max-width:360px">'+
+    '<div class="row" style="margin-top:14px"><button class="b green" id="sub">✅ Submit my sentences</button></div><div id="after"></div></div>';
+  if(mine.length)$('#all').onclick=function(){say(mine.map(function(d){return d.t;}).join(' '));};
+  $('#sub').onclick=function(){
+    $('#sub').disabled=true;
+    var when=new Date(),name=($('#nm').value||'').trim(),report=buildReport(name,when);
+    var fname='picture-sentences-answers_'+(name?name.replace(/[^A-Za-z0-9]+/g,'-')+'_':'')+stamp(when)+'.txt';
+    var rec={id:when.getTime(),when:when.toISOString(),name:name,pts:S.pts,max:S.max,pct:pct,file:fname,report:report,log:LOG.slice(),
+      ghStatus:cfg?'pending':'none',subject:SUBJECT,exercise:'picture-sentences',title:'Picture sentences ('+S.list.map(function(v){return v.w;}).join(', ')+')',
+      dir:W.dir(SUBJECT),secs:TIMER.secs(),parts:TIMER.parts(),leaves:TIMER.leaves()};
+    W.subs.add(rec);
+    W.xp.add(S.pts);$('#xp').textContent='⭐ '+W.xp.get();
+    var starLine='⭐ <b>+'+S.pts+'</b> added to your stars.';
+    function buttons(retry){return '<div class="row" style="margin-top:14px"><button class="b" id="back">&larr; Back to Writing</button>'+(retry?'<button class="b" id="retry">↻ Try sending again</button>':'')+'<button class="b alt" id="dl">⬇ Download</button></div>';}
+    function wire(){$('#back').onclick=home;$('#dl').onclick=function(){W.saveTextFile(report,fname);};if($('#retry'))$('#retry').onclick=send;}
+    function send(){
+      if(sending)return;sending=true;
+      $('#after').innerHTML='<div class="banner">Sending your sentences to GitHub…</div>';
+      W.gh.saveRecord(rec).then(function(r){
+        sending=false;
+        if(r.ok){W.subs.patch(rec.id,{ghStatus:'sent',ghErr:''});$('#after').innerHTML='<div class="good" style="margin-top:14px">✓ Submitted! Your sentences are saved to GitHub.</div><p>'+starLine+'</p>'+buttons(false);}
+        else{W.subs.patch(rec.id,{ghStatus:'pending',ghErr:W.gh.msg(r)});
+          $('#after').innerHTML='<div class="banner">Your sentences are saved on this device, but they did not reach GitHub yet.</div><p>'+esc(W.gh.msg(r))+'</p><p>'+starLine+'</p>'+buttons(true);}
+        wire();
+      });
+    }
+    if(cfg)send();
+    else{var ok=W.saveTextFile(report,fname);
+      $('#after').innerHTML='<div class="good" style="margin-top:14px">✓ Submitted!</div><p>'+starLine+'</p><p class="muted">GitHub saving is not set up, so your sentences were saved on this device'+(ok?' and a file was downloaded.':'.')+'</p>'+buttons(false);wire();}
+  };
+}
+
+if(!WORDS.length)banner('<b>The word list file (<code>words.js</code>) is missing.</b> Upload it to the <b>Writing</b> folder, then refresh this page.');
+home();
+})();
+</script>
+</body>
+</html>
