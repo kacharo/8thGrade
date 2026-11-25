@@ -11,7 +11,8 @@ var SUBJECTS=[
   {key:'Science',label:'Science',icon:'🔬',color:'#1f9d63',href:'Science/index.html',blurb:'Genetics, matter, Earth'},
   {key:'ELA',label:'ELA',icon:'📖',color:'#2f6fed',href:'ELA/index.html',blurb:'Reading and vocabulary'},
   {key:'Math',label:'Math',icon:'➗',color:'#d9822b',href:'Math/index.html',blurb:'Practice and problem solving'},
-  {key:'Social-Study',label:'Social Studies',icon:'🌍',color:'#6a4c93',href:'Social-Study/index.html',blurb:'History and the world'}
+  {key:'Social-Study',label:'Social Studies',icon:'🌍',color:'#6a4c93',href:'Social-Study/index.html',blurb:'History and the world'},
+  {key:'Writing',label:'Writing',icon:'✍️',color:'#c2185b',href:'Writing/index.html',blurb:'Picture clue sentences'}
 ];
 /* =========================================================== */
 
@@ -38,7 +39,7 @@ function sha256(ascii){
   return result;
 }
 
-var W=window.W={CONFIG:CONFIG,SUBJECTS:SUBJECTS,AUTH:AUTH,VERSION:'20261108a'};
+var W=window.W={CONFIG:CONFIG,SUBJECTS:SUBJECTS,AUTH:AUTH,VERSION:'20261124a'};
 var esc=W.esc=function(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});};
 
 /* ---- storage (browser) ---- */
@@ -134,7 +135,7 @@ W.gh={
     var c=W.gh.cfg();if(!c)return Promise.resolve({ok:false,status:-1});
     var dir=(rec.dir||'').replace(/^\/+|\/+$/g,'');
     var base=(dir?dir+'/':'')+'answers/'+rec.exercise+'/'+rec.file.replace(/\.txt$/,'');
-    var data=JSON.stringify({exercise:rec.exercise,name:rec.name,when:rec.when,points:rec.pts,outOf:rec.max,percent:rec.pct,answers:rec.log},null,2);
+    var data=JSON.stringify({exercise:rec.exercise,name:rec.name,when:rec.when,points:rec.pts,outOf:rec.max,percent:rec.pct,seconds:rec.secs||null,timeSpent:rec.secs?W.fmtTime(rec.secs):null,timeByPart:rec.parts||null,leftPage:rec.leaves?{times:rec.leaves.length,secondsAway:rec.leaves.reduce(function(a,x){return a+x.seconds;},0),each:rec.leaves}:null,answers:rec.log},null,2);
     return W.gh.put(c,base+'.txt',rec.report).then(function(r1){if(!r1.ok)return r1;return W.gh.put(c,base+'.json',data);});
   },
   test:function(c){
@@ -161,6 +162,39 @@ W.gh={
   }
 };
 
+/* ---- work timer: counts only active time (pauses when the page is hidden or after 3 idle minutes) ---- */
+W.fmtTime=function(sec){sec=Math.max(0,Math.round(sec||0));var h=Math.floor(sec/3600),m=Math.floor(sec%3600/60),s=sec%60;
+  return (h?h+' hr ':'')+(h||m?m+' min ':'')+s+' sec';};
+W.clockText=function(sec){sec=Math.max(0,Math.floor(sec||0));var h=Math.floor(sec/3600),m=Math.floor(sec%3600/60),s=sec%60,p=function(n){return (n<10?'0':'')+n;};
+  return h?h+':'+p(m)+':'+p(s):m+':'+p(s);};
+W.timer={
+  IDLE:180000,
+  make:function(el){
+    var T={ms:0,on:true,last:Date.now(),act:Date.now(),parts:[],cur:null,curMs:0,leaves:[],hidAt:0,hidPart:''};
+    function wake(){T.act=Date.now();}
+    ['pointerdown','keydown','touchstart','scroll','input','wheel'].forEach(function(ev){window.addEventListener(ev,wake,{passive:true,capture:true});});
+    function tick(){
+      var now=Date.now(),d=Math.min(now-T.last,2000);T.last=now;
+      if(T.on&&!document.hidden&&now-T.act<W.timer.IDLE){T.ms+=d;if(T.cur)T.curMs+=d;}
+      if(el)el.textContent='⏱ '+W.clockText(T.ms/1000);
+    }
+    // every time the page is hidden (other app, other tab, home screen, screen locked) counts as leaving the page
+    document.addEventListener('visibilitychange',function(){var now=Date.now();T.last=now;
+      if(document.hidden){if(T.on&&!T.hidAt){T.hidAt=now;T.hidPart=T.cur||'';}}
+      else{wake();if(T.hidAt){T.leaves.push({part:T.hidPart,seconds:Math.round((now-T.hidAt)/1000)});T.hidAt=0;}}});
+    setInterval(tick,1000);tick();
+    function close(){if(T.cur){T.parts.push({part:T.cur,seconds:Math.round(T.curMs/1000)});T.cur=null;T.curMs=0;}}
+    return {
+      secs:function(){tick();return Math.round(T.ms/1000);},
+      lap:function(name){tick();close();if(name){T.cur=name;T.curMs=0;}},
+      stop:function(){tick();close();T.on=false;if(el)el.classList.add('stopped');},
+      reset:function(){T.ms=0;T.parts=[];T.leaves=[];T.hidAt=0;T.cur=null;T.curMs=0;T.on=true;T.last=T.act=Date.now();if(el)el.classList.remove('stopped');tick();},
+      parts:function(){return T.parts.slice();},
+      leaves:function(){return T.leaves.slice();}
+    };
+  }
+};
+
 /* ---- "My saved answers" card used by every subject page ---- */
 W.ui={
   toast:function(m){var t=document.getElementById('toast');if(!t)return;t.textContent=m;t.classList.add('on');setTimeout(function(){t.classList.remove('on');},2200);},
@@ -169,7 +203,7 @@ W.ui={
     var stat=function(r){return r.ghStatus==='sent'?'<span class="badge ok">☁ Saved to GitHub</span>':(r.ghStatus==='pending'?'<span class="badge wait">⏳ Waiting to send</span>':'<span class="muted">On this device only</span>');};
     el.innerHTML='<h2>📝 My saved answers</h2>'+(subs.length?subs.map(function(r){
       return '<div class="wc" style="margin-bottom:10px"><b>'+W.esc(r.title||r.exercise)+'</b>'+(r.name?' &middot; '+W.esc(r.name):'')+' &middot; '+stat(r)+
-        '<div class="muted">'+W.esc(new Date(r.when).toLocaleString())+' &middot; '+r.pts+' of '+r.max+' points ('+r.pct+'%)</div>'+
+        '<div class="muted">'+W.esc(new Date(r.when).toLocaleString())+' &middot; '+r.pts+' of '+r.max+' points ('+r.pct+'%)'+(r.secs?' &middot; ⏱ '+W.fmtTime(r.secs):'')+'</div>'+
         (r.ghStatus==='pending'&&r.ghErr?'<div class="def" style="color:var(--warn)">'+W.esc(r.ghErr)+'</div>':'')+
         '<div class="row" style="margin-top:8px"><button class="b alt" data-dl="'+r.id+'">⬇ Download</button>'+
         (r.ghStatus==='pending'&&cfg?'<button class="b" data-send="'+r.id+'">↻ Send to GitHub</button>':'')+
