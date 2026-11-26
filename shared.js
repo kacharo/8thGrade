@@ -40,7 +40,7 @@ function sha256(ascii){
   return result;
 }
 
-var W=window.W={CONFIG:CONFIG,SUBJECTS:SUBJECTS,AUTH:AUTH,VERSION:'20261124a'};
+var W=window.W={CONFIG:CONFIG,SUBJECTS:SUBJECTS,AUTH:AUTH,VERSION:'20261126a'};
 var esc=W.esc=function(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});};
 
 /* ---- storage (browser) ---- */
