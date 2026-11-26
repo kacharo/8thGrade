@@ -2,7 +2,8 @@
    Used by every subject page and exercise. Needs shared.js first; wordpics.js is optional but gives the pictures.
    - W.viz.pic(word)     -> the picture for a word (from wordpics.js, or the word's pic emoji in words.js)
    - W.viz.parts(word)   -> the word broken into prefix / root / suffix, with what each piece means
-   - W.viz.writeStep(o)  -> "Write it": she writes her own sentence with 3 of the words */
+   - W.viz.writeStep(o)  -> "Write it": she writes her own sentence with 3 of the words
+   - W.viz.pictureWrite(o) -> "Write sentences": one sentence per lesson word (up to 10), with picture clues */
 (function(){
 'use strict';
 var W=window.W=window.W||{};
@@ -42,7 +43,14 @@ var CSS=[
 '.wr-mine{background:#fffdf5;border:2px dashed var(--line,#e1ddd0);border-radius:12px;padding:10px 12px;margin:8px 0;font-size:20px;line-height:1.5}',
 '.wr-mine b{color:var(--brand,#2f6fed)}',
 '.wr-top{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:14px;align-items:start}',
-'@media (max-width:640px){.wr-top{grid-template-columns:1fr}.wp b{font-size:19px}.wr-word{font-size:28px}.wr-box{font-size:19px}}'
+'.pw-look{font-weight:700;color:var(--brand,#2f6fed);margin:2px 0 6px}',
+'.pw-clues{background:#fffbea;border:2px dashed #e0b84a;border-radius:14px;padding:8px 10px;margin:10px 0}',
+'.pw-clues .t{font-size:15px;color:#8a6d00;font-weight:700;margin-bottom:4px}',
+'.pw-clue{display:inline-block;border:2px solid #e0b84a;background:#fff;border-radius:99px;padding:6px 14px;margin:4px;font:inherit;font-size:17px;font-weight:700;cursor:pointer;color:#22303c}',
+'.pw-clue.used{background:#fff1b8}',
+'.pw-mic{font-size:15px;color:var(--muted,#5d6b78);margin:6px 0}',
+'.pw-ex{background:var(--brand2,#e8f0ff);border-radius:12px;padding:8px 12px;margin:8px 0;font-style:italic}',
+'@media (max-width:640px){.pw-clue{font-size:16px;padding:5px 12px}.wr-top{grid-template-columns:1fr}.wp b{font-size:19px}.wr-word{font-size:28px}.wr-box{font-size:19px}}'
 ].join('\n');
 function addCSS(){if(document.getElementById('wviz-css'))return;var s=document.createElement('style');s.id='wviz-css';s.textContent=CSS;(document.head||document.documentElement).appendChild(s);}
 addCSS();
@@ -198,4 +206,105 @@ function writeStep(o){
   }
   show();
 }
+/* ---------- "Write sentences" with picture clues ----------
+   One word per screen: the word's picture, its parts and meaning, tap-in picture clues (clues:[...] in words.js),
+   "Help me start" (start in words.js), "Show me an example" (the word's example sentence), and live checks.
+   o = {stage, vocab:[[word,def,ex,say],...], max (default 10), num ('9.'), say(text,rate), spoken(text), add(pts,max), log(entry), next() }
+   Points per sentence: used the word 4, at least 6 words 2, wrote about the picture 2, capital 1, end mark 1. */
+function pictureWrite(o){
+  var stage=o.stage,V=o.vocab||[],say=o.say||function(){},spoken=o.spoken||function(t){return t;};
+  var pr=(W.practice&&W.practice.list())||{},seen=(W.store&&W.store.get('written',{}))||{};
+  var idx=V.map(function(v,i){return i;}).sort(function(a,b){
+    var pa=pr[V[a][0].toLowerCase()]?0:1,pb=pr[V[b][0].toLowerCase()]?0:1;if(pa!==pb)return pa-pb;
+    var sa=seen[V[a][0].toLowerCase()]||0,sb=seen[V[b][0].toLowerCase()]||0;if(sa!==sb)return sa-sb;
+    return a-b;});
+  var pick=idx.slice(0,Math.min(o.max||10,V.length)),N=pick.length,n=0,done=[];
+  if(!N){o.next();return;}
+  o.add(0,N*10);
+  function $(id){return document.getElementById(id);}
+  function show(){
+    window.scrollTo(0,0);
+    var v=V[pick[n]],word=v[0],e=entry(word)||{},st=e.start||'',clues=e.clues||[],usedStart=false,sawEx=false;
+    stage.innerHTML='<div class="card"><h2>'+esc(o.num||'')+' Write sentences</h2><p class="muted">Word '+(n+1)+' of '+N+'. Look at the picture, then write your own sentence with the word.</p>'+
+      '<div class="bar"><i style="width:'+Math.round(n/N*100)+'%"></i></div>'+
+      '<div class="wr-top"><div>'+W.viz.pic(word,'big')+'<div class="pw-look">🔍 Look at the picture. What is happening?</div></div><div>'+
+        '<div class="wr-word">'+esc(word)+' <button class="say" id="pwHear" aria-label="Hear the word">🔊</button></div>'+
+        (v[3]?'<div class="rs">say it: '+esc(v[3])+'</div>':'')+W.viz.parts(word)+
+        '<div class="def"><b>Meaning:</b> '+esc(v[1])+' <button class="say" id="pwDef" aria-label="Hear the meaning">🔊</button></div>'+
+        (clues.length?'<div class="pw-clues"><div class="t">🧩 Picture clues: tap one to hear it and put it in your sentence</div>'+
+          clues.map(function(c,i){return '<button class="pw-clue" data-c="'+i+'">'+esc(c)+'</button>';}).join('')+'</div>':'')+
+      '</div></div>'+
+      '<div class="row" style="margin-top:6px">'+(st?'<button class="b alt" id="pwStart">✏️ Help me start</button>':'')+(v[2]?'<button class="b alt" id="pwEx">👀 Show me an example</button>':'')+'</div>'+
+      '<div id="pwExBox"></div>'+
+      '<textarea class="wr-box" id="pwBox" rows="3" spellcheck="true" autocapitalize="sentences" placeholder="Type your sentence here…" style="margin-top:10px"></textarea>'+
+      '<div class="pw-mic">🎤 Don’t feel like typing? Tap the microphone on your keyboard and <b>say</b> your sentence.</div>'+
+      '<ul class="wr-checks" id="pwChecks"></ul>'+
+      '<div class="row"><button class="b green" id="pwDone" disabled>✓ Done</button><button class="b alt" id="pwRead">🔊 Read my sentence</button><button class="b alt" id="pwSkip" style="margin-left:auto">Skip</button></div>'+
+      '<div id="fb"></div></div>';
+    var box=$('pwBox');
+    $('pwHear').onclick=function(){say(spoken(word),0.7);};
+    $('pwDef').onclick=function(){say(spoken(word+'. '+v[1]));};
+    $('pwRead').onclick=function(){var t=box.value.trim();say(t?spoken(t):'Type your sentence first.');};
+    stage.querySelectorAll('[data-c]').forEach(function(b){b.onclick=function(){
+      var c=clues[+b.dataset.c];say(spoken(c));b.classList.add('used');
+      var s=box.selectionStart==null?box.value.length:box.selectionStart,a=box.value.slice(0,s),z=box.value.slice(s);
+      var ins=(a&&!/\s$/.test(a)?' ':'')+c+(/^\s/.test(z)?'':' ');
+      box.value=a+ins+z;var pos=(a+ins).length;box.focus();try{box.setSelectionRange(pos,pos);}catch(x){}check();};});
+    if(st)$('pwStart').onclick=function(){
+      usedStart=true;if(box.value.trim().toLowerCase().indexOf(st.toLowerCase())!==0)box.value=st+' '+box.value.trim();
+      box.value=box.value.replace(/\s*$/,' ');box.focus();try{box.setSelectionRange(box.value.length,box.value.length);}catch(x){}check();};
+    if(v[2])$('pwEx').onclick=function(){sawEx=true;
+      $('pwExBox').innerHTML='<div class="pw-ex">Example: '+esc(v[2])+' <button class="say" id="pwExSay" aria-label="Hear it">🔊</button><br><small>Now write your <b>own</b> sentence about the picture.</small></div>';
+      $('pwExSay').onclick=function(){say(spoken(v[2]));};};
+    function checks(){
+      var t=box.value.trim(),cu=clues.filter(function(c){return usesWord(t,c);});
+      var own=countWords(t)-(usedStart&&t.toLowerCase().indexOf(st.toLowerCase())===0?countWords(st):0);
+      var L=[
+        {ok:usesWord(t,word),txt:'I used the word <b>'+esc(word)+'</b>',pts:4,need:true},
+        {ok:countWords(t)>=6,txt:'At least 6 words ('+countWords(t)+' so far)',pts:2,need:true}];
+      if(clues.length)L.push({ok:cu.length>0,txt:'I wrote about the picture'+(cu.length?' ('+esc(cu.join(', '))+')':' (use a picture clue)'),pts:2});
+      L.push({ok:/^[A-Z]/.test(t),txt:'Starts with a capital letter',pts:clues.length?1:2});
+      L.push({ok:/[.!?]["”’)]?$/.test(t),txt:'Ends with . ! or ?',pts:clues.length?1:2});
+      if(usedStart)L.push({ok:own>=3,txt:'I added at least 3 words of my own',pts:0,need:true});
+      return L;
+    }
+    function check(){
+      var L=checks();
+      $('pwChecks').innerHTML=L.map(function(x){return '<li class="'+(x.ok?'ok':'')+'"><span class="ic">'+(x.ok?'✓':'')+'</span><span>'+x.txt+'</span></li>';}).join('');
+      $('pwDone').disabled=!L.every(function(x){return x.ok||!x.need;});
+    }
+    box.oninput=check;check();
+    $('pwDone').onclick=function(){
+      var L=checks(),t=box.value.trim(),pts=L.reduce(function(s,x){return s+(x.ok?x.pts:0);},0),all=L.every(function(x){return x.ok;});
+      var help=[];if(usedStart)help.push('used the starter "'+st+'"');if(sawEx)help.push('looked at the example');
+      o.add(pts,0);
+      o.log({sec:(o.num?o.num+' ':'')+'Write sentences',q:'Write a sentence with the word: '+word+(help.length?' ('+help.join('; ')+')':''),tried:[t],
+        answer:'Her own sentence ('+pts+' of 10 points). Checks: '+L.map(function(x){return (x.ok?'[x] ':'[ ] ')+x.txt.replace(/<[^>]+>/g,'');}).join(', '),first:all});
+      try{seen[word.toLowerCase()]=(seen[word.toLowerCase()]||0)+1;W.store.set('written',seen);}catch(x){}
+      done.push({w:word,t:t});
+      var f=$('fb');f.className='good';f.style.marginTop='10px';f.innerHTML=(all?'⭐ Great sentence! ':'✓ Nice! ')+'+'+pts+' points';
+      $('pwDone').disabled=$('pwSkip').disabled=true;box.readOnly=true;
+      setTimeout(nextWord,all?1200:1700);
+    };
+    $('pwSkip').onclick=function(){
+      o.log({sec:(o.num?o.num+' ':'')+'Write sentences',q:'Write a sentence with the word: '+word,tried:[box.value.trim()||'(skipped)'],answer:'(skipped)',first:false});
+      done.push({w:word,t:'',skip:true});nextWord();};
+  }
+  function nextWord(){n++;if(n<N)show();else summary();}
+  function summary(){
+    window.scrollTo(0,0);
+    var mine=done.filter(function(d){return !d.skip;});
+    stage.innerHTML='<div class="card"><h2>'+esc(o.num||'')+' Your sentences</h2>'+
+      (mine.length?mine.map(function(d){
+        var re=new RegExp('('+stem(d.w.split(/\s+/)[0]).replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'[a-z]*)','i');
+        return '<div class="wr-mine">'+esc(d.t).replace(re,'<b>$1</b>')+'</div>';}).join('')
+       :'<p class="muted">You skipped the writing this time. Try it next time!</p>')+
+      '<div class="row" style="margin-top:12px">'+(mine.length?'<button class="b alt" id="pwAll">🔊 Hear my sentences</button>':'')+'<button class="b green" id="next">Next: Submit &rarr;</button></div></div>';
+    if(mine.length)$('pwAll').onclick=function(){say(spoken(mine.map(function(d){return d.t;}).join(' ')));};
+    $('next').onclick=o.next;
+  }
+  show();
+}
+W.viz.pictureWrite=pictureWrite;
+
 })();
