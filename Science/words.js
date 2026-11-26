@@ -4,11 +4,12 @@
    A word with no sets is used by every exercise.    parts = the word broken into pieces: [piece, "prefix" | "root" | "suffix" | "abbr" | "word", meaning]. Use " " between two words.
            Leave parts out for a word with no prefix or suffix. If parts is missing, the page guesses common ones by itself.
    start = a sentence starter for the "Write it" step. It should use the word.
+   clues = words from the picture she can tap into her sentence in "Write sentences".
    pic   = (optional) an emoji to show when wordpics.js has no picture for the word, e.g. pic:"🎈".
 */
 window.WORDS=[
  {
-  "w": "heredity",
+  "w": "heredity", "clues": ["baby mouse", "parents", "looks like", "family"],
   "def": "Passing of traits from parents to offspring.",
   "ex": "Heredity is why a baby mouse looks like its parents.",
   "say": "huh-RED-ih-tee",
@@ -30,7 +31,7 @@ window.WORDS=[
   "start": "Because of heredity, I have"
  },
  {
-  "w": "trait",
+  "w": "trait", "clues": ["black fur", "eye color", "feature", "inherit"],
   "def": "A feature of a living thing.",
   "ex": "Black fur is a trait that a mouse can inherit.",
   "say": "TRAYT",
@@ -41,7 +42,7 @@ window.WORDS=[
   "start": "One trait I got from my family is"
  },
  {
-  "w": "DNA",
+  "w": "DNA", "clues": ["instructions", "twisted ladder", "cells", "traits"],
   "def": "The molecule that holds the instructions for traits.",
   "ex": "DNA carries the instructions for every trait.",
   "say": "dee-en-AY",
@@ -69,7 +70,7 @@ window.WORDS=[
   "start": "DNA is important because"
  },
  {
-  "w": "gene",
+  "w": "gene", "clues": ["piece of DNA", "fur color", "chromosome", "instructions"],
   "def": "A piece of DNA that controls one trait.",
   "ex": "One gene controls the color of a mouse’s fur.",
   "say": "JEEN",
@@ -87,7 +88,7 @@ window.WORDS=[
   "start": "A gene can control"
  },
  {
-  "w": "allele",
+  "w": "allele", "clues": ["version", "black allele", "white allele", "gene"],
   "def": "One version of a gene.",
   "ex": "A mouse can have a black allele or a white allele.",
   "say": "uh-LEEL",
@@ -105,7 +106,7 @@ window.WORDS=[
   "start": "A mouse can get one allele from"
  },
  {
-  "w": "genotype",
+  "w": "genotype", "clues": ["Ff", "two alleles", "letters", "pair"],
   "def": "The pair of alleles an organism has.",
   "ex": "The genotype Ff means one black allele and one white allele.",
   "say": "JEE-nuh-type",
@@ -127,7 +128,7 @@ window.WORDS=[
   "start": "The genotype Ff means"
  },
  {
-  "w": "phenotype",
+  "w": "phenotype", "clues": ["black fur", "how it looks", "trait", "mouse"],
   "def": "How the trait looks.",
   "ex": "The phenotype of an Ff mouse is black fur.",
   "say": "FEE-nuh-type",
@@ -149,7 +150,7 @@ window.WORDS=[
   "start": "I can see an animal’s phenotype when"
  },
  {
-  "w": "dominant allele",
+  "w": "dominant allele", "clues": ["always shows", "capital F", "black fur", "strong"],
   "def": "An allele that always shows when it is present.",
   "ex": "A dominant allele always shows up, so Ff mice are black.",
   "say": "DOM-ih-nunt uh-LEEL",
@@ -178,7 +179,7 @@ window.WORDS=[
   "start": "A dominant allele always"
  },
  {
-  "w": "recessive allele",
+  "w": "recessive allele", "clues": ["hidden", "lowercase f", "two copies", "white fur"],
   "def": "An allele that is hidden when a dominant one is present.",
   "ex": "A recessive allele only shows up when a mouse has two of them.",
   "say": "rih-SESS-iv uh-LEEL",
@@ -212,7 +213,7 @@ window.WORDS=[
   "start": "A recessive allele only shows when"
  },
  {
-  "w": "homozygous",
+  "w": "homozygous", "clues": ["same", "ff", "two alleles", "matching"],
   "def": "Two alleles that are the same.",
   "ex": "A mouse with the genotype ff is homozygous.",
   "say": "hoh-moh-ZY-gus",
@@ -240,7 +241,7 @@ window.WORDS=[
   "start": "A mouse is homozygous when"
  },
  {
-  "w": "heterozygous",
+  "w": "heterozygous", "clues": ["different", "Ff", "two alleles", "mixed"],
   "def": "Two alleles that are different.",
   "ex": "A mouse with the genotype Ff is heterozygous.",
   "say": "het-er-oh-ZY-gus",
@@ -268,7 +269,7 @@ window.WORDS=[
   "start": "A mouse is heterozygous when"
  },
  {
-  "w": "hybrid",
+  "w": "hybrid", "clues": ["black mouse", "white mouse", "pup", "parents"],
   "def": "Offspring of parents with different traits.",
   "ex": "A pup from a black mouse and a white mouse is a hybrid.",
   "say": "HY-brid",
@@ -285,7 +286,7 @@ window.WORDS=[
   "start": "A hybrid pup has parents that"
  },
  {
-  "w": "inheritance",
+  "w": "inheritance", "clues": ["parents", "one allele from each", "traits", "offspring"],
   "def": "The way traits are received from parents.",
   "ex": "Inheritance means getting one allele from each parent.",
   "say": "in-HAIR-ih-tunce",
@@ -312,7 +313,7 @@ window.WORDS=[
   "start": "Through inheritance, a baby gets"
  },
  {
-  "w": "Punnett square",
+  "w": "Punnett square", "clues": ["grid", "predict", "babies", "boxes"],
   "def": "A grid used to predict the genotypes of offspring.",
   "ex": "A Punnett square predicts what the babies will look like.",
   "say": "PUN-it skwair",
@@ -336,7 +337,7 @@ window.WORDS=[
   "start": "I can use a Punnett square to"
  },
  {
-  "w": "cell",
+  "w": "cell", "clues": ["tiny", "microscope", "body", "living things"],
   "def": "The smallest living unit. All living things are made of cells.",
   "ex": "Your body is made of trillions of cells.",
   "say": "SEL",
@@ -354,7 +355,7 @@ window.WORDS=[
   "start": "My body is made of cells that"
  },
  {
-  "w": "nucleus",
+  "w": "nucleus", "clues": ["control center", "DNA", "inside the cell", "safe"],
   "def": "The control center of the cell. It stores the DNA.",
   "ex": "The DNA stays safe inside the nucleus.",
   "say": "NOO-klee-us",
@@ -376,7 +377,7 @@ window.WORDS=[
   "start": "The nucleus is like the boss of the cell because"
  },
  {
-  "w": "chromosome",
+  "w": "chromosome", "clues": ["bundle", "genes", "DNA", "chapter"],
   "def": "A packed-up bundle of DNA, like a chapter in a book.",
   "ex": "Each chromosome holds many genes.",
   "say": "KROH-muh-sohm",
@@ -398,7 +399,7 @@ window.WORDS=[
   "start": "A chromosome is like a chapter because"
  },
  {
-  "w": "base",
+  "w": "base", "clues": ["A and T", "C and G", "letter", "pairs"],
   "def": "One letter of the DNA code: A, T, C or G.",
   "ex": "The base A always pairs with the base T.",
   "say": "BAYS",
@@ -408,7 +409,7 @@ window.WORDS=[
   "start": "In DNA, the base A always"
  },
  {
-  "w": "double helix",
+  "w": "double helix", "clues": ["twisted ladder", "DNA", "spiral", "model"],
   "def": "The twisted-ladder shape of DNA.",
   "ex": "When we twisted our bead model, it made a double helix.",
   "say": "DUB-ul HEE-liks",
@@ -431,7 +432,7 @@ window.WORDS=[
   "start": "DNA looks like a double helix because"
  },
  {
-  "w": "protein",
+  "w": "protein", "clues": ["built", "traits", "color", "ribosome"],
   "def": "Built from DNA instructions. Proteins give us our traits.",
   "ex": "A protein gives the monster its green color.",
   "say": "PROH-teen",
@@ -454,7 +455,7 @@ window.WORDS=[
   "start": "A protein is made when"
  },
  {
-  "w": "RNA",
+  "w": "RNA", "clues": ["helper", "letter U", "copy", "DNA"],
   "def": "DNA's helper molecule. It uses U instead of T.",
   "ex": "RNA can work with DNA because they are almost the same.",
   "say": "ar-en-AY",
@@ -481,7 +482,7 @@ window.WORDS=[
   "start": "RNA is different from DNA because"
  },
  {
-  "w": "mRNA",
+  "w": "mRNA", "clues": ["messenger", "copy", "nucleus", "ribosome"],
   "def": "Messenger RNA. It copies the DNA instructions and carries them to the ribosome.",
   "ex": "The mRNA carries a copy of the code out of the nucleus.",
   "say": "em-ar-en-AY",
@@ -503,7 +504,7 @@ window.WORDS=[
   "start": "The mRNA carries"
  },
  {
-  "w": "tRNA",
+  "w": "tRNA", "clues": ["transfer", "brings", "pieces", "protein"],
   "def": "Transfer RNA. It brings protein pieces to the mRNA.",
   "ex": "The tRNA brings the right piece to build the protein.",
   "say": "tee-ar-en-AY",
@@ -525,7 +526,7 @@ window.WORDS=[
   "start": "The tRNA brings"
  },
  {
-  "w": "ribosome",
+  "w": "ribosome", "clues": ["builds", "protein", "reads", "mRNA"],
   "def": "The protein-building station. It reads the mRNA.",
   "ex": "The ribosome reads the mRNA three letters at a time.",
   "say": "RY-buh-sohm",
@@ -547,7 +548,7 @@ window.WORDS=[
   "start": "The ribosome builds"
  },
  {
-  "w": "codon",
+  "w": "codon", "clues": ["three letters", "AUG", "code", "mRNA"],
   "def": "A 3-letter word in the mRNA code, like AUG.",
   "ex": "The codon AUG gave my monster a green body.",
   "say": "KOH-don",
@@ -569,7 +570,7 @@ window.WORDS=[
   "start": "A codon is three letters that"
  },
  {
-  "w": "multicellular",
+  "w": "multicellular", "clues": ["many cells", "worm", "body", "bacteria"],
   "say": "mul-tee-SEL-yoo-ler",
   "def": "Made of many cells.",
   "ex": "A worm is multicellular, but bacteria have only one cell.",
@@ -596,7 +597,7 @@ window.WORDS=[
   "start": "A dog is multicellular because"
  },
  {
-  "w": "tissue",
+  "w": "tissue", "clues": ["muscle", "group", "cells", "job"],
   "say": "TISH-oo",
   "def": "A group of the same kind of cells doing one job.",
   "ex": "Muscle tissue contracts to move the body.",
@@ -613,7 +614,7 @@ window.WORDS=[
   "start": "Muscle tissue helps me"
  },
  {
-  "w": "organ",
+  "w": "organ", "clues": ["heart", "pumps blood", "tissues", "body"],
   "say": "OR-gun",
   "def": "A body part made of tissues that work together.",
   "ex": "The heart is an organ that pumps blood.",
@@ -630,7 +631,7 @@ window.WORDS=[
   "start": "My heart is an organ that"
  },
  {
-  "w": "organism",
+  "w": "organism", "clues": ["living thing", "onion", "cells", "alive"],
   "say": "OR-guh-niz-um",
   "def": "Any living thing.",
   "ex": "An onion is an organism because it is made of cells.",
@@ -652,7 +653,7 @@ window.WORDS=[
   "start": "A tree is an organism because"
  },
  {
-  "w": "neuron",
+  "w": "neuron", "clues": ["nerve cell", "message", "brain", "muscle"],
   "say": "NOOR-on",
   "def": "A nerve cell that carries messages.",
   "ex": "A neuron sends a message from the brain to a muscle.",
@@ -674,7 +675,7 @@ window.WORDS=[
   "start": "A neuron sends a message when"
  },
  {
-  "w": "stimulus",
+  "w": "stimulus", "clues": ["bright light", "react", "squint", "eyes"],
   "say": "STIM-yuh-lus",
   "def": "Something that causes a living thing to react.",
   "ex": "Bright light is a stimulus that makes your eyes squint.",
@@ -696,7 +697,7 @@ window.WORDS=[
   "start": "A loud noise is a stimulus that makes me"
  },
  {
-  "w": "probability",
+  "w": "probability", "clues": ["chance", "3 out of 4", "likely", "coin"],
   "say": "prah-buh-BIL-ih-tee",
   "def": "How likely something is to happen.",
   "ex": "The probability of a taster child is 3 out of 4.",
@@ -723,7 +724,7 @@ window.WORDS=[
   "start": "The probability of flipping heads is"
  },
  {
-  "w": "fossil",
+  "w": "fossil", "clues": ["fish", "rock", "long ago", "bones"],
   "say": "FAH-sul",
   "def": "The remains or traces of a living thing from long ago.",
   "ex": "We found a fish fossil in the rock.",
@@ -745,7 +746,7 @@ window.WORDS=[
   "start": "A fossil can show us"
  },
  {
-  "w": "sediment",
+  "w": "sediment", "clues": ["sand", "mud", "layers", "bottom of the sea"],
   "say": "SED-ih-ment",
   "def": "Bits of sand, mud and rock that settle in layers.",
   "ex": "Sediment piled up at the bottom of the sea.",
@@ -767,7 +768,7 @@ window.WORDS=[
   "start": "Sediment settles in layers when"
  },
  {
-  "w": "outcropping",
+  "w": "outcropping", "clues": ["rock layers", "road", "cliff", "surface"],
   "say": "OWT-krop-ing",
   "def": "A rock formation you can see at Earth’s surface.",
   "ex": "The outcropping by the road shows seven rock layers.",
@@ -794,7 +795,7 @@ window.WORDS=[
   "start": "At the outcropping, we could see"
  },
  {
-  "w": "superposition",
+  "w": "superposition", "clues": ["bottom layer", "oldest", "top layer", "rock"],
   "say": "soo-per-puh-ZISH-un",
   "def": "The idea that lower rock layers are older than upper layers.",
   "ex": "By superposition, layer G is the oldest.",
@@ -821,7 +822,7 @@ window.WORDS=[
   "start": "Superposition tells us that"
  },
  {
-  "w": "index fossil",
+  "w": "index fossil", "clues": ["trilobite", "match", "layers", "same age"],
   "say": "IN-deks FAH-sul",
   "def": "A fossil used to match rock layers of the same age.",
   "ex": "The trilobite is an index fossil that matched the two layers.",
@@ -849,7 +850,7 @@ window.WORDS=[
   "start": "An index fossil helps scientists"
  },
  {
-  "w": "extinct",
+  "w": "extinct", "clues": ["trilobites", "dinosaurs", "gone forever", "fossils"],
   "say": "ek-STINKT",
   "def": "No longer living anywhere on Earth.",
   "ex": "Trilobites are extinct, so we only see them as fossils.",
@@ -871,7 +872,7 @@ window.WORDS=[
   "start": "Dinosaurs are extinct, so"
  },
  {
-  "w": "ecosystem",
+  "w": "ecosystem", "clues": ["soil", "worms", "plant", "sunlight"],
   "say": "EE-koh-sis-tum",
   "def": "All the living and nonliving things in an area.",
   "ex": "The pot with soil, worms and a plant is a tiny ecosystem.",
@@ -893,7 +894,7 @@ window.WORDS=[
   "start": "A pond is an ecosystem because"
  },
  {
-  "w": "decomposer",
+  "w": "decomposer", "clues": ["earthworm", "dead leaves", "soil", "breaks down"],
   "say": "dee-kum-POH-zer",
   "def": "A living thing that breaks down dead matter.",
   "ex": "The earthworm is a decomposer that eats dead leaves.",
@@ -920,7 +921,7 @@ window.WORDS=[
   "start": "A decomposer helps the soil by"
  },
  {
-  "w": "producer",
+  "w": "producer", "clues": ["plant", "sunlight", "makes food", "leaves"],
   "say": "pruh-DOO-ser",
   "def": "A living thing that makes its own food from sunlight.",
   "ex": "A plant is a producer.",
@@ -947,7 +948,7 @@ window.WORDS=[
   "start": "A plant is a producer because"
  },
  {
-  "w": "consumer",
+  "w": "consumer", "clues": ["rabbit", "eats", "plants", "food chain"],
   "say": "kun-SOO-mer",
   "def": "A living thing that eats other living things.",
   "ex": "A rabbit is a consumer because it eats plants.",
@@ -974,7 +975,7 @@ window.WORDS=[
   "start": "I am a consumer because"
  },
  {
-  "w": "nutrient",
+  "w": "nutrient", "clues": ["soil", "grow", "healthy", "food"],
   "say": "NOO-tree-ent",
   "def": "Something living things need to grow and stay healthy.",
   "ex": "Worms put nutrients back into the soil.",
@@ -996,7 +997,7 @@ window.WORDS=[
   "start": "Plants need nutrients to"
  },
  {
-  "w": "variable",
+  "w": "variable", "clues": ["experiment", "change", "earthworms", "test"],
   "say": "VAIR-ee-uh-bul",
   "def": "Something that can change in an experiment.",
   "ex": "The only variable was adding earthworms.",
@@ -1018,7 +1019,7 @@ window.WORDS=[
   "start": "In my experiment, the variable was"
  },
  {
-  "w": "control",
+  "w": "control", "clues": ["same", "fair test", "water", "light"],
   "say": "kun-TROHL",
   "def": "Something kept the same in a fair test.",
   "ex": "Water and light were controls in the plant test.",
@@ -1028,7 +1029,7 @@ window.WORDS=[
   "start": "To make a fair test, the control"
  },
  {
-  "w": "embryo",
+  "w": "embryo", "clues": ["egg", "chicken", "early stage", "grows"],
   "say": "EM-bree-oh",
   "def": "A living thing in its earliest stage of growth.",
   "ex": "A chicken embryo grows inside the egg.",
@@ -1050,7 +1051,7 @@ window.WORDS=[
   "start": "A chicken embryo grows"
  },
  {
-  "w": "vertebrate",
+  "w": "vertebrate", "clues": ["backbone", "fish", "bird", "rabbit"],
   "say": "VER-tuh-brit",
   "def": "An animal with a backbone.",
   "ex": "Fish, birds and rabbits are all vertebrates.",
@@ -1072,7 +1073,7 @@ window.WORDS=[
   "start": "A fish is a vertebrate because"
  },
  {
-  "w": "ancestor",
+  "w": "ancestor", "clues": ["long ago", "family line", "share", "chicken"],
   "say": "AN-ses-ter",
   "def": "A living thing that came long before, in the same family line.",
   "ex": "Chickens and tortoises share an ancestor from long ago.",
@@ -1099,7 +1100,7 @@ window.WORDS=[
   "start": "My ancestors were"
  },
  {
-  "w": "evolution",
+  "w": "evolution", "clues": ["change", "generations", "slow", "living things"],
   "say": "ev-uh-LOO-shun",
   "def": "The slow change of living things over many generations.",
   "ex": "Similar embryos are evidence of evolution.",
@@ -1126,7 +1127,7 @@ window.WORDS=[
   "start": "Evolution happens when"
  },
  {
-  "w": "develop",
+  "w": "develop", "clues": ["tadpole", "frog", "grow", "change"],
   "say": "dih-VEL-up",
   "def": "To grow and change over time.",
   "ex": "A tadpole develops into a frog.",
@@ -1148,7 +1149,7 @@ window.WORDS=[
   "start": "A tadpole develops into"
  },
  {
-  "w": "similarity",
+  "w": "similarity", "clues": ["alike", "tail", "same", "embryos"],
   "say": "sim-uh-LAIR-ih-tee",
   "def": "A way that two things are alike.",
   "ex": "The tail is one similarity between the early embryos.",
@@ -1175,7 +1176,7 @@ window.WORDS=[
   "start": "One similarity between a cat and a dog is"
  },
  {
-  "w": "natural resource",
+  "w": "natural resource", "clues": ["water", "trees", "nature", "use"],
   "say": "NACH-er-ul REE-sors",
   "def": "Something from nature that people use.",
   "ex": "Water is a natural resource we use every day.",
@@ -1208,7 +1209,7 @@ window.WORDS=[
   "start": "One natural resource I use every day is"
  },
  {
-  "w": "renewable",
+  "w": "renewable", "clues": ["wind", "sun", "never runs out", "solar panels"],
   "say": "ree-NOO-uh-bul",
   "def": "Can be replaced by nature in a short time.",
   "ex": "Wind is renewable because it never runs out.",
@@ -1235,7 +1236,7 @@ window.WORDS=[
   "start": "Solar power is renewable because"
  },
  {
-  "w": "nonrenewable",
+  "w": "nonrenewable", "clues": ["oil", "coal", "millions of years", "runs out"],
   "say": "non-ree-NOO-uh-bul",
   "def": "Cannot be replaced in a human lifetime.",
   "ex": "Oil is nonrenewable because it takes millions of years to form.",
@@ -1267,7 +1268,7 @@ window.WORDS=[
   "start": "Coal is nonrenewable because"
  },
  {
-  "w": "fossil fuel",
+  "w": "fossil fuel", "clues": ["oil", "coal", "gasoline", "ancient plants"],
   "say": "FAH-sul FYOO-ul",
   "def": "A fuel made from ancient living things, like oil or coal.",
   "ex": "Gasoline is made from a fossil fuel.",
@@ -1295,7 +1296,7 @@ window.WORDS=[
   "start": "A car burns a fossil fuel called"
  },
  {
-  "w": "consumption",
+  "w": "consumption", "clues": ["use", "oil", "every year", "goes up"],
   "say": "kun-SUMP-shun",
   "def": "How much of something is used.",
   "ex": "Oil consumption keeps going up every year.",
@@ -1322,7 +1323,7 @@ window.WORDS=[
   "start": "We can lower our water consumption by"
  },
  {
-  "w": "reserve",
+  "w": "reserve", "clues": ["underground", "oil", "supply", "later"],
   "say": "rih-ZERV",
   "def": "A supply kept or found for later use.",
   "ex": "Oil reserves are oil found underground that we can still use.",
@@ -1344,7 +1345,7 @@ window.WORDS=[
   "start": "We keep a reserve of snacks so"
  },
  {
-  "w": "conserve",
+  "w": "conserve", "clues": ["bus", "use less", "save", "last longer"],
   "say": "kun-SERV",
   "def": "To use less so something lasts longer.",
   "ex": "We conserve oil when we ride the bus.",
@@ -1366,7 +1367,7 @@ window.WORDS=[
   "start": "I can conserve electricity by"
  },
  {
-  "w": "orbit",
+  "w": "orbit", "clues": ["Moon", "Earth", "path", "month"],
   "say": "OR-bit",
   "def": "The path one object takes around another.",
   "ex": "The Moon’s orbit around Earth takes about a month.",
@@ -1383,7 +1384,7 @@ window.WORDS=[
   "start": "The Moon’s orbit around Earth"
  },
  {
-  "w": "rotation",
+  "w": "rotation", "clues": ["spinning", "day", "night", "Earth"],
   "say": "roh-TAY-shun",
   "def": "Spinning around a center line.",
   "ex": "Earth’s rotation gives us day and night.",
@@ -1405,7 +1406,7 @@ window.WORDS=[
   "start": "Earth’s rotation causes"
  },
  {
-  "w": "phase",
+  "w": "phase", "clues": ["Moon", "full", "shape", "lit part"],
   "say": "FAYZ",
   "def": "The shape of the lit part of the Moon we see.",
   "ex": "Tonight the Moon is in its full phase.",
@@ -1422,7 +1423,7 @@ window.WORDS=[
   "start": "The Moon’s phase changes because"
  },
  {
-  "w": "waxing",
+  "w": "waxing", "clues": ["growing", "bigger", "each night", "Moon"],
   "say": "WAK-sing",
   "def": "Growing larger.",
   "ex": "The waxing Moon looks bigger each night.",
@@ -1444,7 +1445,7 @@ window.WORDS=[
   "start": "When the Moon is waxing,"
  },
  {
-  "w": "waning",
+  "w": "waning", "clues": ["smaller", "shrinking", "after full moon", "Moon"],
   "say": "WAY-ning",
   "def": "Getting smaller.",
   "ex": "After the full moon, the Moon is waning.",
@@ -1466,7 +1467,7 @@ window.WORDS=[
   "start": "When the Moon is waning,"
  },
  {
-  "w": "crescent",
+  "w": "crescent", "clues": ["thin", "fingernail", "sunset", "curved"],
   "say": "KRES-ent",
   "def": "A thin curved shape like a fingernail.",
   "ex": "We saw a thin crescent moon after sunset.",
@@ -1488,7 +1489,7 @@ window.WORDS=[
   "start": "A crescent moon looks like"
  },
  {
-  "w": "gibbous",
+  "w": "gibbous", "clues": ["more than half", "lopsided", "Moon", "almost full"],
   "say": "GIB-us",
   "def": "More than half lit but not full.",
   "ex": "A gibbous moon looks like a lopsided circle.",
@@ -1510,7 +1511,7 @@ window.WORDS=[
   "start": "A gibbous moon is"
  },
  {
-  "w": "kinetic energy",
+  "w": "kinetic energy", "clues": ["moving", "fast", "ball", "particles"],
   "say": "kih-NET-ik EN-er-jee",
   "def": "The energy an object has because it is moving.",
   "ex": "Fast particles have more kinetic energy.",
@@ -1548,7 +1549,7 @@ window.WORDS=[
   "start": "A rolling ball has kinetic energy because"
  },
  {
-  "w": "thermal energy",
+  "w": "thermal energy", "clues": ["hot soup", "particles", "heat", "energy"],
   "say": "THER-mul EN-er-jee",
   "def": "The total energy of all the moving particles in something.",
   "ex": "The hot soup has a lot of thermal energy.",
@@ -1586,7 +1587,7 @@ window.WORDS=[
   "start": "Hot cocoa has thermal energy, so"
  },
  {
-  "w": "temperature",
+  "w": "temperature", "clues": ["thermometer", "degrees", "hot", "cold"],
   "say": "TEM-pruh-cher",
   "def": "A measure of how fast the particles move on average.",
   "ex": "The water’s temperature rose to 35 °C.",
@@ -1608,7 +1609,7 @@ window.WORDS=[
   "start": "When the temperature goes up,"
  },
  {
-  "w": "particle",
+  "w": "particle", "clues": ["tiny", "matter", "moving", "cup"],
   "say": "PAR-tih-kul",
   "def": "A tiny piece of matter.",
   "ex": "Every particle in the cup is always moving.",
@@ -1630,7 +1631,7 @@ window.WORDS=[
   "start": "Every particle in hot water"
  },
  {
-  "w": "transfer",
+  "w": "transfer", "clues": ["hot", "cool water", "move", "energy"],
   "say": "TRANS-fer",
   "def": "To move from one place to another.",
   "ex": "Energy transfers from the hot marbles to the cool water.",
@@ -1652,7 +1653,7 @@ window.WORDS=[
   "start": "Heat can transfer from"
  },
  {
-  "w": "equilibrium",
+  "w": "equilibrium", "clues": ["same temperature", "balanced", "marbles", "water"],
   "say": "ee-kwuh-LIB-ree-um",
   "def": "When things are balanced, like reaching the same temperature.",
   "ex": "The water and the marbles reached equilibrium at 35 °C.",

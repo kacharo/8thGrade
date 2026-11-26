@@ -6,8 +6,8 @@
 <title>Inheritance: The Bitter-Taste Gene</title>
 <script src="../shared.js?v=20261124a" data-home="../index.html"></script>
 <script src="../wordpics.js?v=20261120a"></script>
-<script src="../wordviz.js?v=20261120a"></script>
-<script src="words.js?v=20261120a"></script>
+<script src="../wordviz.js?v=20261125a"></script>
+<script src="words.js?v=20261125a"></script>
 <style>
 :root{--bg:#f6f4ee;--card:#fff;--ink:#22303c;--muted:#5d6b78;--brand:#2f6fed;--brand2:#e8f0ff;--good:#1f9d63;--goodbg:#dff5ea;--bad:#d64545;--badbg:#fde6e6;--warn:#b86e00;--warnbg:#fff1d6;--line:#e1ddd0}
 *{box-sizing:border-box}
@@ -172,18 +172,20 @@ function vPic(w,sz){return W.viz?W.viz.pic(w,sz):'';}
 function vParts(w){return W.viz?W.viz.parts(w):'';}
 function vKey(){return W.viz?W.viz.key():'';}
 /* ---- 2b. write it: her own sentence with 3 of the words ---- */
-function writeIt(){
-  if(!W.viz||!W.viz.writeStep){go(2);return;}
+/* ---- writing: one sentence per lesson word (up to 10), with picture clues (from ../wordviz.js) ---- */
+function writeAll(){
+  var last=NAMES.length-1;
+  if(!W.viz||!W.viz.pictureWrite){go(last);return;}
   stopSay();window.scrollTo(0,0);
-  W.viz.writeStep({stage:stage,vocab:VOCAB,num:'2b.',say:say,spoken:(typeof spoken==='function'?spoken:function(t){return t;}),
-    add:function(p,m){S.pts+=p;S.max+=m;},log:function(e){LOG.push(e);},next:function(){go(2);}});
+  W.viz.pictureWrite({stage:stage,vocab:VOCAB,max:10,num:last+'.',say:say,spoken:(typeof spoken==='function'?spoken:function(t){return t;}),
+    add:function(p,m){S.pts+=p;S.max+=m;},log:function(e){LOG.push(e);},next:function(){go(last);}});
 }
 var MATCH=C.match;
 var TF=C.tf.map(function(t){return {q:t[0],opts:['True','False'],ans:t[1]?0:1,why:t[2]};});
 var MC=C.mc.map(function(t){return {q:t[0],opts:t[1],ans:0,why:t[2]};});
 var FILL=C.fill.map(function(t){return {q:t[0],opts:t[1],ans:0,why:t[2]};});
 var FACTS=C.facts;
-var NAMES=['Learn','Say, Spell & Write','Match','True / False','Quiz','Fill in','Test Practice','Submit'];
+var NAMES=['Learn','Say & Spell','Match','True / False','Quiz','Fill in','Test Practice','Write','Submit'];
 
 // how the reader should say short forms
 function spoken(t){
@@ -199,7 +201,7 @@ var stage=$('#stage');
 function renderSteps(){
   $('#steps').innerHTML=NAMES.map(function(n,i){return '<span class="'+(i===S.step?'on':(i<S.step?'done':''))+'">'+(i<S.step?'✓ ':'')+esc(n)+'</span>';}).join('');
 }
-function go(n){stopSay();S.step=n;TIMER.lap(NAMES[n]);renderSteps();window.scrollTo(0,0);[learn,saySpell,match,runTF,runMC,runFill,testPractice,done][n]();}
+function go(n){stopSay();S.step=n;TIMER.lap(NAMES[n]);renderSteps();window.scrollTo(0,0);[learn,saySpell,match,runTF,runMC,runFill,testPractice,writeAll,done][n]();}
 function bar(i,n){return '<div class="bar"><i style="width:'+Math.round(i/n*100)+'%"></i></div>';}
 
 /* ---- 1. learn ---- */
@@ -242,8 +244,8 @@ function saySpell(){
      (SRC&&(okFirst+okSecond+missed.length>0)?'<div class="big">Pronunciation practice (no points): <b>'+okFirst+'</b> on the first try, <b>'+okSecond+'</b> on the second try, <b>'+missed.length+'</b> to practice.</div>':'<div class="big">Spelling is done!</div>')+
      (micBroken?'<div class="banner">The microphone was not available on this device, so some words were not tested for pronunciation.<br><small>iPhone: allow the microphone for this site in Safari, and turn on Dictation in Settings, General, Keyboard.</small></div>':'')+
      (missed.length?'<div class="banner">🔁 <b>Words to practice:</b><br>'+missed.map(esc).join(', ')+'<br>They were added to <b>My Words</b> in the ELA reading app, and they come first next time.</div>':(SRC&&!micBroken?'<div class="good" style="margin-top:10px">No practice words. Great talking!</div>':''))+
-     '<div class="row" style="margin-top:14px"><button class="b green" id="next">Next: Write it &rarr;</button>'+(missed.length?'<a class="b alt" href="../ELA/index.html">Open the reading app</a>':'')+'</div></div>';
-    $('#next').onclick=function(){writeIt();};
+     '<div class="row" style="margin-top:14px"><button class="b green" id="next">Next: Match &rarr;</button>'+(missed.length?'<a class="b alt" href="../ELA/index.html">Open the reading app</a>':'')+'</div></div>';
+    $('#next').onclick=function(){go(2);};
   }
   function show(){
     stopRec();
@@ -559,7 +561,7 @@ function saveFile(text,fname){
 function done(){
   TIMER.stop();
   var pct=S.max?Math.round(S.pts/S.max*100):0,cfg=W.gh.cfg(),sending=false;
-  stage.innerHTML='<div class="card"><h2>8. Submit your answers</h2><div class="big">You finished everything! You earned <b>'+S.pts+'</b> of '+S.max+' points ('+pct+'%).</div><div class="big" style="margin-top:6px">⏱ You worked for <b>'+W.fmtTime(TIMER.secs())+'</b>.</div>'+
+  stage.innerHTML='<div class="card"><h2>'+NAMES.length+'. Submit your answers</h2><div class="big">You finished everything! You earned <b>'+S.pts+'</b> of '+S.max+' points ('+pct+'%).</div><div class="big" style="margin-top:6px">⏱ You worked for <b>'+W.fmtTime(TIMER.secs())+'</b>.</div>'+
    '<p class="muted">Type your first name, then press Submit. '+(cfg?'Your answers will be saved to GitHub.':'GitHub saving is not set up yet, so a file will be downloaded instead. A parent can set it up on the Home page, under Parent settings.')+'</p>'+
    '<input type="text" id="nm" placeholder="Your first name" autocomplete="given-name" style="max-width:360px">'+
    '<div class="row" style="margin-top:14px"><button class="b green" id="sub">✅ Submit my answers</button></div><div id="after"></div></div>';
