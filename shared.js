@@ -12,7 +12,8 @@ var SUBJECTS=[
   {key:'ELA',label:'ELA',icon:'📖',color:'#2f6fed',href:'ELA/index.html',blurb:'Reading and vocabulary'},
   {key:'Math',label:'Math',icon:'➗',color:'#d9822b',href:'Math/index.html',blurb:'Practice and problem solving'},
   {key:'Social-Study',label:'Social Studies',icon:'🌍',color:'#6a4c93',href:'Social-Study/index.html',blurb:'History and the world'},
-  {key:'Writing',label:'Writing',icon:'✍️',color:'#c2185b',href:'Writing/index.html',blurb:'Picture clue sentences'}
+  {key:'Writing',label:'Writing',icon:'✍️',color:'#c2185b',href:'Writing/index.html',blurb:'Picture clue sentences'},
+  {key:'Geography',label:'Geography',icon:'🗺️',color:'#0077b6',href:'Geography/index.html',blurb:'Map games: states, countries, rivers'}
 ];
 /* =========================================================== */
 
