@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Science - 8th Grade Learning Hub</title>
-<link rel="stylesheet" href="../shared.css?v=20261124a">
+<link rel="stylesheet" href="../shared.css?v=20261126a">
 </head>
 <body>
 <div id="toast"></div>
@@ -19,7 +19,7 @@
   <div class="card" id="words"></div>
   <div class="card" id="saved"></div>
 </main>
-<script src="../shared.js?v=20261124a" data-home="../index.html"></script>
+<script src="../shared.js?v=20261126a" data-home="../index.html"></script>
 <script src="../wordpics.js?v=20261120a"></script>
 <script src="../wordviz.js?v=20261125a"></script>
 <script src="words.js?v=20261125a"></script>
@@ -32,7 +32,7 @@ var EXERCISES=[{"id": "mouse", "icon": "🐭", "title": "Mouse Genetics (One Tra
 var SUBJECT='Science';
 var $=function(s){return document.querySelector(s);};
 $('#xp').textContent='⭐ '+W.xp.get();
-if(!(W.practice&&W.ui&&W.subs&&W.gh&&W.VERSION==='20261124a'))banner('<b>Some site files are out of date.</b> Upload the newest <code>shared.js</code> (main folder), then refresh this page. If you just uploaded it, wait a few minutes and refresh again.');
+if(!(W.practice&&W.ui&&W.subs&&W.gh&&W.VERSION==='20261126a'))banner('<b>Some site files are out of date.</b> Upload the newest <code>shared.js</code> (main folder), then refresh this page. If you just uploaded it, wait a few minutes and refresh again.');
 if(!window.WORDS)banner('<b>The word list file is missing.</b> Upload <code>words.js</code> to this folder.');
 $('#list').innerHTML=EXERCISES.length?EXERCISES.map(function(x){
   var best=(W.store.get('ex_'+x.id,{best:0})||{}).best||0;
