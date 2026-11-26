@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Geography - 8th Grade Learning Hub</title>
-<link rel="stylesheet" href="../shared.css?v=20261124a">
+<link rel="stylesheet" href="../shared.css?v=20261126a">
 <style>
 #clock{font-weight:700;background:#e8f1fb;color:#1565c0;padding:4px 10px;border-radius:99px;font-size:15px;font-variant-numeric:tabular-nums}
 .games{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
@@ -75,7 +75,7 @@ svg.labels .lbl,.lbl.on{display:block}
   <div id="stage"></div>
   <div class="card" id="saved"></div>
 </main>
-<script src="../shared.js?v=20261124a" data-home="../index.html"></script>
+<script src="../shared.js?v=20261126a" data-home="../index.html"></script>
 <script src="maps.js?v=20261126a"></script>
 <script>
 (function(){
@@ -84,7 +84,7 @@ var $=function(s,r){return (r||document).querySelector(s);},$$=function(s,r){ret
 function banner(h){var m=$('main'),d=document.createElement('div');d.className='banner';d.innerHTML=h;m.insertBefore(d,m.firstChild);}
 if(!window.W){banner('<b>The page could not load <code>shared.js</code>.</b> Upload <code>shared.js</code> to the main folder of the repository, then refresh this page.');return;}
 if(!window.GEO){banner('<b>The map file is missing.</b> Upload <code>maps.js</code> to the <b>Geography</b> folder, then refresh this page.');return;}
-if(!(W.ui&&W.subs&&W.gh&&W.timer&&W.VERSION==='20261124a'))banner('<b>Some site files are out of date.</b> Upload the newest <code>shared.js</code> (main folder), then refresh this page.');
+if(!(W.ui&&W.subs&&W.gh&&W.timer&&W.VERSION==='20261126a'))banner('<b>Some site files are out of date.</b> Upload the newest <code>shared.js</code> (main folder), then refresh this page.');
 var SUBJECT='Geography',esc=W.esc,G=window.GEO,stage=$('#stage');
 $('#xp').textContent='⭐ '+W.xp.get();
 
