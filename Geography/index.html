@@ -1,1 +1,369 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Geography - 8th Grade Learning Hub</title>
+<link rel="stylesheet" href="../shared.css?v=20261124a">
+<style>
+#clock{font-weight:700;background:#e8f1fb;color:#1565c0;padding:4px 10px;border-radius:99px;font-size:15px;font-variant-numeric:tabular-nums}
+.games{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+.game{border:2px solid var(--line);border-radius:16px;padding:14px;background:#fff;display:flex;flex-direction:column;gap:6px}
+.game .ic{font-size:40px;line-height:1}
+.game h3{margin:0;font-size:21px}
+.game .row{margin-top:auto}
+.modes{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 10px}
+.modes .b{padding:10px 14px}
+.modes .b.on{outline:3px solid var(--ink)}
+.prompt{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:#fff8e1;border:2px solid #f2c94c;border-radius:14px;padding:10px 14px;margin-bottom:8px;font-size:22px;min-height:58px}
+.prompt b{font-size:26px}
+.prompt .tries{margin-left:auto;font-size:15px;color:var(--muted)}
+.bar{height:10px;background:#ece8dc;border-radius:99px;overflow:hidden;margin:0 0 8px}.bar i{display:block;height:100%;background:var(--good)}
+.mapwrap{position:relative;border:2px solid var(--line);border-radius:16px;overflow:hidden;background:#d9ecf8;touch-action:none;user-select:none;-webkit-user-select:none}
+.mapwrap svg{display:block;width:100%;height:100%;cursor:pointer}
+.zoom{position:absolute;right:8px;top:8px;display:flex;flex-direction:column;gap:6px}
+.zoom button{width:44px;height:44px;border-radius:12px;border:2px solid var(--line);background:#fffffff0;font-size:22px;font-weight:800;cursor:pointer;color:var(--ink)}
+.hint{font-size:14px;color:var(--muted);margin:6px 2px}
+.opts{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px;margin-top:10px}
+.opt{font:inherit;font-size:19px;font-weight:700;padding:12px;border-radius:14px;border:2px solid var(--line);background:#fff;cursor:pointer;text-align:left}
+.opt.right{background:var(--goodbg);border-color:var(--good)}
+.opt.wrong{background:var(--badbg);border-color:var(--bad);opacity:.7}
+#fb{margin-top:8px;min-height:10px}
+.warn{background:var(--warnbg);color:var(--warn);padding:10px 14px;border-radius:12px}
+.info{background:#eef6ff;border-radius:12px;padding:10px 14px;margin-top:8px;font-size:18px;min-height:46px}
+/* map pieces */
+.land{fill:#f3e9d2;stroke:#9a8f7a;stroke-width:.7}
+.land.other{fill:#e7e1d3}
+.hit.land:hover{fill:#efe0bb}
+.sea{fill:transparent}
+.sea.hl{fill:#ffd54f88}
+.riv{fill:none;stroke:#1d6fd6;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.mtn{fill:none;stroke:#8b5a2b;stroke-width:4;stroke-dasharray:6 4;stroke-linecap:round}
+.tap{fill:none;stroke:transparent;stroke-width:22;stroke-linecap:round}
+.tri{fill:#8b5a2b}
+.dot{fill:#d64545;stroke:#fff;stroke-width:1.5}
+.dothit{fill:transparent}
+.box{fill:#fff;stroke:#9a8f7a;stroke-width:1}
+.boxt{font:700 11px sans-serif;fill:#22303c;pointer-events:none}
+.lbl{font-family:"Trebuchet MS",Verdana,sans-serif;font-weight:700;fill:#22303c;paint-order:stroke;stroke:#ffffffd9;stroke-width:3px;stroke-linejoin:round;pointer-events:none;display:none;text-anchor:middle}
+svg.labels .lbl,.lbl.on{display:block}
+.lbl.sea{fill:#0b4f8a}
+.ok{fill:#7fd19b!important}
+.bad{fill:#f4a3a3!important}
+.riv.ok,.mtn.ok{stroke:#1f9d63!important;fill:none!important}
+.riv.bad,.mtn.bad{stroke:#d64545!important;fill:none!important}
+.hl{fill:#ffcf3f!important}
+.riv.hl{stroke:#ff8c00!important;stroke-width:6!important;fill:none!important}
+.mtn.hl{stroke:#ff8c00!important;stroke-width:7!important;fill:none!important}
+.dot.hl,.dot.ok,.dot.bad{stroke:#22303c;stroke-width:2}
+.ring{fill:none;stroke:#ff8c00;stroke-width:3;animation:pulse 1s infinite alternate}
+@keyframes pulse{from{opacity:1}to{opacity:.25}}
+.blink{animation:pulse .6s 6 alternate}
+.miss{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}
+.miss span{background:var(--warnbg);color:var(--warn);border-radius:99px;padding:4px 12px;font-weight:700}
+@media (max-width:640px){.zoom button{width:38px;height:38px;font-size:19px}.zoom{right:6px;top:6px;gap:4px}.prompt{font-size:18px}.prompt b{font-size:22px}.opt{font-size:17px}}
+</style>
+</head>
+<body>
+<div id="toast"></div>
+<header>
+  <a class="b alt" href="../index.html" id="home">🏠 Home</a>
+  <h1>🗺️ Geography</h1>
+  <div style="display:flex;gap:6px;align-items:center;flex:none"><div id="clock" style="display:none">⏱ 0:00</div><div id="xp">⭐ 0</div></div>
+</header>
+<main>
+  <div id="stage"></div>
+  <div class="card" id="saved"></div>
+</main>
+<script src="../shared.js?v=20261124a" data-home="../index.html"></script>
+<script src="maps.js?v=20261126a"></script>
+<script>
+(function(){
+'use strict';
+var $=function(s,r){return (r||document).querySelector(s);},$$=function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s));};
+function banner(h){var m=$('main'),d=document.createElement('div');d.className='banner';d.innerHTML=h;m.insertBefore(d,m.firstChild);}
+if(!window.W){banner('<b>The page could not load <code>shared.js</code>.</b> Upload <code>shared.js</code> to the main folder of the repository, then refresh this page.');return;}
+if(!window.GEO){banner('<b>The map file is missing.</b> Upload <code>maps.js</code> to the <b>Geography</b> folder, then refresh this page.');return;}
+if(!(W.ui&&W.subs&&W.gh&&W.timer&&W.VERSION==='20261124a'))banner('<b>Some site files are out of date.</b> Upload the newest <code>shared.js</code> (main folder), then refresh this page.');
+var SUBJECT='Geography',esc=W.esc,G=window.GEO,stage=$('#stage');
+$('#xp').textContent='⭐ '+W.xp.get();
 
+/* ---------- read aloud ---------- */
+function say(t,rate){
+  if(!('speechSynthesis' in window))return;
+  try{speechSynthesis.cancel();var u=new SpeechSynthesisUtterance(t);u.rate=rate||0.85;u.lang='en-US';
+    var vs=speechSynthesis.getVoices();var v=vs.filter(function(x){return /en[-_]US/i.test(x.lang);})[0]||vs.filter(function(x){return /^en/i.test(x.lang);})[0];
+    if(v)u.voice=v;speechSynthesis.speak(u);}catch(e){}
+}
+function stopSay(){try{speechSynthesis.cancel();}catch(e){}}
+function toast(m){W.ui.toast(m);}
+
+/* ---------- facts ---------- */
+var FACT={
+ 'Pacific Ocean':'The largest and deepest ocean on Earth.','Atlantic Ocean':'The second-largest ocean. It lies between the Americas and Europe and Africa.',
+ 'Indian Ocean':'The warmest ocean. It lies between Africa, Asia and Australia.','Arctic Ocean':'The smallest and coldest ocean. Much of it is frozen.',
+ 'Southern Ocean':'The ocean that circles Antarctica.',
+ 'Nile River':'The longest river in the world. It flows north through Egypt.','Amazon River':'Carries more water than any other river. It flows through the rainforest in Brazil.',
+ 'Mississippi River':'The biggest river in the United States. It ends at New Orleans.','Yangtze River':'The longest river in Asia. It flows across China.',
+ 'Ganges River':'A holy river in India. It flows into the Bay of Bengal.','Danube River':'Flows through 10 countries in Europe, more than any other river.',
+ 'Congo River':'The deepest river in the world. It crosses the equator twice.','Volga River':'The longest river in Europe. It flows into the Caspian Sea.',
+ 'Mekong River':'Flows through six countries in Southeast Asia.',
+ 'Himalayas':'The highest mountains on Earth, between India and China.','Andes Mountains':'The longest mountain range on land, along South America.',
+ 'Rocky Mountains':'Stretch from Canada down to New Mexico.','Alps':'Famous snowy mountains in Europe.','Ural Mountains':'They divide Europe from Asia.',
+ 'Appalachian Mountains':'Very old mountains in the eastern United States.','Atlas Mountains':'Mountains in northwest Africa, near the Sahara.',
+ 'Great Dividing Range':'The longest mountain range in Australia.',
+ 'Mount Everest':'The tallest mountain on Earth, in the Himalayas.','Mount Kilimanjaro':'The tallest mountain in Africa, in Tanzania.',
+ 'Mount Fuji':'A famous volcano in Japan.','Denali':'The tallest mountain in North America, in Alaska.','Mont Blanc':'The tallest mountain in the Alps.'
+};
+var STNAME={};G.us.states.forEach(function(s){STNAME[s.ab]=s.n;});
+
+/* ---------- the games ---------- */
+var GAMES=[
+ {id:'us-states',map:'us',icon:'🇺🇸',title:'U.S. States',desc:'All 50 states.',noun:'state'},
+ {id:'us-cities',map:'us',icon:'🏙️',title:'U.S. Cities',desc:'Big cities across the country.',noun:'city'},
+ {id:'w-countries',map:'world',icon:'🌍',title:'World Countries',desc:'Major countries on every continent.',noun:'country'},
+ {id:'w-oceans',map:'world',icon:'🌊',title:'Oceans',desc:'The five oceans.',noun:'ocean'},
+ {id:'w-rivers',map:'world',icon:'🏞️',title:'Rivers',desc:'The world’s great rivers.',noun:'river'},
+ {id:'w-mountains',map:'world',icon:'⛰️',title:'Mountains',desc:'Mountain ranges and famous peaks.',noun:'mountain'},
+ {id:'w-cities',map:'world',icon:'🏛️',title:'World Cities',desc:'Famous cities around the world.',noun:'city'}
+];
+function itemsFor(g){
+  if(g.id==='us-states')return G.us.states.filter(function(s){return s.ab!=='DC';}).map(function(s){return {n:s.n,info:s.n+' ('+s.ab+')'};});
+  if(g.id==='us-cities')return G.us.cities.map(function(c){return {n:c.n,info:c.n+', '+(STNAME[c.st]||c.st)};});
+  if(g.id==='w-countries')return G.world.countries.filter(function(c){return c.q;}).map(function(c){return {n:c.n,info:c.n};});
+  if(g.id==='w-oceans')return G.world.oceans.map(function(o){return {n:o.n,info:o.n+'. '+(FACT[o.n]||'')};});
+  if(g.id==='w-rivers')return G.world.rivers.map(function(o){return {n:o.n,info:o.n+'. '+(FACT[o.n]||'')};});
+  if(g.id==='w-mountains')return G.world.mountains.concat(G.world.peaks).map(function(o){return {n:o.n,info:o.n+'. '+(FACT[o.n]||'')};});
+  if(g.id==='w-cities')return G.world.cities.map(function(c){return {n:c.n,info:c.n+', '+c.c};});
+}
+
+/* ---------- drawing the map ---------- */
+function P(d,cls,extra){return '<path d="'+d+'" class="'+cls+'" vector-effect="non-scaling-stroke"'+(extra||'')+'/>';}
+function lbl(x,y,t,k,cls){return '<text class="lbl'+(cls?' '+cls:'')+'" data-l="'+k+'" x="'+x+'" y="'+y+'">'+esc(t)+'</text>';}
+function drawMap(g){
+  var M=G[g.map],o='',L='';
+  if(g.map==='us'){
+    o+='<rect x="-50" y="-50" width="1100" height="720" class="sea" style="fill:#d9ecf8"/>';
+    if(g.id==='us-states'){
+      var k=0;M.states.forEach(function(s){
+        if(s.ab==='DC'){o+=P(s.d,'land other');return;}
+        o+=P(s.d,'land hit','  data-k="'+k+'"');
+        if(!M.small.some(function(b){return b.ab===s.ab;}))L+=lbl(s.x,s.y,s.ab,k);
+        s._k=k;k++;});
+      M.small.forEach(function(b){var s=M.states.filter(function(x){return x.ab===b.ab;})[0];
+        o+='<line x1="'+(b.x)+'" y1="'+(b.y+11)+'" x2="'+s.x+'" y2="'+s.y+'" stroke="#9a8f7a" stroke-width="1" vector-effect="non-scaling-stroke"/>';
+        o+='<rect class="box land hit" data-k="'+s._k+'" x="'+b.x+'" y="'+b.y+'" width="36" height="22" rx="5"/><text class="boxt" x="'+(b.x+18)+'" y="'+(b.y+15)+'" text-anchor="middle">'+b.ab+'</text>';});
+    }else{
+      M.states.forEach(function(s){o+=P(s.d,'land other','  data-x="'+esc(s.n)+'"');});
+      M.cities.forEach(function(c,i){o+='<circle class="dothit hit" data-k="'+i+'" cx="'+c.x+'" cy="'+c.y+'" r="10"/><circle class="dot" data-k="'+i+'" cx="'+c.x+'" cy="'+c.y+'" r="4"/>';L+=lbl(c.x,c.y-8,c.n,i);});
+    }
+  }else{
+    o+=P(M.sphere,'sea','  style="fill:#d9ecf8"')+P(M.grat,'','  style="fill:none;stroke:#ffffff;stroke-width:.6;opacity:.7"');
+    if(g.id==='w-oceans')M.oceans.forEach(function(s,i){o+=P(s.d,'sea hit','  data-k="'+i+'"');L+=lbl(s.x,s.y,s.n,i,'sea');});
+    var qi=0;
+    M.countries.forEach(function(c){
+      if(g.id==='w-countries'&&c.q){o+=P(c.d,'land hit','  data-k="'+qi+'"');L+=lbl(c.x,c.y,c.n,qi);qi++;}
+      else o+=P(c.d,'land'+(g.id==='w-countries'?' other':''),'  data-x="'+esc(c.n)+'"');
+    });
+    if(g.id==='w-rivers')M.rivers.forEach(function(r,i){o+=P(r.d,'riv','  data-k="'+i+'"')+P(r.d,'tap hit','  data-k="'+i+'"');L+=lbl(r.x,r.y-6,r.n,i);});
+    if(g.id==='w-mountains'){
+      var n=M.mountains.length;
+      M.mountains.forEach(function(m,i){o+=P(m.d,'mtn','  data-k="'+i+'"')+P(m.d,'tap hit','  data-k="'+i+'"');
+        m.tri.forEach(function(t){o+='<path class="tri" d="M'+t[0]+' '+(t[1]-6)+'l5 8h-10z"/>';});L+=lbl(m.x,m.y-8,m.n,i);});
+      M.peaks.forEach(function(p,j){var i=n+j;o+='<circle class="dothit hit" data-k="'+i+'" cx="'+p.x+'" cy="'+p.y+'" r="10"/><path class="dot" data-k="'+i+'" d="M'+p.x+' '+(p.y-7)+'l6 10h-12z" style="fill:#5a3a22"/>';L+=lbl(p.x,p.y-10,p.n,i);});
+    }
+    if(g.id==='w-cities')M.cities.forEach(function(c,i){o+='<circle class="dothit hit" data-k="'+i+'" cx="'+c.x+'" cy="'+c.y+'" r="10"/><circle class="dot" data-k="'+i+'" cx="'+c.x+'" cy="'+c.y+'" r="3.5"/>';L+=lbl(c.x,c.y-7,c.n,i);});
+  }
+  return '<svg id="map" viewBox="0 0 '+M.w+' '+M.h+'" xmlns="http://www.w3.org/2000/svg">'+o+'<g id="marks"></g><g id="labels">'+L+'</g></svg>';
+}
+
+/* ---------- zoom and pan ---------- */
+var VB,BASE,svg,moved=false,A=1;   // A = height/width of the map frame on screen
+function maxW(){return Math.min(BASE.w,BASE.h/A);}
+function full(){var w=maxW();VB={w:w,h:w*A,x:(BASE.w-w)/2,y:(BASE.h-w*A)/2};}
+function setVB(){VB.w=Math.min(maxW(),Math.max(BASE.w/8,VB.w));VB.h=VB.w*A;
+  VB.x=Math.min(BASE.w-VB.w,Math.max(0,VB.x));VB.y=Math.min(BASE.h-VB.h,Math.max(0,VB.y));
+  svg.setAttribute('viewBox',VB.x+' '+VB.y+' '+VB.w+' '+VB.h);rescale();}
+function zoomAt(f,cx,cy){var nw=Math.min(maxW(),Math.max(BASE.w/8,VB.w/f)),r=nw/VB.w;
+  if(cx==null){cx=VB.x+VB.w/2;cy=VB.y+VB.h/2;}VB.x=cx-(cx-VB.x)*r;VB.y=cy-(cy-VB.y)*r;VB.w=nw;setVB();}
+function toMap(px,py){var b=svg.getBoundingClientRect();return [VB.x+(px-b.left)/b.width*VB.w,VB.y+(py-b.top)/b.height*VB.h];}
+function rescale(){   // keep dots, tap areas and labels the same size on screen at any zoom
+  var b=svg.getBoundingClientRect();if(!b.width)return;var k=VB.w/b.width;
+  $$('.dothit',svg).forEach(function(c){c.setAttribute('r',16*k);});
+  $$('circle.dot',svg).forEach(function(c){c.setAttribute('r',(c.classList.contains('hl')?8:5)*k);});
+  $$('.ring',svg).forEach(function(c){c.setAttribute('r',18*k);});
+  $$('.lbl',svg).forEach(function(t){t.style.fontSize=(13*k)+'px';});
+  $$('.boxt',svg).forEach(function(t){t.style.fontSize='11px';});
+}
+function wireMap(onTap){
+  svg=$('#map');var M=svg.viewBox.baseVal;BASE={w:M.width,h:M.height};
+  A=window.innerWidth<640?0.75:BASE.h/BASE.w;svg.parentNode.style.aspectRatio=String(1/A);full();setVB();
+  var pts={},start=null,pinch=null;
+  svg.addEventListener('pointerdown',function(e){pts[e.pointerId]=[e.clientX,e.clientY];moved=false;
+    var ids=Object.keys(pts);if(ids.length===1)start={x:e.clientX,y:e.clientY,vx:VB.x,vy:VB.y};
+    if(ids.length===2){var a=pts[ids[0]],b=pts[ids[1]];pinch={d:Math.hypot(a[0]-b[0],a[1]-b[1]),w:VB.w};}});
+  svg.addEventListener('pointermove',function(e){if(!pts[e.pointerId])return;pts[e.pointerId]=[e.clientX,e.clientY];
+    var ids=Object.keys(pts),bb=svg.getBoundingClientRect();
+    if(ids.length===2&&pinch){var a=pts[ids[0]],b=pts[ids[1]],d=Math.hypot(a[0]-b[0],a[1]-b[1]);
+      var c=toMap((a[0]+b[0])/2,(a[1]+b[1])/2);zoomAt(VB.w/(pinch.w*pinch.d/d),c[0],c[1]);moved=true;return;}
+    if(start&&ids.length===1){var dx=e.clientX-start.x,dy=e.clientY-start.y;if(Math.abs(dx)+Math.abs(dy)>8)moved=true;
+      if(moved){VB.x=start.vx-dx/bb.width*VB.w;VB.y=start.vy-dy/bb.height*VB.h;setVB();}}});
+  function up(e){delete pts[e.pointerId];if(Object.keys(pts).length<2)pinch=null;if(!Object.keys(pts).length)start=null;}
+  svg.addEventListener('pointerup',up);svg.addEventListener('pointercancel',up);svg.addEventListener('pointerleave',up);
+  svg.addEventListener('wheel',function(e){e.preventDefault();var c=toMap(e.clientX,e.clientY);zoomAt(e.deltaY<0?1.25:0.8,c[0],c[1]);},{passive:false});
+  svg.addEventListener('click',function(e){if(moved){moved=false;return;}
+    var t=e.target.closest('[data-k]'),x=e.target.closest('[data-x]');
+    onTap(t?+t.getAttribute('data-k'):null,x?x.getAttribute('data-x'):null);});
+  $('#zin').onclick=function(){zoomAt(1.6);};$('#zout').onclick=function(){zoomAt(1/1.6);};$('#zre').onclick=function(){full();setVB();};
+  window.onresize=rescale;setTimeout(rescale,0);rescale();
+}
+function mark(k,cls){$$('[data-k="'+k+'"]:not(.tap):not(.dothit)',svg).forEach(function(el){el.classList.add(cls);});rescale();}
+function unmark(cls){$$('.'+cls,svg).forEach(function(el){el.classList.remove(cls);});}
+function showLabel(k,on){$$('[data-l="'+k+'"]',svg).forEach(function(el){el.classList.toggle('on',on!==false);});}
+function ring(k){var c=$('circle.dot[data-k="'+k+'"],path.dot[data-k="'+k+'"]',svg);$('#marks').innerHTML='';if(!c)return;
+  var bb=c.getBBox();$('#marks').innerHTML='<circle class="ring" cx="'+(bb.x+bb.width/2)+'" cy="'+(bb.y+bb.height/2)+'" r="18" vector-effect="non-scaling-stroke"/>';rescale();}
+function focusOn(k){   // zoom a little toward a small target so she can see it
+  var el=$('[data-k="'+k+'"]:not(.tap):not(.dothit)',svg);if(!el)return;var bb=el.getBBox();
+  if(bb.width<BASE.w/12&&bb.height<BASE.h/12){var w=Math.min(maxW(),BASE.w/2.2);VB={w:w,h:w*A,x:bb.x+bb.width/2-w/2,y:bb.y+bb.height/2-w*A/2};setVB();}
+}
+
+/* ---------- menu ---------- */
+var best=W.store.get('geo_best',{})||{},miss=W.store.get('geo_miss',{})||{};
+function menu(){
+  stopSay();$('#clock').style.display='none';$('#saved').style.display='';window.scrollTo(0,0);
+  var sec=function(t,list){return '<h2>'+t+'</h2><div class="games">'+list.map(function(g){var b=best[g.id];
+    return '<div class="game"><div class="ic">'+g.icon+'</div><h3>'+esc(g.title)+'</h3><div class="muted">'+esc(g.desc)+'</div>'+(b?'<div class="dots">Best: '+b+'%</div>':'')+
+      '<div class="row"><button class="b alt" data-g="'+g.id+'" data-m="explore">👀 Explore</button><button class="b green" data-g="'+g.id+'" data-m="find">🎮 Play</button></div></div>';}).join('')+'</div>';};
+  stage.innerHTML='<div class="card">'+sec('🇺🇸 United States',GAMES.filter(function(g){return g.map==='us';}))+'</div>'+
+    '<div class="card">'+sec('🌍 The World',GAMES.filter(function(g){return g.map==='world';}))+'</div>';
+  $$('[data-g]',stage).forEach(function(b){b.onclick=function(){open(GAMES.filter(function(g){return g.id===b.dataset.g;})[0],b.dataset.m);};});
+  try{W.ui.saved($('#saved'),SUBJECT);}catch(e){}
+}
+
+/* ---------- a game screen ---------- */
+var R,TIMER=null;
+function open(g,mode){
+  stopSay();window.scrollTo(0,0);$('#saved').style.display='none';
+  var items=itemsFor(g);
+  stage.innerHTML='<div class="card"><div class="row" style="justify-content:space-between"><h2 style="margin:0">'+g.icon+' '+esc(g.title)+'</h2><button class="b alt" id="back">&larr; All games</button></div>'+
+    '<div class="modes"><button class="b alt" data-mode="explore">👀 Explore</button><button class="b alt" data-mode="find">🎯 Find it</button><button class="b alt" data-mode="name">🔤 Name it</button></div>'+
+    '<div id="top"></div><div class="mapwrap">'+drawMap(g)+'<div class="zoom"><button id="zin" aria-label="Zoom in">＋</button><button id="zout" aria-label="Zoom out">−</button><button id="zre" aria-label="Show the whole map">⟲</button></div></div>'+
+    '<div class="hint">Drag to move the map. Pinch or use ＋ − to zoom.</div><div id="opts"></div><div id="fb"></div></div>';
+  $('#back').onclick=menu;
+  $$('[data-mode]').forEach(function(b){b.onclick=function(){start(g,items,b.dataset.mode);};});
+  wireMap(function(k,x){if(R&&R.tap)R.tap(k,x);});
+  start(g,items,mode);
+}
+function setMode(m){$$('[data-mode]').forEach(function(b){b.classList.toggle('on',b.dataset.mode===m);});}
+function clearMarks(){['ok','bad','hl','blink'].forEach(unmark);$('#marks').innerHTML='';$$('.lbl.on',svg).forEach(function(l){l.classList.remove('on');});$('#opts').innerHTML='';$('#fb').innerHTML='';}
+
+function start(g,items,mode){
+  stopSay();clearMarks();setMode(mode);$('#zre').click();
+  if(mode==='explore'){
+    $('#clock').style.display='none';
+    svg.classList.add('labels');
+    $('#top').innerHTML='<div class="prompt">👀 Tap anything on the map to hear its name. <label style="margin-left:auto;font-size:16px"><input type="checkbox" id="lab" checked> Show names</label></div>';
+    $('#lab').onchange=function(){svg.classList.toggle('labels',this.checked);};
+    $('#fb').innerHTML='<div class="info" id="inf">Tap a '+esc(g.noun)+'.</div>';
+    R={tap:function(k,x){
+      unmark('hl');$('#marks').innerHTML='';
+      if(k==null){if(x){$('#inf').textContent=x;say(x);}return;}
+      mark(k,'hl');if(/cities|mountains/.test(g.id))ring(k);$('#inf').innerHTML='<b>'+esc(items[k].info)+'</b>';say(items[k].info);}};
+    return;
+  }
+  svg.classList.remove('labels');
+  // pick 10: the ones she missed before come first
+  var mm=miss[g.id]||{},order=items.map(function(it,i){return i;});
+  order.sort(function(a,b){return (mm[items[b].n]||0)-(mm[items[a].n]||0)||Math.random()-0.5;});
+  var top=order.slice(0,Math.min(10,order.length)).sort(function(){return Math.random()-0.5;});
+  R={g:g,items:items,mode:mode,q:top,i:0,pts:0,max:top.length*10,log:[],missed:[]};
+  $('#clock').style.display='';if(!TIMER)TIMER=W.timer.make($('#clock'));else TIMER.reset();TIMER.lap(g.title+(mode==='find'?' - Find it':' - Name it'));
+  ask();
+}
+function bar(){return '<div class="bar"><i style="width:'+Math.round(R.i/R.q.length*100)+'%"></i></div>';}
+function ask(){
+  clearMarks();var k=R.q[R.i],it=R.items[k],tries=0,done=false,picked=[];
+  if(R.mode==='find'){
+    $('#top').innerHTML=bar()+'<div class="prompt">🎯 Find: <b>'+esc(it.n)+'</b> <button class="say" id="sq" aria-label="Hear it">🔊</button><span class="tries">Question '+(R.i+1)+' of '+R.q.length+'</span></div>';
+    $('#sq').onclick=function(){say(it.n);};say('Find '+it.n);
+    R.tap=function(t,x){
+      if(done)return;
+      if(t===k){done=true;var p=tries?5:10;R.pts+=p;mark(k,'ok');showLabel(k);if(/cities|mountains/.test(R.g.id))ring(k);
+        picked.push(it.n);R.log.push({sec:R.g.title+' - Find it',q:'Find: '+it.n,tried:picked.slice(),answer:it.n,first:!tries});
+        $('#fb').innerHTML='<div class="good">✓ '+(tries?'Got it!':'Yes! That’s it.')+' '+esc(it.info)+' (+'+p+')</div>';say(tries?'Got it':'Yes!');
+        setTimeout(next,1500);return;}
+      var name=t!=null?R.items[t].n:(x||'');
+      if(t==null&&!/w-oceans|w-countries/.test(R.g.id)){   // tapped plain land or sea: just a hint, not a try
+        $('#fb').innerHTML='<div class="warn">'+({'w-rivers':'Tap a blue river line.','w-mountains':'Tap a brown mountain line or a ▲ peak.','us-states':'Tap a state.'}[R.g.id]||'Tap a red dot.')+' Use ＋ to zoom in.</div>';return;}
+      tries++;picked.push(name||'(not an ocean)');
+      if(t!=null){mark(t,'bad');showLabel(t);setTimeout(function(){unmark('bad');showLabel(t,false);},1400);}
+      if(tries<2){$('#fb').innerHTML='<div class="warn">'+(name?'That’s <b>'+esc(name)+'</b>. ':'That’s not one of the oceans. ')+'Try again!</div>';if(name)say('That is '+name+'. Try again.');}
+      else{done=true;R.missed.push(it.n);bump(it.n);
+        R.log.push({sec:R.g.title+' - Find it',q:'Find: '+it.n,tried:picked.slice(),answer:it.n,first:false});
+        focusOn(k);mark(k,'hl');mark(k,'blink');showLabel(k);if(/cities|mountains/.test(R.g.id))ring(k);
+        $('#fb').innerHTML='<div class="warn">'+(name?'That’s '+esc(name)+'. ':'')+'Here is <b>'+esc(it.n)+'</b> (blinking). '+esc(FACT[it.n]||'')+'</div><div class="row" style="margin-top:8px"><button class="b green" id="nx">Next &rarr;</button></div>';
+        say('Here is '+it.n);$('#nx').onclick=next;}
+    };
+  }else{
+    $('#top').innerHTML=bar()+'<div class="prompt">🔤 Name the highlighted <b>'+esc(R.g.noun)+'</b><span class="tries">Question '+(R.i+1)+' of '+R.q.length+'</span></div>';
+    focusOn(k);mark(k,'hl');if(/cities|mountains/.test(R.g.id))ring(k);
+    var pool=R.items.map(function(x,i){return i;}).filter(function(i){return i!==k;}).sort(function(){return Math.random()-0.5;}).slice(0,3);
+    var opts=pool.concat([k]).sort(function(){return Math.random()-0.5;});
+    $('#opts').innerHTML='<div class="opts">'+opts.map(function(i){return '<button class="opt" data-o="'+i+'">'+esc(R.items[i].n)+'</button>';}).join('')+'</div>';
+    R.tap=null;
+    $$('[data-o]').forEach(function(b){b.onclick=function(){
+      if(done)return;var o=+b.dataset.o;picked.push(R.items[o].n);say(R.items[o].n);
+      if(o===k){done=true;var p=tries?0:10;R.pts+=p;b.classList.add('right');unmark('hl');mark(k,'ok');showLabel(k);
+        if(tries){R.missed.push(it.n);bump(it.n);}
+        R.log.push({sec:R.g.title+' - Name it',q:'Name the highlighted '+R.g.noun,tried:picked.slice(),answer:it.n,first:!tries});
+        $('#fb').innerHTML='<div class="good">✓ '+esc(it.info)+(p?' (+10)':'')+'</div>';setTimeout(next,1600);}
+      else{tries++;b.classList.add('wrong');b.disabled=true;$('#fb').innerHTML='<div class="warn">Not that one. Look again and try another.</div>';}
+    };});
+  }
+}
+function bump(n){var m=miss[R.g.id]=miss[R.g.id]||{};m[n]=(m[n]||0)+1;W.store.set('geo_miss',miss);}
+function next(){R.i++;if(R.i<R.q.length){$('#zre').click();ask();}else results();}
+
+/* ---------- results + submit ---------- */
+function pad(n){return (n<10?'0':'')+n;}
+function stamp(d){return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())+'_'+pad(d.getHours())+pad(d.getMinutes());}
+function results(){
+  TIMER.stop();stopSay();clearMarks();R.tap=null;
+  // the ones she got right on the first try come off the "missed" list
+  var mm=miss[R.g.id]||{};R.log.forEach(function(e){if(e.first&&mm[e.answer]){mm[e.answer]=Math.max(0,mm[e.answer]-1);}});W.store.set('geo_miss',miss);
+  var pct=R.max?Math.round(R.pts/R.max*100):0,cfg=W.gh.cfg(),title=R.g.title+(R.mode==='find'?' - Find it':' - Name it');
+  if(pct>(best[R.g.id]||0)){best[R.g.id]=pct;W.store.set('geo_best',best);}
+  $('#top').innerHTML='';
+  $('#fb').innerHTML='<div class="good" style="font-size:20px">🎉 Round done! <b>'+R.pts+'</b> of '+R.max+' points ('+pct+'%). ⏱ '+W.fmtTime(TIMER.secs())+'</div>'+
+    (R.missed.length?'<p style="margin:10px 0 0">Practice these next time (they will come first):</p><div class="miss">'+R.missed.map(function(n){return '<span>'+esc(n)+'</span>';}).join('')+'</div>':'<p>No misses. Amazing!</p>')+
+    '<p class="muted">Type your first name, then press Submit. '+(cfg?'Your answers will be saved to GitHub.':'GitHub saving is not set up yet, so a file will be downloaded instead.')+'</p>'+
+    '<input type="text" id="nm" placeholder="Your first name" autocomplete="given-name" style="max-width:360px">'+
+    '<div class="row" style="margin-top:12px"><button class="b green" id="sub">✅ Submit</button><button class="b alt" id="again">↻ Play again</button><button class="b alt" id="menu">All games</button></div><div id="after"></div>';
+  svg.classList.add('labels');
+  $('#again').onclick=function(){start(R.g,R.items,R.mode);};$('#menu').onclick=menu;
+  $('#sub').onclick=function(){
+    $('#sub').disabled=true;
+    var when=new Date(),name=($('#nm').value||'').trim(),secs=TIMER.secs(),lv=TIMER.leaves(),away=lv.reduce(function(a,x){return a+x.seconds;},0);
+    var L=[('GEOGRAPHY: '+title).toUpperCase()+' - STUDENT ANSWERS','','Name: '+(name||'(not entered)'),'Date: '+when.toLocaleString(),
+      'Score: '+R.pts+' of '+R.max+' points ('+pct+'%)','Right on the first try: '+R.log.filter(function(e){return e.first;}).length+' of '+R.log.length,
+      'Time spent: '+W.fmtTime(secs)+' (active time only)','Left the page: '+(lv.length?lv.length+' time'+(lv.length>1?'s':'')+' (away '+W.fmtTime(away)+' in total)':'never'),
+      (R.missed.length?'To practice: '+R.missed.join(', '):''),'','[OK] = right on the first try     [RETRY] = needed more than one try'];
+    R.log.forEach(function(e){L.push('');L.push((e.first?'[OK]    ':'[RETRY] ')+e.q);L.push('        Her answers: '+e.tried.join('  >  '));L.push('        Correct answer: '+e.answer);});
+    var report=L.join('\n')+'\n',fname=R.g.id+'-'+R.mode+'-answers_'+(name?name.replace(/[^A-Za-z0-9]+/g,'-')+'_':'')+stamp(when)+'.txt';
+    var rec={id:when.getTime(),when:when.toISOString(),name:name,pts:R.pts,max:R.max,pct:pct,file:fname,report:report,log:R.log.slice(),
+      ghStatus:cfg?'pending':'none',subject:SUBJECT,exercise:R.g.id+'-'+R.mode,title:title,dir:W.dir(SUBJECT),secs:secs,parts:TIMER.parts(),leaves:lv};
+    W.subs.add(rec);W.xp.add(R.pts);$('#xp').textContent='⭐ '+W.xp.get();
+    var after=$('#after'),star='<p>⭐ <b>+'+R.pts+'</b> added to your stars.</p>';
+    function send(){after.innerHTML='<div class="banner">Sending to GitHub…</div>';
+      W.gh.saveRecord(rec).then(function(r){
+        if(r.ok){W.subs.patch(rec.id,{ghStatus:'sent',ghErr:''});after.innerHTML='<div class="good" style="margin-top:10px">✓ Submitted! Saved to GitHub.</div>'+star;}
+        else{W.subs.patch(rec.id,{ghStatus:'pending',ghErr:W.gh.msg(r)});after.innerHTML='<div class="banner">Saved on this device, but it did not reach GitHub yet.<br>'+esc(W.gh.msg(r))+'</div>'+star+'<button class="b" id="retry">↻ Try sending again</button>';$('#retry').onclick=send;}});}
+    if(cfg)send();else{var ok=W.saveTextFile(report,fname);after.innerHTML='<div class="good" style="margin-top:10px">✓ Submitted!</div>'+star+'<p class="muted">Saved on this device'+(ok?' and a file was downloaded.':'.')+'</p>';}
+  };
+}
+
+menu();
+})();
+</script>
+</body>
+</html>
